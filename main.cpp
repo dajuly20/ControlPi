@@ -110,7 +110,7 @@ std::string regexCallback(const std::smatch& m) {
     string deoendantStr = m[1].str();
     
     bool dependantState;
-    // Unnecessary  comment
+    
     char frstChar = deoendantStr.at(0);
     char scndChar = deoendantStr.at(1);
     char thrdChar = deoendantStr.at(2);
