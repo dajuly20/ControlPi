@@ -20,10 +20,12 @@
 #include <string.h>
 #include <regex>
 #include <bitset>
+#include <stdexcept>
 //#include <boost/regex.hpp>
 #include "pifacedigital.h"
 #include "boolLogicParser.h"
 #include "regReplaceExtension.h"
+
 static volatile int keepRunning = 1;
 
 using namespace std;
@@ -103,46 +105,51 @@ void PrintMatches2(std::string str){
 
 uint8_t invertRead(int i){
    return ~pifacedigital_digital_read(i)&1;
+   //return  ~pifacedigital_read_bit(i, INPUT, hw_addr) & 1;
 }
-            
-std::string regexCallback(const std::smatch& m) {
-    cout << "call on: " << m[1].str() << endl;
+ 
+
+// Used in regex callback to replace Identifiers by their value
+std::string replaceIdentifier(const std::smatch& m) {
+    bool dbg = false;
+    if(dbg) cout << "call on: " << m[1].str() << endl;
     string deoendantStr = m[1].str();
     
     bool dependantState;
     
+    // Splits String in characters.
     char frstChar = deoendantStr.at(0);
     char scndChar = deoendantStr.at(1);
     char thrdChar = deoendantStr.at(2);
     char frthChar = deoendantStr.at(3);
    
-    // Get number of Var.
+    // explicit cast 4th character to integer 
+    // (regular expression checks for numberic)
     int dependantNum = frthChar - '0';
     
-    
     // Input or Outupt
-    if(frstChar == 'I'){  
+    if(frstChar == 'i'){  
        dependantState = invertRead(dependantNum);
-       cout << "its input!" << dependantNum << " its state is: " << dependantState << endl;    
-        
-    }
-    else if(frstChar == 'O'){
-        cout << "its output" << dependantNum;    
-        cout << "Don't know how to determine output state for now..";
-        
-    }else{
-        cout << "FEHLER. This should never happen.. ";
+       if(dbg) cout << "its input " << dependantNum << " its state is: " << dependantState << endl;        
     }
     
-        return std::to_string(dependantState);
+    else if(frstChar == 'o'){
+        //cout << "its output" << dependantNum;    
+        throw std::invalid_argument("Outputs not yet supportet as identifiers");
+       // cout << "Don't know how to determine output state for now..";   
+    }
+    
+    else{
+        // Todo throw error! 
+        cout << "FEHLER. This should never happen.. ";
+        throw std::invalid_argument("Identifier has invalid structure");
+    }
+    
+    return std::to_string(dependantState);
     // Todo second and third chars are ignored for now.
     //      and have to be implemented.
-    
-    
-    
-    
-    
-    cout << endl;
+
+    //cout << endl;
     
   return "1";
 }
@@ -197,17 +204,13 @@ int testBoolLogic ()
     return 0; 
 }
 
-
 void intHandler(int dummy) {
     keepRunning = 0;
 }
 
 
-
-
-
 bool parseLogic(string input){
-    
+    bool dbg = false;
      //string format like:  a0 = "!0 & 1;";
             
         typedef std::string::const_iterator It;
@@ -220,25 +223,24 @@ bool parseLogic(string input){
             bool ok = qi::phrase_parse(f,l,p > ';',qi::space,result);
 
             if (!ok)
-                std::cerr << "invalid inputjw\n";
+                std::cerr << "Logic string invalid" << input << endl;
             else
             {
-                
-                std::cout << "JWresult:\t" << result << "\n";
-                std::cout << "JWevaluated:\t" << evaluate(result) << "\n";
+                if(dbg) std::cout << "parseLogic: Input " << input << " resulting into" << result << " evaluated to " << evaluate(result) << endl;
                 return evaluate(result);
             
             }
 
         } catch (const qi::expectation_failure<It>& e)
         {
-            std::cerr << "expectation_failure at '" << std::string(e.first, e.last) << "'\n";
+            std::cerr << "parseLogic: expectation_failure at '" << std::string(e.first, e.last) << "'\n";
         }  
 }
 
 
-uint8_t parseInputs(){
+uint8_t parseIdentifiers(){
       // Cut the string in halves at the "=" sign
+    bool dbg = false;
     std::string delimiter = "=";
 
     size_t found;
@@ -246,37 +248,51 @@ uint8_t parseInputs(){
     
     //Strings shall be read as a array of strings 
     //string rawFullInput="Ora0=!(![Ira0] & [Ira1]) | [Ira2] & [Ira3];";  
-     const std::string inputs[] = { 
-        std::string("Ora0=!(![Ira0] & [Ira1]) | [Ira2] & [Ira3];"),
-        std::string("Ora1=[Ira1];"),
-        std::string("Ora2=[Ira2];"),
-        std::string("Ora3=![Ira3];"),
+     const std::string outputStrings[] = { 
+        std::string("Ora0=![ira1];"),
+        std::string("Ora1=[ira1];"),
+        std::string("Ora2=[ira2];"),
+        std::string("Ora3=![ira3];"),
         std::string("") // marker
     };
 
      
-    for (std::string rawFullInput: inputs) { 
+    // One OutputString might be Ora0=![Ira1] & [Ira0] | [Ira2];
+    //                           ^^^^   ^^^^
+    //                             |     |  
+    //                          Output  Input    
+    for (std::string outStr: outputStrings) { 
 
-        // Splits the Locig into the Output to use (e.g. Ora0) and the rawLogicString
-        if ((found = rawFullInput.find("=")) != string::npos){
-           string hwOutputStr        = rawFullInput.substr(0,found);
-           int hwOutputNumber = hwOutputStr.at(3) - '0';
+        // Splits the output string by the '=' sign in two parts:
+        // 1. the Output to use (e.g. Ora0) 2nd the rawLogicString including used inputs in brackets e.g. ![Ira1] & [Ira0] | [Ira2];
+        if ((found = outStr.find("=")) != string::npos){ // TODO "" string to char?
+           string useOutStr = outStr.substr(0,found);
+           int    useOutNum = useOutStr.at(3) - '0'; 
 
-           string rawLogicString  = rawFullInput.substr(found+1, string::npos);
+           string rawLogicString  = outStr.substr(found+1, string::npos);
 
-           cout << "HardwareOutput is: " << hwOutputNumber << endl;
-           cout << "RawLogicString is: " << rawLogicString << endl;
+           if(dbg) cout << "HardwareOutput is: " << useOutNum << endl;
+           if(dbg) cout << "RawLogicString is: " << rawLogicString << endl;
 
-           string outLogicString  = regex_replace(rawLogicString, regex("\\[([I][rv][a-z][0-8])\\]"),
-                                    regexCallback);
-           cout << "Resulting logic string is: " << outLogicString << endl;
+           // Calls a function for each match on "[ira0]" a string of 4 characters in '[' brackets,
+           // 1st char of which may be i/o (in/out), 2nd r/v (real/virtual), 3rd hardware idendifier (a-z), 4re input identifier (0-8)
+           // eventually every occurance of brackets should be replaced either by a 0 or 1. 
+           // For the example state of (Ira1 = 0, Ira0 =1, Ira2 = 1), the example logic string would look like !0 & 1 | 1;
+           string outLogicString  = regex_replace(rawLogicString, regex("\\[([io][rv][a-z][0-8])\\]"),
+                                    replaceIdentifier);
+           if(dbg) cout << "Resulting logic string is: " << outLogicString << endl;
 
+           // Eventually the example logic string (e.g. !0 & 1 | 1;) will be parsed to 1
            bool parsedOut = parseLogic(outLogicString);
 
            // Adds up the one Bits
            // e.g. Output 3 is the third bit from right, so 2^3 * 1 or 0
-           outputByte += int(parsedOut) * pow(2, hwOutputNumber); 
-           cout << "Output Byte is now " << int(outputByte) << endl;
+           outputByte += int(parsedOut) * pow(2, useOutNum); 
+           cout << "Output" << useOutNum << " is " << int(parsedOut) << endl;
+           if(dbg) cout << "Output Byte is now " << int(outputByte) << endl;
+        }
+        else{
+            // Todo: Error, = sign not in string.
         }
     }
      cout << "returning output byte: " << int(outputByte) << endl;
@@ -290,7 +306,7 @@ int main( int argc, char *argv[] )
     uint8_t inputs;         /**< Input bits (pins 0-7) */
     int hw_addr = 0;        /**< PiFaceDigital hardware address  */
     int interrupts_enabled; /**< Whether or not interrupts are enabled  */
-
+    
     signal(SIGINT, intHandler);
     
     //testBoolLogic();
@@ -308,6 +324,8 @@ int main( int argc, char *argv[] )
     printf("Opening piface digital connection at location %d\n", hw_addr);
     pifacedigital_open(hw_addr);
 
+    // Initially set all outputs to 0
+    pifacedigital_write_reg(0x00, OUTPUT, hw_addr);
 
 
     /**
@@ -369,6 +387,8 @@ int main( int argc, char *argv[] )
     inputs = pifacedigital_read_reg(INPUT, hw_addr);
     printf("Inputs: 0x%x\n", inputs);
 
+    inputs = pifacedigital_read_reg(OUTPUT, hw_addr);
+    printf("Outputs: 0x%x\n", inputs);
 
     /**
      * Write each output pin individually
@@ -391,57 +411,27 @@ int main( int argc, char *argv[] )
     }
 */
 
-   
-
-            //char Ora0[] = "Ira0*Ira1*Ira2*Ira2";
-            
-            //char str[] ="- This, a sample string.";
-            
-            
-            
-          
-          
-            
-           
-          
-            
-           
-            
-          
-          
-         // Should become => 
-         // outChannel="ra0";  inputVars = "!(!1 & 0) || 1 & 0"
-         // Res = parseLogic(inputVars) 
-         // Dynamically select Ora0 as output and write res to it. 
-         
-          // test Logic parser.
-          bool res = parseLogic("!0 & 0;");
-          if(res){
-              cout << "Result 1" << endl;
-          }
-          else{
-              cout << "Result false" << endl;
-          }
-                 
+  
     /**
      * Wait for input change interrupt.
      * pifacedigital_wait_for_input returns a value <= 0 on failure.
      */
     while(keepRunning ){
     if (interrupts_enabled) {
-        printf("Waiting for input (press any button on the PiFaceDigital)\n");
+        printf("\n\nWaiting for input (press any button on the PiFaceDigital)\n");
         if (pifacedigital_wait_for_input(&inputs, -1, hw_addr) > 0){
         
             
-            printf("Inputs: 0x%x\n", inputs);
+            //printf("Inputs: 0x%x\n", inputs);
              /**
             * Read each input pin individually
             * A return value of 0 is pressed.
             */
-            uint8_t parsedOutputs = parseInputs();
+            uint8_t parsedOutputs = parseIdentifiers();
             
             pifacedigital_write_reg(parsedOutputs, OUTPUT, hw_addr);
-            
+            inputs = pifacedigital_read_reg(OUTPUT, hw_addr);
+            printf("Outputs: 0x%x\n", inputs);
 //            if ( invertRead(0) && invertRead(1) && invertRead(2) && invertRead(3)){
 //               pifacedigital_digital_write(0, 1); 
 //            }
@@ -467,6 +457,7 @@ int main( int argc, char *argv[] )
     /**
      * Close the connection to the PiFace Digital
      */
-    printf("CTRL + C Detected.. ");
+    printf("shutting down gracefully");
+    pifacedigital_write_reg(0x00, OUTPUT, hw_addr);
     pifacedigital_close(hw_addr);
 }
