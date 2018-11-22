@@ -22,13 +22,16 @@
 #include <bitset>
 #include <stdexcept>
 //#include <boost/regex.hpp>
-#include "pifacedigital.h"
+#include "/usr/local/include/pifacedigitalcpp.h"
 #include "boolLogicParser.h"
 #include "regReplaceExtension.h"
 
 static volatile int keepRunning = 1;
 
 using namespace std;
+
+PiFaceDigital pfd;
+
 
 //string tr(const boost::smatch &m) {
     //return m[0].str()[0] == ' ' ? "_" : ""; }
@@ -102,12 +105,60 @@ void PrintMatches2(std::string str){
     
 }
 
+class replaceIdentifier2{
+    PiFaceDigital pfd;
+    
+public:
+   
+    replaceIdentifier2(PiFaceDigital _pfd){
+        this->pfd = _pfd;
+    }
+   
+    std::string operator()(const std::smatch& m) {
+        bool dbg = false;
+        if(dbg) cout << "call on: " << m[1].str() << endl;
+        string deoendantStr = m[1].str();
 
-uint8_t invertRead(int i){
-   return ~pifacedigital_digital_read(i)&1;
-   //return  ~pifacedigital_read_bit(i, INPUT, hw_addr) & 1;
-}
- 
+        bool dependantState;
+
+        // Splits String in characters.
+        char frstChar = deoendantStr.at(0);
+        char scndChar = deoendantStr.at(1);
+        char thrdChar = deoendantStr.at(2);
+        char frthChar = deoendantStr.at(3);
+
+        // explicit cast 4th character to integer 
+        // (regular expression checks for numberic)
+        int dependantNum = frthChar - '0';
+
+        // Input or Outupt
+        if(frstChar == 'i'){  
+           dependantState = pfd.digital_read_inv(dependantNum);
+           if(dbg) cout << "its input " << dependantNum << " its state is: " << dependantState << endl;        
+        }
+
+        else if(frstChar == 'o'){
+            //cout << "its output" << dependantNum;    
+            throw std::invalid_argument("Outputs not yet supportet as identifiers");
+           // cout << "Don't know how to determine output state for now..";   
+        }
+
+        else{
+            // Todo throw error! 
+            cout << "FEHLER. This should never happen.. ";
+            throw std::invalid_argument("Identifier has invalid structure");
+        }
+
+        return std::to_string(dependantState);
+        // Todo second and third chars are ignored for now.
+        //      and have to be implemented.
+
+        //cout << endl;
+
+      return "1";
+    }
+    
+};
 
 // Used in regex callback to replace Identifiers by their value
 std::string replaceIdentifier(const std::smatch& m) {
@@ -129,7 +180,7 @@ std::string replaceIdentifier(const std::smatch& m) {
     
     // Input or Outupt
     if(frstChar == 'i'){  
-       dependantState = invertRead(dependantNum);
+       dependantState = pfd.digital_read_inv(dependantNum);
        if(dbg) cout << "its input " << dependantNum << " its state is: " << dependantState << endl;        
     }
     
@@ -238,7 +289,7 @@ bool parseLogic(string input){
 }
 
 
-uint8_t parseIdentifiers(){
+uint8_t parseIdentifiers(PiFaceDigital pfd){
       // Cut the string in halves at the "=" sign
     bool dbg = false;
     std::string delimiter = "=";
@@ -274,12 +325,15 @@ uint8_t parseIdentifiers(){
            if(dbg) cout << "HardwareOutput is: " << useOutNum << endl;
            if(dbg) cout << "RawLogicString is: " << rawLogicString << endl;
 
+           // Using as Functor to put in piFaceDigital object.
+           replaceIdentifier2 rpi(pfd);
+           
            // Calls a function for each match on "[ira0]" a string of 4 characters in '[' brackets,
            // 1st char of which may be i/o (in/out), 2nd r/v (real/virtual), 3rd hardware idendifier (a-z), 4re input identifier (0-8)
            // eventually every occurance of brackets should be replaced either by a 0 or 1. 
            // For the example state of (Ira1 = 0, Ira0 =1, Ira2 = 1), the example logic string would look like !0 & 1 | 1;
            string outLogicString  = regex_replace(rawLogicString, regex("\\[([io][rv][a-z][0-8])\\]"),
-                                    replaceIdentifier);
+                                    rpi);
            if(dbg) cout << "Resulting logic string is: " << outLogicString << endl;
 
            // Eventually the example logic string (e.g. !0 & 1 | 1;) will be parsed to 1
@@ -300,14 +354,20 @@ uint8_t parseIdentifiers(){
     
 }
 
+
 int main( int argc, char *argv[] )
 {
     uint8_t i = 0;          /**< Loop iterator */
     uint8_t inputs;         /**< Input bits (pins 0-7) */
     int hw_addr = 0;        /**< PiFaceDigital hardware address  */
     int interrupts_enabled; /**< Whether or not interrupts are enabled  */
+    int enable_interrupts = 1; /**< Whether or not interrupts should be enabled  */
     
     signal(SIGINT, intHandler);
+    signal(SIGKILL, intHandler);
+    signal(SIGHUP, intHandler);
+    signal(SIGTERM, intHandler);
+    
     
     //testBoolLogic();
     /**
@@ -322,10 +382,17 @@ int main( int argc, char *argv[] )
      * Open piface digital SPI connection(s)
      */
     printf("Opening piface digital connection at location %d\n", hw_addr);
-    pifacedigital_open(hw_addr);
+    
+  // Create Instance of pfd
+    PiFaceDigital pfd(hw_addr, enable_interrupts);
 
+    if(!pfd.init_success()){
+        cout << "Error: Could not open PiFaceDigital" << endl;
+        cout << "Is the device properly attached? " << endl; 
+        return -1;
+    }
     // Initially set all outputs to 0
-    pifacedigital_write_reg(0x00, OUTPUT, hw_addr);
+    pfd.write_reg(0x00, OUTPUT, hw_addr);
 
 
     /**
@@ -333,93 +400,32 @@ int main( int argc, char *argv[] )
      * Reverse the return value of pifacedigital_enable_interrupts() to be consistent
      * with the variable name "interrupts_enabled". (the function returns 0 on success)
      */
-    if (interrupts_enabled = !pifacedigital_enable_interrupts())
+    if (pfd.interrupts_enabled()){
         printf("Interrupts enabled.\n");
-    else
-        printf("Could not enable interrupts. Try running using sudo to enable PiFaceDigital interrupts.\n");
+    }else{
+        printf("Could not enable interrupts. Are you in group spi and gpio? Try running using sudo to enable PiFaceDigital interrupts\n");
+        return -1;
+    }
 
-
-    /**
-     * Bulk set all 8 outputs at once using a hexidecimal
-     * representation of the inputs as an 8-bit binary
-     * number, where each bit represents an output from
-     * 0-7
-     */
-    /* Set all outputs off (00000000) */
-    printf("Setting all outputs off\n");
-    //pifacedigital_write_reg(0x00, OUTPUT, hw_addr);
-    //sleep(1);
-
-    /* Set output states to alternating on/off (10101010) */
-    printf("Setting outputs to 10101010\n");
-    //pifacedigital_write_reg(0xaa, OUTPUT, hw_addr);
-    //sleep(1);
-
-    /* Set output states to alternating off/on (01010101) */
-    //printf("Setting outputs to 01010101\n");
-    //pifacedigital_write_reg(0x55, OUTPUT, hw_addr);
-    //sleep(1);
-
-    /* Set all outputs off (000000) */
-    //printf("Setting all outputs off\n");
-    //pifacedigital_write_reg(0x00, OUTPUT, hw_addr);
-
-
-    /**
-     * Read/write single input bits
-     */
-    //uint8_t bit = pifacedigital_read_bit(0, OUTPUT, hw_addr);
-    //printf("Reading bit 0: %d\n", bit);
-    //sleep(1);
-    //printf("Writing bit 0 to 0\n", bit);
-    //pifacedigital_write_bit(0, 0, OUTPUT, hw_addr);
-
-
-    /**
-     * Set input pullups (must #include "mcp23s17.h")
-     */
-    /* pifacedigital_write_reg(0xff, GPPUB, hw_addr); */
-
-
+  
     /**
      * Bulk read all inputs at once
      */
-    inputs = pifacedigital_read_reg(INPUT, hw_addr);
+    inputs = pfd.read_reg(PiFaceDigital::OUT, hw_addr);
     printf("Inputs: 0x%x\n", inputs);
 
-    inputs = pifacedigital_read_reg(OUTPUT, hw_addr);
+    inputs = pfd.read_reg(PiFaceDigital::OUT, hw_addr);
     printf("Outputs: 0x%x\n", inputs);
 
-    /**
-     * Write each output pin individually
-     */
-    /*
-    for (i = 0; i < 8; i++) {
-        const char *desc;
-        if (i <= 1) desc = "pin with attached relay";
-        else desc = "pin";
 
-        // Turn output pin i high 
-        printf("Setting output %s %d HIGH\n", desc, (int)i);
-        pifacedigital_digital_write(i, 1);
-        sleep(1);
-
-        //Turn output pin i low 
-        printf("Setting output %s %d LOW\n", desc, (int)i);
-        pifacedigital_digital_write(i, 0);
-        sleep(1);
-    }
-*/
-
-  
     /**
      * Wait for input change interrupt.
      * pifacedigital_wait_for_input returns a value <= 0 on failure.
      */
     while(keepRunning ){
-    if (interrupts_enabled) {
+    if (pfd.interrupts_enabled()) {
         printf("\n\nWaiting for input (press any button on the PiFaceDigital)\n");
-        if (pifacedigital_wait_for_input(&inputs, -1, hw_addr) > 0){
+        if (pfd.wait_for_input(&inputs, -1, hw_addr) > 0){
         
             
             //printf("Inputs: 0x%x\n", inputs);
@@ -427,20 +433,20 @@ int main( int argc, char *argv[] )
             * Read each input pin individually
             * A return value of 0 is pressed.
             */
-            uint8_t parsedOutputs = parseIdentifiers();
+            uint8_t parsedOutputs = parseIdentifiers(pfd);
             
-            pifacedigital_write_reg(parsedOutputs, OUTPUT, hw_addr);
-            inputs = pifacedigital_read_reg(OUTPUT, hw_addr);
+            pfd.write_reg(parsedOutputs, OUTPUT, hw_addr);
+            inputs = pfd.read_reg(OUTPUT, hw_addr);
             printf("Outputs: 0x%x\n", inputs);
 //            if ( invertRead(0) && invertRead(1) && invertRead(2) && invertRead(3)){
-//               pifacedigital_digital_write(0, 1); 
+//               pfd.digital_write(0, 1); 
 //            }
 //            else{
-//                pifacedigital_digital_write(0, 0);
+//                pfd.digital_write(0, 0);
 //            }
             
             for (i = 0; i < 8; i++) {
-                uint8_t pinStateRev =  ~pifacedigital_digital_read(i) & 1;
+                uint8_t pinStateRev =  pfd.digital_read_inv(i); 
                 
                 printf("Input %d value: %d\n", (int)i, (int)pinStateRev);
             }
@@ -449,15 +455,16 @@ int main( int argc, char *argv[] )
         }
     }
     else{
-        printf("Interrupts disabled, skipping interrupt tests.\n");
+        printf("Interrupts disabled. Aborting.\n");
         keepRunning = 0;
     }
 
     }
     /**
-     * Close the connection to the PiFace Digital
+     * Close the connection to the PiFace Digital 
+     * pfd object goes out of scope, destructor does the rest!
      */
-    printf("shutting down gracefully");
-    pifacedigital_write_reg(0x00, OUTPUT, hw_addr);
-    pifacedigital_close(hw_addr);
+    
+    pfd.write_reg(0x00, OUTPUT, hw_addr);
+    
 }

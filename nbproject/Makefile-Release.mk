@@ -37,7 +37,6 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/boolLogicParser.o \
 	${OBJECTDIR}/main.o \
-	${OBJECTDIR}/pifacewrapper/PiFaceWrapper.o \
 	${OBJECTDIR}/regReplaceExtension.o
 
 
@@ -74,11 +73,6 @@ ${OBJECTDIR}/main.o: main.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
-
-${OBJECTDIR}/pifacewrapper/PiFaceWrapper.o: pifacewrapper/PiFaceWrapper.cpp
-	${MKDIR} -p ${OBJECTDIR}/pifacewrapper
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/pifacewrapper/PiFaceWrapper.o pifacewrapper/PiFaceWrapper.cpp
 
 ${OBJECTDIR}/regReplaceExtension.o: regReplaceExtension.cpp
 	${MKDIR} -p ${OBJECTDIR}

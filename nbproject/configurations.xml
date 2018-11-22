@@ -4,7 +4,6 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <itemPath>pifacewrapper/PiFaceWrapper.h</itemPath>
       <itemPath>boolLogicParser.h</itemPath>
       <itemPath>regReplaceExtension.h</itemPath>
     </logicalFolder>
@@ -15,10 +14,21 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>pifacewrapper/PiFaceWrapper.cpp</itemPath>
       <itemPath>boolLogicParser.cpp</itemPath>
+      <itemPath>bootstrap.sh</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>regReplaceExtension.cpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -43,7 +53,7 @@
       <compileType>
         <linkerTool>
           <linkerLibItems>
-            <linkerLibLibItem>pifacedigital</linkerLibLibItem>
+            <linkerLibLibItem>pifacedigitalcpp</linkerLibLibItem>
             <linkerLibLibItem>mcp23s17</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
@@ -52,11 +62,9 @@
       </item>
       <item path="boolLogicParser.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="bootstrap.sh" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="pifacewrapper/PiFaceWrapper.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="pifacewrapper/PiFaceWrapper.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="regReplaceExtension.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -87,11 +95,9 @@
       </item>
       <item path="boolLogicParser.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="bootstrap.sh" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="pifacewrapper/PiFaceWrapper.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="pifacewrapper/PiFaceWrapper.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="regReplaceExtension.cpp" ex="false" tool="1" flavor2="0">
       </item>
