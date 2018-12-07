@@ -41,7 +41,7 @@ OBJECTFILES= \
 
 
 # C Compiler Flags
-CFLAGS=
+CFLAGS=-j 4
 
 # CC Compiler Flags
 CCFLAGS=
@@ -54,11 +54,15 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-lpifacedigitalcpp -lmcp23s17
+LDLIBSOPTIONS=/usr/local/lib/libpifacedigitalcpp.a /usr/local/lib/libmcp23s17.a
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
 	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/mycontroldigital
+
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/mycontroldigital: /usr/local/lib/libpifacedigitalcpp.a
+
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/mycontroldigital: /usr/local/lib/libmcp23s17.a
 
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/mycontroldigital: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
