@@ -37,7 +37,16 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/boolLogicParser.o \
 	${OBJECTDIR}/main.o \
-	${OBJECTDIR}/regReplaceExtension.o
+	${OBJECTDIR}/regReplaceExtension.o \
+	${OBJECTDIR}/src/ChannelEntitys/Channel_Entities_PiFace.o \
+	${OBJECTDIR}/src/ChannelEntitys/Channel_Entity.o \
+	${OBJECTDIR}/src/IOChannels/IO_Channel.o \
+	${OBJECTDIR}/src/IOChannels/IO_Channel_Hw.o \
+	${OBJECTDIR}/src/IOChannels/IO_Channel_Hw_PiFace.o \
+	${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual.o \
+	${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual_Memory.o \
+	${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual_Pipe.o \
+	${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual_Timer.o
 
 
 # C Compiler Flags
@@ -82,6 +91,51 @@ ${OBJECTDIR}/regReplaceExtension.o: regReplaceExtension.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/regReplaceExtension.o regReplaceExtension.cpp
+
+${OBJECTDIR}/src/ChannelEntitys/Channel_Entities_PiFace.o: src/ChannelEntitys/Channel_Entities_PiFace.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/ChannelEntitys
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/ChannelEntitys/Channel_Entities_PiFace.o src/ChannelEntitys/Channel_Entities_PiFace.cpp
+
+${OBJECTDIR}/src/ChannelEntitys/Channel_Entity.o: src/ChannelEntitys/Channel_Entity.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/ChannelEntitys
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/ChannelEntitys/Channel_Entity.o src/ChannelEntitys/Channel_Entity.cpp
+
+${OBJECTDIR}/src/IOChannels/IO_Channel.o: src/IOChannels/IO_Channel.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/IOChannels
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/IOChannels/IO_Channel.o src/IOChannels/IO_Channel.cpp
+
+${OBJECTDIR}/src/IOChannels/IO_Channel_Hw.o: src/IOChannels/IO_Channel_Hw.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/IOChannels
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/IOChannels/IO_Channel_Hw.o src/IOChannels/IO_Channel_Hw.cpp
+
+${OBJECTDIR}/src/IOChannels/IO_Channel_Hw_PiFace.o: src/IOChannels/IO_Channel_Hw_PiFace.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/IOChannels
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/IOChannels/IO_Channel_Hw_PiFace.o src/IOChannels/IO_Channel_Hw_PiFace.cpp
+
+${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual.o: src/IOChannels/IO_Channel_Virtual.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/IOChannels
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual.o src/IOChannels/IO_Channel_Virtual.cpp
+
+${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual_Memory.o: src/IOChannels/IO_Channel_Virtual_Memory.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/IOChannels
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual_Memory.o src/IOChannels/IO_Channel_Virtual_Memory.cpp
+
+${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual_Pipe.o: src/IOChannels/IO_Channel_Virtual_Pipe.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/IOChannels
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual_Pipe.o src/IOChannels/IO_Channel_Virtual_Pipe.cpp
+
+${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual_Timer.o: src/IOChannels/IO_Channel_Virtual_Timer.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/IOChannels
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual_Timer.o src/IOChannels/IO_Channel_Virtual_Timer.cpp
 
 # Subprojects
 .build-subprojects:

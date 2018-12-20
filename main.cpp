@@ -18,14 +18,22 @@
 #include <unistd.h>
 #include <signal.h>
 #include <fstream>
+#include <memory>   // shared_ptr
 //#include <string.h>
 #include <regex>
 #include <bitset>
 #include <stdexcept>
 //#include <boost/regex.hpp>
-#include "/usr/local/include/pifacedigitalcpp.h"
+#include "pifacedigitalcpp.h"
 #include "boolLogicParser.h"
 #include "regReplaceExtension.h"
+
+
+#include "src/ChannelEntitys/Channel_Entity.h"
+#include "src/ChannelEntitys/Channel_Entities_PiFace.h"
+#include "src/IOChannels/IO_Channel.h"
+#include "src/IOChannels/IO_Channel_Hw_PiFace.h"
+
 
 static volatile int keepRunning = 1;
 static volatile bool configRead = false;
@@ -36,36 +44,6 @@ static int hw_addr = 0;
 static int enable_interrupts = 1;
 
 PiFaceDigital pfd(hw_addr, enable_interrupts, PiFaceDigital::EXITVAL_ZERO);
-
-
-class MyControlHWInterface
-{ 
-public:
-    virtual int eat(){
-        cout << " I eat generic food" << endl;
-    }
-    
-};
-
-class PiFaceHWInterface : public MyControlHWInterface{
-public:
-    int eat(){
-        cout << " I eat spi input :-) " << endl;
-    }
-};
-
-
-class gpioHWInterface : public MyControlHWInterface{
-public:
-    int eat(){
-        cout << " I eat gpio input :-) " << endl;
-    }
-};
-
-
-
-
-
 
 
  
@@ -271,7 +249,13 @@ uint8_t parseIdentifiers(PiFaceDigital* pfd, std::vector<std::string>& softLogic
 
            // Adds up the one Bits
            // e.g. Output 3 is the third bit from right, so 2^3 * 1 or 0
-           outputByte += int(parsedOut) * pow(2, useOutNum); 
+           //outputByte += int(parsedOut) * pow(2, useOutNum); // TODO shift? 
+           
+           if (int(parsedOut) == 1) {
+                outputByte |= 1 << useOutNum; // set
+            } else {
+                outputByte &= 0xff ^ (1 << useOutNum); // clear
+            }
            cout << "Output" << useOutNum << " is " << int(parsedOut) << endl;
            if(dbg) cout << "Output Byte is now " << int(outputByte) << endl;
         }
@@ -284,17 +268,44 @@ uint8_t parseIdentifiers(PiFaceDigital* pfd, std::vector<std::string>& softLogic
     
 }
 
+     
+std::string strip_white(const std::string& input)
+{
+   size_t b = input.find_first_not_of(' ');
+   if (b == std::string::npos) b = 0;
+   return input.substr(b, input.find_last_not_of(' ') + 1 - b);
+}
+ 
+std::string strip_comments(const std::string& input, const std::string& delimiters)
+{
+   return strip_white(input.substr(0, input.find_first_of(delimiters)));
+}
+
+
 
 std::vector<std::string>  loadSoftLogic(std::string filename){
     
         std::ifstream data(filename);
+        
+        if(!data.is_open()){
+           throw std::invalid_argument("Error: Couldnt load conf file: "+filename);
+        }
 	std::string line;
 	std::vector<std::string> logic;
 
 	while (std::getline(data, line))
 	{
-		logic.push_back(line);
+                std::string delimiters("#;");
+                line = strip_comments(line, delimiters);
+                if(line.size() > 0){
+                    cout << "Adding Line: >>" << line << "<<" << endl;
+                    logic.push_back(line+';');
+                }
 	}
+        
+        if(logic.size() == 0){
+            throw std::invalid_argument("Error: Config file empty!");
+        }
         
   
    std::vector<std::string> fallbackLogic = {
@@ -307,6 +318,47 @@ std::vector<std::string>  loadSoftLogic(std::string filename){
    
    return logic;
 }
+ 
+
+ typedef std::unique_ptr<IO_Channel> IOChannelPtr;
+     
+    
+
+
+
+class IO_Channel_AccesWrapper{
+public:
+    IO_Channel_AccesWrapper& operator[](char a);
+      uint8_t operator[](int a);
+    auto  operator->();
+    std::vector<char> options;
+    std::map<char,IOChannelPtr> io_channels;
+    
+};
+
+
+IO_Channel_AccesWrapper& IO_Channel_AccesWrapper::operator[](char a){
+        cout << "Value is " << a;
+        options.push_back(a);
+        return *this;
+    }
+
+  uint8_t IO_Channel_AccesWrapper::operator[](int a){
+        cout << "THE PIN Value is " << a << endl;
+        uint8_t ret =  (*io_channels[options[0]])[options[1]]->read_pin(a);
+        options.clear();
+        return ret;
+    }
+
+auto IO_Channel_AccesWrapper::operator->(){
+    if(options.size() != 2){
+         throw std::invalid_argument("Error: Array must have two dimensions."); 
+    }
+    auto ret = (*io_channels[options[0]])[options[1]];
+    options.clear();
+    return ret;
+}
+
 
 
 int main( int argc, char *argv[] )
@@ -326,15 +378,8 @@ int main( int argc, char *argv[] )
     signal(SIGTERM, intHandler);
     signal(SIGUSR1 ,usrSigHandler);
     
+
     
-    std::vector<MyControlHWInterface*> interfaces;
-    interfaces.push_back(new PiFaceHWInterface() ); 
-    interfaces.push_back(new gpioHWInterface() ); 
-    
-    
-    interfaces[0]->eat();
-    interfaces[1]->eat();
-  
     /**
      * Read command line value for which PiFace to connect to
      */
@@ -356,8 +401,57 @@ int main( int argc, char *argv[] )
         cout << "Is the device properly attached? " << endl; 
         return -1;
     }
+    
+    IO_Channel_AccesWrapper chnl;
+    // Could Access now via (*myte.io_channels['H'])['i']->read_pin(0) 
+    // But IO_Channel_AccessWrapper hides it away, and simplyfies access. so obj['H']['i']->member
+    chnl.io_channels.insert(std::make_pair('H', new IO_Channel_Hw_PiFace(&pfd)));
+     
+     
+      //myte['H']['i']->
+//     IOChannelPtr hwChannel_piFace ();
+    // std::map<char,IOChannelPtr> io_channels;
+     
+     //io_channels.insert(std::make_pair('H', new IO_Channel_Hw_PiFace(&pfd)));
+
+
+     
+    // int inputHi0 = (int) (*io_channels['H'])['i']->read_pin(0);
+ //  int inputHi0 = (int) chnl['H']['i']->read_pin(0); // (*io_channels['H'])['i']->read_pin(0);
+  int inputHi0 = (int) chnl['H']['i'][0]; // (*io_channels['H'])['i']->read_pin(0);
+
+//      int inOrOut = hwChannel->ge('i')->read_pin(0);
+//      inOrOut = (*hwChannel)['i']->read_pin(0);
+//      inOrOut = hwChannel.operator*()['i']->read_pin(0);
+//      
+     
+       
+     
+      //cout << ">>> " << (hwChannel[34]) << " <<< " << endl;
+      
+      //auto hwInputEntity =  (hwChannel['i']);
+      //
+      //inOrOut = (int) hwInputEntity.
+      
+//    Channel_Entity* Inputs  = new Channel_Entity_PiFace_Inputs(&pfd);
+//    Channel_Entity* Outputs = new Channel_Entity_PiFace_Outputs(&pfd);
+//    
+//    Outputs->write_all(0xFF);
+    cout << "Test Entity New: " <<  inputHi0 << endl;
+//    cout << "Test Entity: " <<  (int) Outputs->read_pin(0) << endl;
+//    sleep(1);
+//    Outputs->write_all(0x00);
+    
+    
+//    delete Inputs;
+//    delete Outputs;
+    //(*io_channels['H'])['o']->write_all(0xFF);
+    chnl['H']['o']->write_all(0xFF);
+    sleep(1);
     // Initially set all outputs to 0
-    pfd.write_byte(0x00);
+    //(*io_channels['H'])['o']->write_all(0x00);
+    chnl['H']['o']->write_all(0x00);
+    //pfd.write_byte(0x00);
 
 
     /**
@@ -392,6 +486,12 @@ int main( int argc, char *argv[] )
      * Wait for input change interrupt.
      * pifacedigital_wait_for_input returns a value <= 0 on failure.
      */
+    // Initially read config and set Outputs accordingly.
+    softLogic = loadSoftLogic(filename);
+    configRead = true;
+    uint8_t parsedOutputs = parseIdentifiers(&pfd, softLogic);
+    pfd.write_byte(parsedOutputs, PiFaceDigital::OUT);
+     
     while(keepRunning ){
     if (pfd.interrupts_enabled()) {
         printf("\n\nWaiting for input (press any button on the PiFaceDigital)\n");
