@@ -11,35 +11,30 @@
  * Created on 13. Oktober 2018, 21:49
  */
 
-#include <iostream>
-#include <string>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <signal.h>
-#include <fstream>
+#include <iostream> // cout
+#include <string>   // std::string
+#include <signal.h> // signal
+#include <fstream>  // ifstream 
 #include <memory>   // shared_ptr
-//#include <string.h>
-#include <regex>
-#include <bitset>
-#include <stdexcept>
-//#include <boost/regex.hpp>
+#include <regex>    // regex_replace
+#include <stdexcept> // throw
+
 #include "pifacedigitalcpp.h"
 #include "boolLogicParser.h"
-#include "regReplaceExtension.h"
-
-
+#include "regReplaceExtension.h" // Extended reg-replace for inserting callback function.
 #include "src/ChannelEntitys/Channel_Entity.h"
 #include "src/ChannelEntitys/Channel_Entities_PiFace.h"
 #include "src/IOChannels/IO_Channel.h"
 #include "src/IOChannels/IO_Channel_Hw_PiFace.h"
 
 
-static volatile int keepRunning = 1;
-static volatile bool configRead = false;
-
 using namespace std;
 
+// Globals 
+static volatile int  keepRunning = 1;     //Used to interrupt mainloop
+static volatile bool configRead  = false; //Used to re-read configuration
+
+// Parameters for PiFace Object.. will soon be  emoved because initialising piface will be moved into IO_Channel_PiFaceDigital.
 static int hw_addr = 0;
 static int enable_interrupts = 1;
 
@@ -47,7 +42,9 @@ PiFaceDigital pfd(hw_addr, enable_interrupts, PiFaceDigital::EXITVAL_ZERO);
 
 
  
-
+/*
+ Functor to inject the IO Object into the replace identifier function.
+ */
 class replaceIdentifier{
     PiFaceDigital* pfd;
     
@@ -153,17 +150,29 @@ int testBoolLogic ()
     return 0; 
 }
 
+/*
+ * Signal Handler
+ * Sets the condition of the main loop to zero, 
+ * to end the program.
+ * 
+ */
 void intHandler(int dummy) {
     keepRunning = 0;
 }
 
+/* Signal Handler
+ * Handles SIGUSR1 Signal to trigger re-read of config.
+ */
 void usrSigHandler(int dummy) {
     printf("\n Reveived reload signal.\n ");
     configRead = false;
 }
 
-
-bool parseLogic(string input){
+/*
+ * evaulateLogicString
+ * Evaluates a given logic string e.g. !0 &1 | 0 ... ; to a boolean result. 
+ */
+bool evaluateLogicString(string input){
     bool dbg = false;
      //string format like:  a0 = "!0 & 1;";
             
@@ -191,7 +200,24 @@ bool parseLogic(string input){
         }  
 }
 
-
+/*
+ * parseIdentifiers
+ * Pases a vector of strings, and replaces square brakets to their 
+ * 
+ * One row may come as follows:
+ * One OutputString might be Ora0=![Ira1] & [Ira0] | [Ira2];
+ *                           ^^^^   ^^^^
+ *                             |     |  
+ *                           Output  Input 
+ * 
+ * In above example the logic string for O-utput r-eal a(..z) 0(..9) will be parsed.
+ * For that anything in square brackets will be replaced by a boolean value representing
+ * the state of the related "pin" or the related signal.
+ * 
+ * So given a value of Ira1=0; Ira0=1 and Ira2 = 0 the above example would end up as follows: 
+ * Ora0=!0 & 1 | 0 
+ *
+ */
 uint8_t parseIdentifiers(PiFaceDigital* pfd, std::vector<std::string>& softLogic){
       // Cut the string in halves at the "=" sign
     bool dbg = false;
@@ -199,26 +225,16 @@ uint8_t parseIdentifiers(PiFaceDigital* pfd, std::vector<std::string>& softLogic
 
     size_t found;
     uint8_t outputByte = 0;
-    
-    //Strings shall be read as a array of strings 
-    //string rawFullInput="Ora0=!(![Ira0] & [Ira1]) | [Ira2] & [Ira3];";  
-//     const std::string outputStrings[] = { 
-//        std::string("Ora0=([ira0] | [ora0]) & ![ira1];"),
-//        std::string("Ora1=[ira1];"),
-//        std::string("Ora2=[ira2];"),
-//        std::string("Ora3=![ira3];"),
-//        std::string("") // marker
-//    };
 
-     cout << endl << endl << "Uising following config:" << endl << "---------------------------------------------" << endl;
-        for (std::string outStr: softLogic) { 
-            cout << outStr << endl;
-        } 
-     cout << endl <<  "---------------------------------------------" << endl << endl;
-    // One OutputString might be Ora0=![Ira1] & [Ira0] | [Ira2];
-    //                           ^^^^   ^^^^
-    //                             |     |  
-    //                          Output  Input    
+    
+    cout << endl << endl << "Uising following config:" << endl << "---------------------------------------------" << endl;
+    
+    for (std::string outStr: softLogic) { 
+        cout << outStr << endl;
+    } 
+    
+    cout << endl <<  "---------------------------------------------" << endl << endl;
+   
     for (std::string outStr: softLogic) { 
 
         // Splits the output string by the '=' sign in two parts:
@@ -245,7 +261,7 @@ uint8_t parseIdentifiers(PiFaceDigital* pfd, std::vector<std::string>& softLogic
            if(dbg) cout << "Resulting logic string is: " << outLogicString << endl;
 
            // Eventually the example logic string (e.g. !0 & 1 | 1;) will be parsed to 1
-           bool parsedOut = parseLogic(outLogicString);
+           bool parsedOut = evaluateLogicString(outLogicString);
 
            // Adds up the one Bits
            // e.g. Output 3 is the third bit from right, so 2^3 * 1 or 0
@@ -268,7 +284,11 @@ uint8_t parseIdentifiers(PiFaceDigital* pfd, std::vector<std::string>& softLogic
     
 }
 
-     
+/*
+ * stripWhite
+ * Stripes any whitespace from given string.
+ * (used for reading configuration)
+ */     
 std::string strip_white(const std::string& input)
 {
    size_t b = input.find_first_not_of(' ');
@@ -276,13 +296,21 @@ std::string strip_white(const std::string& input)
    return input.substr(b, input.find_last_not_of(' ') + 1 - b);
 }
  
+
+/*
+ * strip_comments
+ * Strips anything starting from the first position of given delimiter.
+ * e.g. "#" for Comments.
+ */
 std::string strip_comments(const std::string& input, const std::string& delimiters)
 {
    return strip_white(input.substr(0, input.find_first_of(delimiters)));
 }
 
-
-
+/*
+ * loadSoftLogic
+ * Loads logic from given filename, and returns it as vector of strings.
+ */
 std::vector<std::string>  loadSoftLogic(std::string filename){
     
         std::ifstream data(filename);
@@ -323,9 +351,6 @@ std::vector<std::string>  loadSoftLogic(std::string filename){
  typedef std::unique_ptr<IO_Channel> IOChannelPtr;
      
     
-
-
-
 class IO_Channel_AccesWrapper{
 public:
     IO_Channel_AccesWrapper& operator[](char a);
