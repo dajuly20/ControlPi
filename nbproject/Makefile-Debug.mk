@@ -35,6 +35,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/IO_Channel_AccesWrapper.o \
 	${OBJECTDIR}/boolLogicParser.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/regReplaceExtension.o \
@@ -67,15 +68,20 @@ LDLIBSOPTIONS=/usr/local/lib/libpifacedigitalcpp.a /usr/local/lib/libmcp23s17.a
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/mycontroldigital
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/controlpi
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/mycontroldigital: /usr/local/lib/libpifacedigitalcpp.a
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/controlpi: /usr/local/lib/libpifacedigitalcpp.a
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/mycontroldigital: /usr/local/lib/libmcp23s17.a
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/controlpi: /usr/local/lib/libmcp23s17.a
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/mycontroldigital: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/controlpi: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/mycontroldigital ${OBJECTFILES} ${LDLIBSOPTIONS}
+	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/controlpi ${OBJECTFILES} ${LDLIBSOPTIONS}
+
+${OBJECTDIR}/IO_Channel_AccesWrapper.o: IO_Channel_AccesWrapper.cpp
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/IO_Channel_AccesWrapper.o IO_Channel_AccesWrapper.cpp
 
 ${OBJECTDIR}/boolLogicParser.o: boolLogicParser.cpp
 	${MKDIR} -p ${OBJECTDIR}

@@ -9,19 +9,19 @@ CND_DISTDIR=dist
 # Debug configuration
 CND_PLATFORM_Debug=GNU-Linux
 CND_ARTIFACT_DIR_Debug=dist/Debug/GNU-Linux
-CND_ARTIFACT_NAME_Debug=mycontroldigital
-CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux/mycontroldigital
+CND_ARTIFACT_NAME_Debug=controlpi
+CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux/controlpi
 CND_PACKAGE_DIR_Debug=dist/Debug/GNU-Linux/package
-CND_PACKAGE_NAME_Debug=mycontroldigital.tar
-CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux/package/mycontroldigital.tar
+CND_PACKAGE_NAME_Debug=controlpi.tar
+CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux/package/controlpi.tar
 # Release configuration
 CND_PLATFORM_Release=GNU-Linux
 CND_ARTIFACT_DIR_Release=dist/Release/GNU-Linux
-CND_ARTIFACT_NAME_Release=mycontroldigital
-CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux/mycontroldigital
+CND_ARTIFACT_NAME_Release=controlpi
+CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux/controlpi
 CND_PACKAGE_DIR_Release=dist/Release/GNU-Linux/package
-CND_PACKAGE_NAME_Release=mycontroldigital.tar
-CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux/package/mycontroldigital.tar
+CND_PACKAGE_NAME_Release=controlpi.tar
+CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux/package/controlpi.tar
 #
 # include compiler specific variables
 #

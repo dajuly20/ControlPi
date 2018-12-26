@@ -15,7 +15,7 @@
 #include <string>   // std::string
 #include <signal.h> // signal
 #include <fstream>  // ifstream 
-#include <memory>   // shared_ptr
+
 #include <regex>    // regex_replace
 #include <stdexcept> // throw
 
@@ -26,7 +26,7 @@
 #include "src/ChannelEntitys/Channel_Entities_PiFace.h"
 #include "src/IOChannels/IO_Channel.h"
 #include "src/IOChannels/IO_Channel_Hw_PiFace.h"
-
+#include "IO_Channel_AccesWrapper.h"
 
 using namespace std;
 
@@ -348,41 +348,8 @@ std::vector<std::string>  loadSoftLogic(std::string filename){
 }
  
 
- typedef std::unique_ptr<IO_Channel> IOChannelPtr;
-     
-    
-class IO_Channel_AccesWrapper{
-public:
-    IO_Channel_AccesWrapper& operator[](char a);
-      uint8_t operator[](int a);
-    auto  operator->();
-    std::vector<char> options;
-    std::map<char,IOChannelPtr> io_channels;
-    
-};
 
 
-IO_Channel_AccesWrapper& IO_Channel_AccesWrapper::operator[](char a){
-        cout << "Value is " << a;
-        options.push_back(a);
-        return *this;
-    }
-
-  uint8_t IO_Channel_AccesWrapper::operator[](int a){
-        cout << "THE PIN Value is " << a << endl;
-        uint8_t ret =  (*io_channels[options[0]])[options[1]]->read_pin(a);
-        options.clear();
-        return ret;
-    }
-
-auto IO_Channel_AccesWrapper::operator->(){
-    if(options.size() != 2){
-         throw std::invalid_argument("Error: Array must have two dimensions."); 
-    }
-    auto ret = (*io_channels[options[0]])[options[1]];
-    options.clear();
-    return ret;
-}
 
 
 
