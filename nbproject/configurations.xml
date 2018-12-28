@@ -44,6 +44,7 @@
       <itemPath>src/IOChannels/IO_Channel_Hw_PiFace.cpp</itemPath>
       <itemPath>boolLogicParser.cpp</itemPath>
       <itemPath>bootstrap.sh</itemPath>
+      <itemPath>logic.conf</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>regReplaceExtension.cpp</itemPath>
     </logicalFolder>
@@ -98,6 +99,8 @@
       <item path="boolLogicParser.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="bootstrap.sh" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="logic.conf" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -213,6 +216,8 @@
       <item path="boolLogicParser.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="bootstrap.sh" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="logic.conf" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
