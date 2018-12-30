@@ -34,3 +34,7 @@ ChannelEntitySP IO_Channel_AccesWrapper::operator->(){
     options.clear();
     return ret;
 }
+
+IO_Channel* IO_Channel_AccesWrapper::getIOChnl(){
+    return &(*io_channels[options[0]]);
+}

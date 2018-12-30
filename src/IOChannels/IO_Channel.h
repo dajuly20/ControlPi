@@ -41,9 +41,19 @@ public:
         return chEntities[identifier];
     }
     
- 
+    bool interrupts_enabled(){
+        return false;
+    }
    
-
+    int wait_for_interrupt(){
+        return 0;
+    }
+    
+    void caching_enable(){};
+    void caching_disable(){};
+    void flush(){};
+    
+    
     std::map<char, ChannelEntitySP> chEntities;
  protected:   
 

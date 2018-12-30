@@ -34,13 +34,6 @@ using namespace std;
 static volatile int  keepRunning = 1;     //Used to interrupt mainloop
 static volatile bool configRead  = false; //Used to re-read configuration
 
-// Parameters for PiFace Object.. will soon be  emoved because initialising piface will be moved into IO_Channel_PiFaceDigital.
-static int hw_addr = 0;
-static int enable_interrupts = 1;
-
-PiFaceDigital pfd(hw_addr, enable_interrupts, PiFaceDigital::EXITVAL_ZERO);
-
-
  
 /*
  Functor to inject the IO Object into the replace identifier function.
@@ -117,55 +110,6 @@ public:
     
 };
 
-int testBoolLogic ()
-{
-    const std::string inputs[] = { 
-        std::string("true & false;"),
-        std::string("true & !false;"),
-        std::string("!true & false;"),
-        std::string("true | false;"),
-        std::string("true | !false;"),
-        std::string("!true | false;"),
-
-        std::string("T&F;"),
-        std::string("T&!F;"),
-        std::string("!T&F;"),
-        std::string("T|F;"),
-        std::string("T|!F;"),
-        std::string("!T|F;"),
-        std::string("") // marker
-    };
-
-    for (const std::string *i = inputs; !i->empty(); ++i)
-    {
-        typedef std::string::const_iterator It;
-        It f(i->begin()), l(i->end());
-        parser<It> p;
-
-        try
-        {
-            expr result;
-            bool ok = qi::phrase_parse(f,l,p > ';',qi::space,result);
-
-            if (!ok)
-                std::cerr << "invalid input\n";
-            else
-            {
-                std::cout << "result:\t" << result << "\n";
-                std::cout << "evaluated:\t" << evaluate(result) << "\n";
-            }
-
-        } catch (const qi::expectation_failure<It>& e)
-        {
-            std::cerr << "expectation_failure at '" << std::string(e.first, e.last) << "'\n";
-        }
-
-        if (f!=l) std::cerr << "unparsed: '" << std::string(f,l) << "'\n";
-    }
-
-    return 0; 
-}
-
 /*
  * Signal Handler
  * Sets the condition of the main loop to zero, 
@@ -234,13 +178,13 @@ bool evaluateLogicString(string input){
  * Ora0=!0 & 1 | 0 
  *
  */
-uint8_t parseIdentifiers(IO_Channel_AccesWrapper& chnl, std::vector<std::string>& softLogic){
+void parseIdentifiers(IO_Channel_AccesWrapper& chnl, std::vector<std::string>& softLogic){
       // Cut the string in halves at the "=" sign
     bool dbg = false;
     std::string delimiter = "=";
 
     size_t found;
-    uint8_t outputByte = 0;
+    //uint8_t outputByte = 0;
 
     
     cout << endl << endl << "Uising following config:" << endl << "---------------------------------------------" << endl;
@@ -256,27 +200,31 @@ uint8_t parseIdentifiers(IO_Channel_AccesWrapper& chnl, std::vector<std::string>
         // Splits the output string by the '=' sign in two parts:
         // 1. the Output to use (e.g. Ora0) 2nd the rawLogicString including used inputs in brackets e.g. ![Ira1] & [Ira0] | [Ira2];
         if ((found = softLogicRow.find('=')) != string::npos){ // Changed "" to '' 27.12.2018. Remove comment when it works ;) 
-            string asignedEntityStr = softLogicRow.substr(0,found);
             
+            
+            // The part before the '=' is the variable, to which whe outcome will be asigned to ==> 'asigned' part
+            string asignedEntityStr         = softLogicRow.substr(0,found);
             char   asigned_IOChannel        = asignedEntityStr.at(0);
             char   asigmed_ChannelEntity    = asignedEntityStr.at(1);
             int    asigned_Pin              = asignedEntityStr.at(3) - '0'; 
 
-           
-           string rawLogicString  = softLogicRow.substr(found+1, string::npos);
+           // The part after the '=' is the equation string. It consists of identifiers 
+           //   (like [Ho0]) arithmetic operators ( &, | ) and round brakets. Also allowed  are literals (0 or 1)
+           string equationString  = softLogicRow.substr(found+1, string::npos);
 
            if(dbg) cout << "HardwareOutput is: " << asigned_Pin << endl;
-           if(dbg) cout << "RawLogicString is: " << rawLogicString << endl;
+           if(dbg) cout << "RawLogicString is: " << equationString << endl;
 
            
-           // Using as Functor to put in piFaceDigital object.
+           // Instantiate the replace-identifier Functor/Class that is used to
+           //   inject the IO_Channel_AccessWrapper into the actual replace-function.
            replaceIdentifier rpi(chnl);
            
            // Calls a function for each match on "[ira0]" a string of 4 characters in '[' brackets,
            // 1st char of which may be i/o (in/out), 2nd r/v (real/virtual), 3rd hardware idendifier (a-z), 4re input identifier (0-8)
            // eventually every occurance of brackets should be replaced either by a 0 or 1. 
            // For the example state of (Ira1 = 0, Ira0 =1, Ira2 = 1), the example logic string would look like !0 & 1 | 1;
-           string outLogicString  = regex_replace(rawLogicString, regex("\\[([io][rv][a-z][0-8])\\]"),
+           string outLogicString  = regex_replace(equationString, regex("\\[([io][rv][a-z][0-8])\\]"),
                                     rpi);
            if(dbg) cout << "Resulting logic string is: " << outLogicString << endl;
 
@@ -284,6 +232,8 @@ uint8_t parseIdentifiers(IO_Channel_AccesWrapper& chnl, std::vector<std::string>
            bool parsedOut = evaluateLogicString(outLogicString);
 
            chnl[asigned_IOChannel][asigmed_ChannelEntity]->write_pin(parsedOut, asigned_Pin);
+           
+           
            // Adds up the one Bits
            // e.g. Output 3 is the third bit from right, so 2^3 * 1 or 0
            //outputByte += int(parsedOut) * pow(2, useOutNum); // TODO shift? 
@@ -293,15 +243,15 @@ uint8_t parseIdentifiers(IO_Channel_AccesWrapper& chnl, std::vector<std::string>
 //            } else {
 //                outputByte &= 0xff ^ (1 << asignedPin); // clear
 //            }
-           cout << "Output" << asigned_Pin << " is " << int(parsedOut) << endl;
-           if(dbg) cout << "Output Byte is now " << int(outputByte) << endl;
+          // cout << "Output" << asigned_Pin << " is " << int(parsedOut) << endl;
+          // if(dbg) cout << "Output Byte is now " << int(outputByte) << endl;
         }
         else{
             // Todo: Error, = sign not in string.
         }
     }
-     cout << "returning output byte: " << int(outputByte) << endl;
-    return outputByte;
+    //cout << "returning output byte: " << int(outputByte) << endl;
+    //return outputByte;
     
 }
 
@@ -369,20 +319,11 @@ std::vector<std::string>  loadSoftLogic(std::string filename){
 }
  
 
-
-
-
-
-
 int main( int argc, char *argv[] )
 {
     uint8_t i = 0;          /**< Loop iterator */
     uint8_t inputs;         /**< Input bits (pins 0-7) */
     uint8_t outputs;         /**< Input bits (pins 0-7) */
-    
-    int hw_addr = 0;        /**< PiFaceDigital hardware address  */
-    int interrupts_enabled; /**< Whether or not interrupts are enabled  */
-    int enable_interrupts = 1; /**< Whether or not interrupts should be enabled  */
     
     // Register signalHandler
     signal(SIGINT,  intHandler);
@@ -396,32 +337,24 @@ int main( int argc, char *argv[] )
     /**
      * Read command line value for which PiFace to connect to
      */
-    if (argc > 1) {
-        hw_addr = atoi(argv[1]);
-    }
+//    if (argc > 1) {
+//        hw_addr = atoi(argv[1]);
+//    }
 
     
     /**
      * Open piface digital SPI connection(s)
      */
-    printf("Opening piface digital connection at location %d\n", hw_addr);
-    
-    // Create Instance of pfd
-    PiFaceDigital pfd(hw_addr, enable_interrupts, PiFaceDigital::EXITVAL_ZERO);
-
-    if(!pfd.init_success()){
-        cout << "Error: Could not open PiFaceDigital" << endl;
-        cout << "Is the device properly attached? " << endl; 
-        return -1;
-    }
+//    printf("Opening piface digital connection at location %d\n", hw_addr);
+//    
     
     IO_Channel_AccesWrapper chnl;
     // Could Access now via (*myte.io_channels['H'])['i']->read_pin(0) 
     // But IO_Channel_AccessWrapper hides it away, and simplyfies access. so obj['H']['i']->member
-    chnl.io_channels.insert(std::make_pair('H', new IO_Channel_Hw_PiFace(&pfd)));
+    chnl.io_channels.insert(std::make_pair('H', new IO_Channel_Hw_PiFace()));
      
  
-  int inputHi0 = (int) chnl['H']['i'][0]; // (*io_channels['H'])['i']->read_pin(0);
+    int inputHi0 = (int) chnl['H']['i'][0]; // (*io_channels['H'])['i']->read_pin(0);
     cout << "Test Entity New: " <<  inputHi0 << endl;
 
     chnl['H']['o']->write_all(0xFF);
@@ -437,12 +370,12 @@ int main( int argc, char *argv[] )
      * Reverse the return value of pifacedigital_enable_interrupts() to be consistent
      * with the variable name "interrupts_enabled". (the function returns 0 on success)
      */
-    if (pfd.interrupts_enabled()){
-        printf("Interrupts enabled.\n");
-    }else{
-        printf("Could not enable interrupts. Are you in group spi and gpio? Try running using sudo to enable PiFaceDigital interrupts\n");
-        return -1;
-    }
+//    if (pfd.interrupts_enabled()){
+//        printf("Interrupts enabled.\n");
+//    }else{
+//        printf("Could not enable interrupts. Are you in group spi and gpio? Try running using sudo to enable PiFaceDigital interrupts\n");
+//        return -1;
+//    }
 
   
     /**
@@ -469,15 +402,21 @@ int main( int argc, char *argv[] )
     // Initially read config and set Outputs accordingly.
     softLogic = loadSoftLogic(filename);
     configRead = true;
-    uint8_t parsedOutputs = parseIdentifiers(chnl, softLogic);
+    //uint8_t parsedOutputs = 
+    parseIdentifiers(chnl, softLogic);
     
     
-    chnl['H']['o']->write_all(parsedOutputs);
-     
+    //chnl['H']['o']->write_all(parsedOutputs);
+    
+    
+    
+    // HIIIIIIIIIIIIIIIIIER WAR ICH ...
+  //  chnl['H'].getIOChnl(). 
+            
     while(keepRunning ){
-    if (pfd.interrupts_enabled()) {
+    if (chnl['H'].getIOChnl()->interrupts_enabled()) {
         printf("\n\nWaiting for input (press any button on the PiFaceDigital)\n");
-        if (pfd.wait_for_input(&inputs, -1) > 0){
+        if (chnl['H'].getIOChnl()->wait_for_interrupt() > 0){
         
             if(configRead == false){
                 softLogic = loadSoftLogic(filename);
@@ -491,15 +430,16 @@ int main( int argc, char *argv[] )
             */
             
             // Enable caching for pfd until parsing of identifiers is ready.
-            pfd.caching_enable();
+            chnl['H'].getIOChnl()->caching_enable();
 
-            uint8_t parsedOutputs = parseIdentifiers(chnl, softLogic);
+            //uint8_t parsedOutputs = 
+            parseIdentifiers(chnl, softLogic);
          
-            pfd.write_byte(parsedOutputs, PiFaceDigital::OUT);
-            outputs = pfd.read_byte(PiFaceDigital::OUT);
+            //chnl['H']['o']->write_all(parsedOutputs);
+            outputs = chnl['H']['i']->read_all();
             printf("Outputs: 0x%x\n", outputs);
             
-            pfd.flush();
+            chnl['H'].getIOChnl()->flush();
             // Perform write through.
             
             

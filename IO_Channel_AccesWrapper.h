@@ -29,7 +29,7 @@ public:
     ChannelEntitySP operator->();
     std::vector<char> options;
     std::map<char,IOChannelPtr> io_channels;
-    
+    IO_Channel* getIOChnl();
 };
 
 
