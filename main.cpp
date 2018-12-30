@@ -391,6 +391,7 @@ int main( int argc, char *argv[] )
     /**
      * Open piface digital SPI connection(s)
      */
+    cout << endl << endl << "ControlPi started!" << endl; 
     printf("Opening piface digital connection at location %d\n", hw_addr);
     
   // Create Instance of pfd
@@ -494,7 +495,7 @@ int main( int argc, char *argv[] )
      
     while(keepRunning ){
     if (pfd.interrupts_enabled()) {
-        printf("\n\nWaiting for input (press any button on the PiFaceDigital)\n");
+        printf("Waiting for input (press any button on the PiFaceDigital) CTRL + C to Abort\n");
         if (pfd.wait_for_input(&inputs, -1) > 0){
         
             if(configRead == false){
