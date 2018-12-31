@@ -28,7 +28,7 @@ IO_Channel_AccesWrapper& IO_Channel_AccesWrapper::operator[](char a){
 
 ChannelEntitySP IO_Channel_AccesWrapper::operator->(){
     if(options.size() != 2){
-         throw std::invalid_argument("Error: Array must have two dimensions."); 
+         throw std::invalid_argument("Error: Array must have two dimensions. (dim= "+std::to_string(options.size())+") ..."); 
     }
     auto ret = (*io_channels[options[0]])[options[1]];
     options.clear();
@@ -36,5 +36,6 @@ ChannelEntitySP IO_Channel_AccesWrapper::operator->(){
 }
 
 IO_Channel* IO_Channel_AccesWrapper::getIOChnl(){
+    options.clear();
     return &(*io_channels[options[0]]);
 }

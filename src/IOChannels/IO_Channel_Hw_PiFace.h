@@ -28,20 +28,14 @@ public:
     virtual ~IO_Channel_Hw_PiFace();
     PiFaceDigital* pfd;
     
+     
+    bool interrupts_enabled() override;
+    bool wait_for_interrupt() override;
     
-    void caching_enable(){ pfd->caching_enable(); }
-    void caching_disable(){ pfd->caching_disable();}
-    void flush(){ pfd->flush();}
+    void caching_enable() override;
+    void caching_disable() override;
+    void flush() override; 
     
-    bool interrupts_enabled(){
-        // cast to bool
-        return (bool) pfd->interrupts_enabled();
-    }
-   
-    int wait_for_interrupt(){
-        uint8_t inputs;
-        return pfd->wait_for_input(&inputs, -1);
-    }
 private:
     void init_pfd_object();
 };

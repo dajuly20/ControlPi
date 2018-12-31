@@ -41,17 +41,17 @@ public:
         return chEntities[identifier];
     }
     
-    bool interrupts_enabled(){
+    virtual bool interrupts_enabled(){
         return false;
     }
    
-    int wait_for_interrupt(){
-        return 0;
+    virtual bool wait_for_interrupt(){
+        return false;
     }
     
-    void caching_enable(){};
-    void caching_disable(){};
-    void flush(){};
+    virtual void caching_enable(){};
+    virtual void caching_disable(){};
+    virtual void flush(){};
     
     
     std::map<char, ChannelEntitySP> chEntities;

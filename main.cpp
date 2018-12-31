@@ -57,7 +57,7 @@ public:
     
     // TODO Change to return char? 
     std::string operator()(const std::smatch& match) {
-        bool dbg = false;
+        bool dbg = true;
         if(dbg) cout << "call on: " << match[1].str() << endl;
         string dependantStr = match[1].str();
 
@@ -75,7 +75,8 @@ public:
 
         dependantState = chnl[frstChar][scndChar]->read_pin(thrdChar);
         
-        
+        if(dbg) cout << "FrstChar: " << frstChar << endl << "ScndChar: " << scndChar << " Number:" << thrdChar << endl;
+         
         /*
          Removed 27.12.2018 ... 
         // Input or Outupt
@@ -180,7 +181,7 @@ bool evaluateLogicString(string input){
  */
 void parseIdentifiers(IO_Channel_AccesWrapper& chnl, std::vector<std::string>& softLogic){
       // Cut the string in halves at the "=" sign
-    bool dbg = false;
+    bool dbg = true;
     std::string delimiter = "=";
 
     size_t found;
@@ -202,11 +203,15 @@ void parseIdentifiers(IO_Channel_AccesWrapper& chnl, std::vector<std::string>& s
         if ((found = softLogicRow.find('=')) != string::npos){ // Changed "" to '' 27.12.2018. Remove comment when it works ;) 
             
             
-            // The part before the '=' is the variable, to which whe outcome will be asigned to ==> 'asigned' part
+            // The part before the '=' is the variable, to which whe outcome will be asigned to ==> 'asigned' part7
+            // TODO Check for length of String
             string asignedEntityStr         = softLogicRow.substr(0,found);
+            if(asignedEntityStr.size() != 3){
+                throw std::invalid_argument("Error: Asignee needs to have 3 letters/digits in '"+asignedEntityStr+"'");
+            }
             char   asigned_IOChannel        = asignedEntityStr.at(0);
-            char   asigmed_ChannelEntity    = asignedEntityStr.at(1);
-            int    asigned_Pin              = asignedEntityStr.at(3) - '0'; 
+            char   asigned_ChannelEntity    = asignedEntityStr.at(1);
+            int    asigned_Pin              = asignedEntityStr.at(2) - '0'; 
 
            // The part after the '=' is the equation string. It consists of identifiers 
            //   (like [Ho0]) arithmetic operators ( &, | ) and round brakets. Also allowed  are literals (0 or 1)
@@ -224,14 +229,19 @@ void parseIdentifiers(IO_Channel_AccesWrapper& chnl, std::vector<std::string>& s
            // 1st char of which may be i/o (in/out), 2nd r/v (real/virtual), 3rd hardware idendifier (a-z), 4re input identifier (0-8)
            // eventually every occurance of brackets should be replaced either by a 0 or 1. 
            // For the example state of (Ira1 = 0, Ira0 =1, Ira2 = 1), the example logic string would look like !0 & 1 | 1;
-           string outLogicString  = regex_replace(equationString, regex("\\[([io][rv][a-z][0-8])\\]"),
+           string outLogicString  = regex_replace(equationString, regex("\\[([A-Z][a-z][0-8])\\]"),
                                     rpi);
            if(dbg) cout << "Resulting logic string is: " << outLogicString << endl;
 
            // Eventually the example logic string (e.g. !0 & 1 | 1;) will be parsed to 1
            bool parsedOut = evaluateLogicString(outLogicString);
 
-           chnl[asigned_IOChannel][asigmed_ChannelEntity]->write_pin(parsedOut, asigned_Pin);
+           if(dbg) cout << "assigned IO_chnl: " << asigned_IOChannel << endl;
+           if(dbg) cout << "asigned ChannelEntity:" << asigned_ChannelEntity << endl;
+           if(dbg) cout << "assigned Pin: " << asigned_Pin << endl;
+           if(dbg) cout << "parsed out is " << (parsedOut ? "true" : "false") << endl;
+           
+           chnl[asigned_IOChannel][asigned_ChannelEntity]->write_pin(parsedOut, asigned_Pin);
            
            
            // Adds up the one Bits
@@ -326,6 +336,7 @@ int main( int argc, char *argv[] )
     uint8_t outputs;         /**< Input bits (pins 0-7) */
     
     // Register signalHandler
+
     signal(SIGINT,  intHandler);
     signal(SIGKILL, intHandler);
     signal(SIGHUP,  intHandler);
@@ -416,7 +427,7 @@ int main( int argc, char *argv[] )
     while(keepRunning ){
     if (chnl['H'].getIOChnl()->interrupts_enabled()) {
         printf("\n\nWaiting for input (press any button on the PiFaceDigital)\n");
-        if (chnl['H'].getIOChnl()->wait_for_interrupt() > 0){
+        if (chnl['H'].getIOChnl()->wait_for_interrupt()){
         
             if(configRead == false){
                 softLogic = loadSoftLogic(filename);

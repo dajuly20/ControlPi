@@ -17,6 +17,8 @@
 #include <functional>
 #include "pifacedigitalcpp.h"
 
+uint8_t inputs;
+
 IO_Channel_Hw_PiFace::IO_Channel_Hw_PiFace(PiFaceDigital* pfd_init) : pfd(pfd_init) {
     this->init_pfd_object();
 }
@@ -28,8 +30,8 @@ IO_Channel_Hw_PiFace::IO_Channel_Hw_PiFace() {
     static int hw_addr = 0;
     static int enable_interrupts = 1;
 
-    PiFaceDigital _pfd(hw_addr, enable_interrupts, PiFaceDigital::EXITVAL_ZERO);
-    this->pfd = &_pfd;
+    PiFaceDigital* _pfd = new PiFaceDigital(hw_addr, enable_interrupts, PiFaceDigital::EXITVAL_ZERO);
+    this->pfd = _pfd;
     
     if(!pfd->init_success()){
         throw std::invalid_argument("Error: Could not open PiFaceDigital. Is the device properly attached?");
@@ -52,6 +54,7 @@ IO_Channel_Hw_PiFace::IO_Channel_Hw_PiFace(const IO_Channel_Hw_PiFace& orig) {
 }
 
 IO_Channel_Hw_PiFace::~IO_Channel_Hw_PiFace() {
+    delete this->pfd;
 //    for (auto chEntity : chEntities) {
 //        delete chEntity;
 //    }
@@ -61,3 +64,21 @@ IO_Channel_Hw_PiFace::~IO_Channel_Hw_PiFace() {
 //    }
 }
 
+   bool IO_Channel_Hw_PiFace::interrupts_enabled(){
+        // cast to bool
+        printf("Hier simma");
+        return (bool) pfd->interrupts_enabled();
+    }
+   
+   bool IO_Channel_Hw_PiFace::wait_for_interrupt(){
+        
+        //if (pifacedigital_wait_for_input(&inputs, -1, hw_addr) > 0)
+        bool ret = (pfd->wait_for_input(&inputs, -1) > 0);
+        printf("Input values are: "+inputs);
+        
+        return ret;
+    }
+   
+   void IO_Channel_Hw_PiFace::caching_enable(){ printf("Caching enable called"); pfd->caching_enable(); }
+   void IO_Channel_Hw_PiFace::caching_disable(){ printf("Caching disable called"); pfd->caching_disable();}
+   void IO_Channel_Hw_PiFace::flush(){ printf("Flush called!!!"); pfd->flush();}
