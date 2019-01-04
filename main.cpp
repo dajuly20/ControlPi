@@ -69,13 +69,13 @@ public:
         char thrdChar = dependantStr.at(2);
         //char frthChar = dependantStr.at(3);
 
-        // explicit cast 4th character to integer 
+        // explicit cast 3th character to integer 
         // (regular expression checks for numberic)
         int dependantNum = thrdChar - '0';
 
-        dependantState = chnl[frstChar][scndChar]->read_pin(thrdChar);
+        dependantState = chnl[frstChar][scndChar]->read_pin(dependantNum);
         
-        if(dbg) cout << "FrstChar: " << frstChar << endl << "ScndChar: " << scndChar << " Number:" << thrdChar << endl;
+        if(dbg) cout << "FrstChar: " << frstChar << endl << "ScndChar: " << scndChar << endl << " Number:" << thrdChar << endl << endl;
          
         /*
          Removed 27.12.2018 ... 
@@ -423,7 +423,8 @@ int main( int argc, char *argv[] )
     
     // HIIIIIIIIIIIIIIIIIER WAR ICH ...
   //  chnl['H'].getIOChnl(). 
-            
+    chnl['H'].getIOChnl()->caching_enable();  
+    
     while(keepRunning ){
     if (chnl['H'].getIOChnl()->interrupts_enabled()) {
         printf("\n\nWaiting for input (press any button on the PiFaceDigital)\n");
@@ -441,8 +442,8 @@ int main( int argc, char *argv[] )
             */
             
             // Enable caching for pfd until parsing of identifiers is ready.
-            chnl['H'].getIOChnl()->caching_enable();
-
+          
+            chnl['H'].getIOChnl()->flush();
             //uint8_t parsedOutputs = 
             parseIdentifiers(chnl, softLogic);
          

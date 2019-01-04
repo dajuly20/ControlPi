@@ -75,7 +75,7 @@ IO_Channel_Hw_PiFace::~IO_Channel_Hw_PiFace() {
         //if (pifacedigital_wait_for_input(&inputs, -1, hw_addr) > 0)
         bool ret = (pfd->wait_for_input(&inputs, -1) > 0);
         printf("Input values are: "+inputs);
-        
+	//pfd->flush();        
         return ret;
     }
    
