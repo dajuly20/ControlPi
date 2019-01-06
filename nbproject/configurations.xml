@@ -16,6 +16,7 @@
         <itemPath>src/IOChannels/IO_Channel_Virtual_Pipe.h</itemPath>
         <itemPath>src/IOChannels/IO_Channel_Virtual_Timer.h</itemPath>
       </logicalFolder>
+      <itemPath>src/ChannelEntitys/Channel_Entity_Memory.h</itemPath>
       <itemPath>IO_Channel_AccesWrapper.h</itemPath>
       <itemPath>src/IOChannels/IO_Channel_Hw_PiFace.h</itemPath>
       <itemPath>boolLogicParser.h</itemPath>
@@ -31,17 +32,18 @@
       <logicalFolder name="f2" displayName="Channel_Entities" projectFiles="true">
         <itemPath>src/ChannelEntitys/Channel_Entities_PiFace.cpp</itemPath>
         <itemPath>src/ChannelEntitys/Channel_Entity.cpp</itemPath>
+        <itemPath>src/ChannelEntitys/Channel_Entity_Memory.cpp</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="IO_Channels" projectFiles="true">
         <itemPath>src/IOChannels/IO_Channel.cpp</itemPath>
         <itemPath>src/IOChannels/IO_Channel_Hw.cpp</itemPath>
+        <itemPath>src/IOChannels/IO_Channel_Hw_PiFace.cpp</itemPath>
         <itemPath>src/IOChannels/IO_Channel_Virtual.cpp</itemPath>
         <itemPath>src/IOChannels/IO_Channel_Virtual_Memory.cpp</itemPath>
         <itemPath>src/IOChannels/IO_Channel_Virtual_Pipe.cpp</itemPath>
         <itemPath>src/IOChannels/IO_Channel_Virtual_Timer.cpp</itemPath>
       </logicalFolder>
       <itemPath>IO_Channel_AccesWrapper.cpp</itemPath>
-      <itemPath>src/IOChannels/IO_Channel_Hw_PiFace.cpp</itemPath>
       <itemPath>boolLogicParser.cpp</itemPath>
       <itemPath>bootstrap.sh</itemPath>
       <itemPath>logic.conf</itemPath>
@@ -124,6 +126,16 @@
             flavor2="0">
       </item>
       <item path="src/ChannelEntitys/Channel_Entity.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="src/ChannelEntitys/Channel_Entity_Memory.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="src/ChannelEntitys/Channel_Entity_Memory.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -241,6 +253,16 @@
             flavor2="0">
       </item>
       <item path="src/ChannelEntitys/Channel_Entity.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="src/ChannelEntitys/Channel_Entity_Memory.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="src/ChannelEntitys/Channel_Entity_Memory.h"
             ex="false"
             tool="3"
             flavor2="0">

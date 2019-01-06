@@ -20,12 +20,13 @@
 #include <stdexcept> // throw
 
 #include "pifacedigitalcpp.h"
-#include "boolLogicParser.h"
+#include "boolLogicParser.h"    
 #include "regReplaceExtension.h" // Extended reg-replace for inserting callback function.
 #include "src/ChannelEntitys/Channel_Entity.h"
 #include "src/ChannelEntitys/Channel_Entities_PiFace.h"
 #include "src/IOChannels/IO_Channel.h"
 #include "src/IOChannels/IO_Channel_Hw_PiFace.h"
+#include "src/IOChannels/IO_Channel_Virtual_Memory.h"
 #include "IO_Channel_AccesWrapper.h"
 
 using namespace std;
@@ -363,6 +364,7 @@ int main( int argc, char *argv[] )
     // Could Access now via (*myte.io_channels['H'])['i']->read_pin(0) 
     // But IO_Channel_AccessWrapper hides it away, and simplyfies access. so obj['H']['i']->member
     chnl.io_channels.insert(std::make_pair('H', new IO_Channel_Hw_PiFace()));
+    chnl.io_channels.insert(std::make_pair('M', new IO_Channel_Virtual_Memory()));
      
  
     int inputHi0 = (int) chnl['H']['i'][0]; // (*io_channels['H'])['i']->read_pin(0);

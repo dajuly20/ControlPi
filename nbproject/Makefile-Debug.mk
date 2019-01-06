@@ -41,6 +41,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/regReplaceExtension.o \
 	${OBJECTDIR}/src/ChannelEntitys/Channel_Entities_PiFace.o \
 	${OBJECTDIR}/src/ChannelEntitys/Channel_Entity.o \
+	${OBJECTDIR}/src/ChannelEntitys/Channel_Entity_Memory.o \
 	${OBJECTDIR}/src/IOChannels/IO_Channel.o \
 	${OBJECTDIR}/src/IOChannels/IO_Channel_Hw.o \
 	${OBJECTDIR}/src/IOChannels/IO_Channel_Hw_PiFace.o \
@@ -107,6 +108,11 @@ ${OBJECTDIR}/src/ChannelEntitys/Channel_Entity.o: src/ChannelEntitys/Channel_Ent
 	${MKDIR} -p ${OBJECTDIR}/src/ChannelEntitys
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/ChannelEntitys/Channel_Entity.o src/ChannelEntitys/Channel_Entity.cpp
+
+${OBJECTDIR}/src/ChannelEntitys/Channel_Entity_Memory.o: src/ChannelEntitys/Channel_Entity_Memory.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/ChannelEntitys
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/ChannelEntitys/Channel_Entity_Memory.o src/ChannelEntitys/Channel_Entity_Memory.cpp
 
 ${OBJECTDIR}/src/IOChannels/IO_Channel.o: src/IOChannels/IO_Channel.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/IOChannels

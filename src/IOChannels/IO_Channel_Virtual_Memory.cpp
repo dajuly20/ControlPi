@@ -12,8 +12,12 @@
  */
 
 #include "IO_Channel_Virtual_Memory.h"
+#include "../ChannelEntitys/Channel_Entity_Memory.h"
 
 IO_Channel_Virtual_Memory::IO_Channel_Virtual_Memory() {
+    ChannelEntitySP memoryEntity_a ( new Channel_Entity_Memory());
+     chEntities.insert ( std::make_pair('a',memoryEntity_a) );
+    
 }
 
 IO_Channel_Virtual_Memory::IO_Channel_Virtual_Memory(const IO_Channel_Virtual_Memory& orig) {
