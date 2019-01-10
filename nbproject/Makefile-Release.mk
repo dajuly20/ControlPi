@@ -42,13 +42,16 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/ChannelEntitys/Channel_Entities_PiFace.o \
 	${OBJECTDIR}/src/ChannelEntitys/Channel_Entity.o \
 	${OBJECTDIR}/src/ChannelEntitys/Channel_Entity_Memory.o \
+	${OBJECTDIR}/src/ChannelEntitys/Channel_Entity_TimerOutput.o \
+	${OBJECTDIR}/src/ChannelEntitys/Channel_Entity_TimerTrigger.o \
 	${OBJECTDIR}/src/IOChannels/IO_Channel.o \
 	${OBJECTDIR}/src/IOChannels/IO_Channel_Hw.o \
 	${OBJECTDIR}/src/IOChannels/IO_Channel_Hw_PiFace.o \
 	${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual.o \
 	${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual_Memory.o \
 	${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual_Pipe.o \
-	${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual_Timer.o
+	${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual_Timer.o \
+	${OBJECTDIR}/timercpp.o
 
 
 # C Compiler Flags
@@ -110,6 +113,16 @@ ${OBJECTDIR}/src/ChannelEntitys/Channel_Entity_Memory.o: src/ChannelEntitys/Chan
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/ChannelEntitys/Channel_Entity_Memory.o src/ChannelEntitys/Channel_Entity_Memory.cpp
 
+${OBJECTDIR}/src/ChannelEntitys/Channel_Entity_TimerOutput.o: src/ChannelEntitys/Channel_Entity_TimerOutput.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/ChannelEntitys
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/ChannelEntitys/Channel_Entity_TimerOutput.o src/ChannelEntitys/Channel_Entity_TimerOutput.cpp
+
+${OBJECTDIR}/src/ChannelEntitys/Channel_Entity_TimerTrigger.o: src/ChannelEntitys/Channel_Entity_TimerTrigger.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/ChannelEntitys
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/ChannelEntitys/Channel_Entity_TimerTrigger.o src/ChannelEntitys/Channel_Entity_TimerTrigger.cpp
+
 ${OBJECTDIR}/src/IOChannels/IO_Channel.o: src/IOChannels/IO_Channel.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/IOChannels
 	${RM} "$@.d"
@@ -144,6 +157,11 @@ ${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual_Timer.o: src/IOChannels/IO_Channe
 	${MKDIR} -p ${OBJECTDIR}/src/IOChannels
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual_Timer.o src/IOChannels/IO_Channel_Virtual_Timer.cpp
+
+${OBJECTDIR}/timercpp.o: timercpp.cpp
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/timercpp.o timercpp.cpp
 
 # Subprojects
 .build-subprojects:

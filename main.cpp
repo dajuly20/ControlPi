@@ -28,6 +28,7 @@
 #include "src/IOChannels/IO_Channel_Hw_PiFace.h"
 #include "src/IOChannels/IO_Channel_Virtual_Memory.h"
 #include "IO_Channel_AccesWrapper.h"
+#include "src/IOChannels/IO_Channel_Virtual_Timer.h"
 
 using namespace std;
 
@@ -359,12 +360,25 @@ int main( int argc, char *argv[] )
      */
 //    printf("Opening piface digital connection at location %d\n", hw_addr);
 //    
+        TimerCpp tu = TimerCpp();
+ 
+        tu.setInterval([&]() {
+                cout << "Hey.. After each 1s..." << endl;
+            }, 1000); 
+ 
+                    tu.setTimeout([&]() {
+            cout << "Hey.. After 5.2s. But I will stop the timer!" << endl;
+            tu.stop();
+        }, 5200); 
+
+
     
     IO_Channel_AccesWrapper chnl;
     // Could Access now via (*myte.io_channels['H'])['i']->read_pin(0) 
     // But IO_Channel_AccessWrapper hides it away, and simplyfies access. so obj['H']['i']->member
     chnl.io_channels.insert(std::make_pair('H', new IO_Channel_Hw_PiFace()));
     chnl.io_channels.insert(std::make_pair('M', new IO_Channel_Virtual_Memory()));
+    chnl.io_channels.insert(std::make_pair('T', new IO_Channel_Virtual_Timer()));
      
  
     int inputHi0 = (int) chnl['H']['i'][0]; // (*io_channels['H'])['i']->read_pin(0);

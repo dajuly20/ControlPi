@@ -15,14 +15,18 @@
 #define IO_CHANNEL_VIRTUAL_TIMER_H
 
 #include "IO_Channel_Virtual.h"
-
+#include "../../timercpp.h"
 
 class IO_Channel_Virtual_Timer : public IO_Channel_Virtual {
 public:
     IO_Channel_Virtual_Timer();
     IO_Channel_Virtual_Timer(const IO_Channel_Virtual_Timer& orig);
     virtual ~IO_Channel_Virtual_Timer();
+    void trigger(bool _bdata, uint8_t bit_num);
+    void test();
 private:
+    //TimerCpp t = TimerCpp();
+ 
 
 };
 
