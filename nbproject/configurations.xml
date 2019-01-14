@@ -55,6 +55,7 @@
       <itemPath>main.cpp</itemPath>
       <itemPath>regReplaceExtension.cpp</itemPath>
       <itemPath>timercpp.cpp</itemPath>
+      <itemPath>timercppNew.h</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -232,6 +233,8 @@
       </item>
       <item path="timercpp.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="timercppNew.h" ex="false" tool="3" flavor2="0">
+      </item>
     </conf>
     <conf name="Release" type="1">
       <toolsSet>
@@ -382,6 +385,8 @@
       <item path="timercpp.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="timercpp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="timercppNew.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>

@@ -15,7 +15,7 @@
 #include "../ChannelEntitys/Channel_Entity_TimerTrigger.h"
 
 #include "IO_Channel_Virtual_Timer.h"
-//#include "timercpp.h"
+#include "../../timercppNew.h"
 #include <string>
 
 IO_Channel_Virtual_Timer::IO_Channel_Virtual_Timer() {
@@ -29,7 +29,9 @@ IO_Channel_Virtual_Timer::IO_Channel_Virtual_Timer() {
   
      
      
-        triggerEntityT->registerTrigger(this);
+    triggerEntityT->registerTrigger(this);
+        
+    t = Timer();
 }
 
 IO_Channel_Virtual_Timer::IO_Channel_Virtual_Timer(const IO_Channel_Virtual_Timer& orig) {
@@ -46,6 +48,17 @@ void IO_Channel_Virtual_Timer::trigger(bool _bdata, uint8_t bit_num){
     std::string res = "Triggered pin "+ std::to_string(bit_num)+" with " +val;
     std::cout << res;
 
+ 
+
+    t.setInterval([&]() {
+        std::cout << "Hey.. After each 1s..." << std::endl;
+    }, 1000); 
+
+    t.setTimeout([&]() {
+        std::cout << "Hey.. After 5.2s. But I will stop the timer!" << std::endl;
+        t.stop();
+    }, 5200); 
+    
 /*     t.setInterval([&]() {
         cout << "Hey.. After each 1s..." << endl;
     }, 1000); 

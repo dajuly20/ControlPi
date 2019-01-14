@@ -22,6 +22,7 @@
 #include "pifacedigitalcpp.h"
 #include "boolLogicParser.h"    
 #include "regReplaceExtension.h" // Extended reg-replace for inserting callback function.
+
 #include "src/ChannelEntitys/Channel_Entity.h"
 #include "src/ChannelEntitys/Channel_Entities_PiFace.h"
 #include "src/IOChannels/IO_Channel.h"
@@ -360,16 +361,18 @@ int main( int argc, char *argv[] )
      */
 //    printf("Opening piface digital connection at location %d\n", hw_addr);
 //    
-        TimerCpp tu = TimerCpp();
- 
-        tu.setInterval([&]() {
-                cout << "Hey.. After each 1s..." << endl;
-            }, 1000); 
- 
-                    tu.setTimeout([&]() {
-            cout << "Hey.. After 5.2s. But I will stop the timer!" << endl;
-            tu.stop();
-        }, 5200); 
+//    auto la = [&]() {
+//                cout << "Hey.. After each 1s..." << endl;
+//            };
+//        TimerCpp tu = TimerCpp();
+//// 
+////        ll
+//         tu.setInterval(la, 1000); 
+//// 
+////                    tu.setTimeout([&]() {
+//            cout << "Hey.. After 5.2s. But I will stop the timer!" << endl;
+//            tu.stop();
+//        }, 5200); 
 
 
     
@@ -440,6 +443,7 @@ int main( int argc, char *argv[] )
     // HIIIIIIIIIIIIIIIIIER WAR ICH ...
   //  chnl['H'].getIOChnl(). 
     chnl['H'].getIOChnl()->caching_enable();  
+
     
     while(keepRunning ){
     if (chnl['H'].getIOChnl()->interrupts_enabled()) {
