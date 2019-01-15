@@ -387,12 +387,12 @@ int main( int argc, char *argv[] )
     int inputHi0 = (int) chnl['H']['i'][0]; // (*io_channels['H'])['i']->read_pin(0);
     cout << "Test Entity New: " <<  inputHi0 << endl;
 
-    chnl['H']['o']->write_all(0xFF);
+   /* chnl['H']['o']->write_all(0xFF);
     sleep(1);
     
     // Initially set all outputs to 0
     chnl['H']['o']->write_all(0x00);
-
+*/
 
 
     /**

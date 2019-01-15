@@ -80,14 +80,9 @@ void IO_Channel_Virtual_Timer::trigger(bool _tvalu, uint8_t bit_num){
     std::string val = _tvalu ? " true" : " false";
     std::string res = "Triggered pin "+ std::to_string(bit_num)+" with " +val;
     std::cout << res;
-    
-    //Channel_Entity t = chEntities['t'];
-    //Channel_Entity o  = chEntities['o'];
-    
+
     ChannelEntitySP o = chEntities['o'];
-    //Channel_Entity_TimerOutput o = 
     
-    //bool t_val = chEntities['t'].read_pin(bit_num);
     bool t_val = _tvalu;
     bool o_val = o->read_pin(bit_num);
    
@@ -99,23 +94,22 @@ void IO_Channel_Virtual_Timer::trigger(bool _tvalu, uint8_t bit_num){
     if(t_val){
         // reset power-off delay timer
     }
-    
-    
+   
     if(!t_val && !o_val ){
     // Trigger = 0  | Output = 0     
         
     }
     else if(!t_val && o_val){
     // Triffer = 0 | Output = 1    
-        
+    
+        chEntities['o']->write_pin(0,bit_num);
     }
     else if(t_val && !o_val){
     // Trigger = 1 | Output = 0    
-    // Power-on delay
+    // Power-on delay   
         
-        
-        t.setTimeout([&]() {
-            std::cout << "Hey.. After 1s. But I put the output to 1!" << std::endl;
+        t.setTimeout([this, bit_num]() {
+            std::cout << "Hey.. After 1s. But I put the output to 1! BITNUM IS: " << std::to_string( (int)bit_num) << std::endl;
             chEntities['o']->write_pin(1,bit_num);
             //t.stop();
         }, 1000); 

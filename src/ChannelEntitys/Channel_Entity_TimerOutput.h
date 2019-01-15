@@ -14,6 +14,10 @@
 #ifndef CHANNEL_ENTITY_TIMEROUTPUT_H
 #define CHANNEL_ENTITY_TIMEROUTPUT_H
 
+#include <iostream> // cout
+#include <string>   // std::string
+
+
 #include "Channel_Entity.h"
 #include "Channel_Entity_Memory.h"
 
@@ -30,11 +34,8 @@ public:
     return Channel_Entity_Memory::read_pin(bit_num);
 }
 
-void    write_pin(bool _bdata, uint8_t bit_num){   
-    
-    // invoke parent write pin method to really save the pin value
-    Channel_Entity_Memory::write_pin(_bdata, bit_num);
-}
+void    write_pin(bool _bdata, uint8_t bit_num) override;
+
 private:
 
 };

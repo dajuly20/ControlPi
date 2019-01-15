@@ -18,6 +18,10 @@
 #include "Channel_Entity_Memory.h"
 #include "../IOChannels/IO_Channel_Virtual_Timer.h"
 
+#include <iostream> // cout
+#include <string>   // std::string
+
+
 
 class Channel_Entity_TimerTrigger : public Channel_Entity_Memory{
 public:
@@ -40,6 +44,7 @@ uint8_t read_pin(uint8_t bit_num){
 void  write_pin(bool _bdata, uint8_t bit_num){   
    // invoke only if this bit has changed its value.
     if(read_pin(bit_num) != _bdata){
+        std::cout << "####\n\nBIt number :" << std::to_string(bit_num) << " was triggered! \n\n###" << std::endl;
         timer->trigger( _bdata, bit_num);
         // invoke parent write pin method to really save the pin value
         Channel_Entity_Memory::write_pin(_bdata, bit_num);
