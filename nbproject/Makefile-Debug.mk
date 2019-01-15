@@ -50,8 +50,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual.o \
 	${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual_Memory.o \
 	${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual_Pipe.o \
-	${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual_Timer.o \
-	${OBJECTDIR}/timercpp.o
+	${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual_Timer.o
 
 
 # C Compiler Flags
@@ -161,11 +160,6 @@ ${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual_Timer.o: src/IOChannels/IO_Channe
 	${MKDIR} -p ${OBJECTDIR}/src/IOChannels
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -std=c++14 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/IOChannels/IO_Channel_Virtual_Timer.o src/IOChannels/IO_Channel_Virtual_Timer.cpp
-
-${OBJECTDIR}/timercpp.o: timercpp.cpp
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++14 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/timercpp.o timercpp.cpp
 
 # Subprojects
 .build-subprojects:

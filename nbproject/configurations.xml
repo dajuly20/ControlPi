@@ -21,7 +21,6 @@
       <itemPath>src/IOChannels/IO_Channel_Hw_PiFace.h</itemPath>
       <itemPath>boolLogicParser.h</itemPath>
       <itemPath>regReplaceExtension.h</itemPath>
-      <itemPath>timercpp.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -54,7 +53,6 @@
       <itemPath>logic.conf</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>regReplaceExtension.cpp</itemPath>
-      <itemPath>timercpp.cpp</itemPath>
       <itemPath>timercppNew.h</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -229,10 +227,6 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="timercpp.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="timercpp.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="timercppNew.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
@@ -381,10 +375,6 @@
             ex="false"
             tool="3"
             flavor2="0">
-      </item>
-      <item path="timercpp.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="timercpp.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="timercppNew.h" ex="false" tool="3" flavor2="0">
       </item>
