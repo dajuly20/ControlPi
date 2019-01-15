@@ -38,9 +38,12 @@ uint8_t read_pin(uint8_t bit_num){
 }
 
 void  write_pin(bool _bdata, uint8_t bit_num){   
-    timer->trigger( _bdata, bit_num);
-    // invoke parent write pin method to really save the pin value
-    Channel_Entity_Memory::write_pin(_bdata, bit_num);
+   // invoke only if this bit has changed its value.
+    if(read_pin(bit_num) != _bdata){
+        timer->trigger( _bdata, bit_num);
+        // invoke parent write pin method to really save the pin value
+        Channel_Entity_Memory::write_pin(_bdata, bit_num);
+    }
 }
 
 private:
