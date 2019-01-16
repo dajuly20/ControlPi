@@ -66,7 +66,6 @@ IO_Channel_Hw_PiFace::~IO_Channel_Hw_PiFace() {
 
    bool IO_Channel_Hw_PiFace::interrupts_enabled(){
         // cast to bool
-        printf("Hier simma");
         return (bool) pfd->interrupts_enabled();
     }
    
@@ -74,11 +73,11 @@ IO_Channel_Hw_PiFace::~IO_Channel_Hw_PiFace() {
         
         //if (pifacedigital_wait_for_input(&inputs, -1, hw_addr) > 0)
         bool ret = (pfd->wait_for_input(&inputs, -1) > 0);
-        printf("Input values are: "+inputs);
+        // printf("Input values are: "+inputs);
 	//pfd->flush();        
         return ret;
     }
    
    void IO_Channel_Hw_PiFace::caching_enable(){ printf("Caching enable called"); pfd->caching_enable(); }
    void IO_Channel_Hw_PiFace::caching_disable(){ printf("Caching disable called"); pfd->caching_disable();}
-   void IO_Channel_Hw_PiFace::flush(){ printf("Flush called!!!"); pfd->flush();}
+   void IO_Channel_Hw_PiFace::flush(){ pfd->flush();}
