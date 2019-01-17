@@ -37,6 +37,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/IO_Channel_AccesWrapper.o \
 	${OBJECTDIR}/boolLogicParser.o \
+	${OBJECTDIR}/iterationSwitchGuard.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/regReplaceExtension.o \
 	${OBJECTDIR}/src/ChannelEntitys/Channel_Entities_PiFace.o \
@@ -90,6 +91,11 @@ ${OBJECTDIR}/boolLogicParser.o: boolLogicParser.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -std=c++14 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/boolLogicParser.o boolLogicParser.cpp
+
+${OBJECTDIR}/iterationSwitchGuard.o: iterationSwitchGuard.cpp
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -std=c++14 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/iterationSwitchGuard.o iterationSwitchGuard.cpp
 
 ${OBJECTDIR}/main.o: main.cpp
 	${MKDIR} -p ${OBJECTDIR}

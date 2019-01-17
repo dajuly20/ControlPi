@@ -22,12 +22,16 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <atomic>
+#include <chrono>
 
 
 #include "pifacedigitalcpp.h"
 #include "boolLogicParser.h"    
 #include "regReplaceExtension.h" // Extended reg-replace for inserting callback function.
 
+#include "globals.h"
+#include "iterationSwitchGuard.h"
 #include "src/ChannelEntitys/Channel_Entity.h"
 #include "src/ChannelEntitys/Channel_Entities_PiFace.h"
 #include "src/IOChannels/IO_Channel.h"
@@ -39,14 +43,12 @@
 using namespace std;
 
 // Globals 
-static volatile int  keepRunning = 1;     //Used to interrupt mainloop
+std::atomic<bool>    keepRunning(true);     //Used to interrupt mainloop
 static volatile bool configRead  = false; //Used to re-read configuration
 
-typedef shared_ptr<IO_Channel_AccesWrapper> IO_Channel_AccessWrapperPTR;
+typedef std::shared_ptr<IO_Channel_AccesWrapper> IO_Channel_AccessWrapperPTR;
 
-condition_variable itCond;
-mutex              itCondMutex;
-bool               itCondSwitch;
+
 
 /*
  Functor to inject the IO Object into the replace identifier function.
@@ -86,8 +88,10 @@ class replaceIdentifier{
  * to end the program.
  * 
  */
+
 void intHandler(int dummy) {
-    keepRunning = 0;
+    keepRunning = false;
+
 }
 
 /* Signal Handler
@@ -285,32 +289,48 @@ int main( int argc, char *argv[] )
     uint8_t i = 0;          /**< Loop iterator */
     uint8_t inputs;         /**< Input bits (pins 0-7) */
     uint8_t outputs;         /**< Input bits (pins 0-7) */
-    
+ 
+    iterationSwitchGuard isg;
+  
     // Register signalHandlers
     signal(SIGINT,  intHandler);    // Stops program gracefully
     signal(SIGKILL, intHandler);    // " "
     signal(SIGHUP,  intHandler);    // " "
     signal(SIGTERM, intHandler);    // " "
     signal(SIGUSR1 ,usrSigHandler); // Re-Reads config, doesn't exit.
+    
+    cout << "Test 1 " << endl;
 
     // Push all the possible channels to the array. 
     // Could Access now via (*myte.io_channels['H'])['i']->read_pin(0) 
     // But IO_Channel_AccessWrapper hides it away, and simplyfies access. so obj['H']['i']->member
+    cout << "Test 1.0 " << endl;
     IO_Channel_AccesWrapper chnl;
+    cout << "Test 1.0.1 " << endl;
     chnl.io_channels.insert(std::make_pair('H', new IO_Channel_Hw_PiFace()));
+    cout << "Test 1.0.1 " << endl;
     chnl.io_channels.insert(std::make_pair('M', new IO_Channel_Virtual_Memory()));
+    cout << "Test 1.0.1 " << endl;
     chnl.io_channels.insert(std::make_pair('T', new IO_Channel_Virtual_Timer()));
+cout << "Test 1.1 " << endl;
+
+    chnl['H'].getIOChnl()->assignIsg(&isg);
+    chnl['M'].getIOChnl()->assignIsg(&isg);
+    chnl['T'].getIOChnl()->assignIsg(&isg);
     // Usage e.g.:  chnl['H']['i'][0];  ==> (*io_channels['H'])['i']->read_pin(0);
-  
+  cout << "Test 1.2 " << endl;
+
     // Mandatory for interrupt funktion.
     inputs = chnl['H']['o']->read_all();
     printf("Outputs: 0x%x\n", inputs);
-
+cout << "Test 1.3 " << endl;
     // Initially read the config    
     std::string filename = "logic.conf";
     std::vector<std::string>  softLogic;
     softLogic  = loadSoftLogic(filename);
     configRead = true;
+    
+    cout << "Test 2 " << endl;
     
     // Initially parse identifiers once.
     // (Necessary to let starting values take efect.
@@ -321,8 +341,52 @@ int main( int argc, char *argv[] )
     // TODO: Make infrastructure to enable caching on all channels at once
     chnl['H'].getIOChnl()->caching_enable();  
 
+    
+    std::thread hwInterrupt([&chnl,&isg](){
+        cout << "Started interrupt thread " << endl;
+        while(keepRunning){
+            if (chnl['H'].getIOChnl()->wait_for_interrupt()){
+                for (int i = 0; i < 8; i++) {
+                    uint8_t pinStateRev =  chnl['H']['i']->read_pin(i); 
+                    printf("Input %d value: %d\n", (int)i, (int)pinStateRev);
+                }
+            
+            std::unique_lock<mutex> lock{isg.itCondMutex};
+            {
+                cout << "Locked in interrput thread " << endl;
+                isg.itCondSwitch = true;
+                isg.itCond.notify_one();
+            }
+                
+            }
+            else{
+                printf("Can't wait for input. Something went wrong!\n");
+            }
+        }
+    });
+    
+    hwInterrupt.detach();
+    
+    std::thread signalInterrupt([&isg](){
+        while(keepRunning);
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        {
+            std::unique_lock<mutex> lock{isg.itCondMutex};    
+            cout << "Locked in signal thread " << endl;
+            isg.itCondSwitch = true;  
+        }
+        isg.itCond.notify_one();
+    });
+    
+    signalInterrupt.detach();
+    
+    // TODO USE SANTINISER
+    // fno-omit-frame-pointer -fsanitize=thread
+    // -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined
     // Main loop. 
-    while(keepRunning ){
+    cout << "Test 3 " << endl;
+    while(keepRunning){
+        cout << "Test 4 " << endl;
         if (chnl['H'].getIOChnl()->interrupts_enabled()) {
             printf("\n\nWaiting for input (press any button on the PiFaceDigital)\n");
             /*
@@ -333,32 +397,27 @@ int main( int argc, char *argv[] )
             bool               itCondSwitch;
 
              */
-            // std::unique_lock<mutex> lock{itCondMutex};
-            //itCond.wait(lock, [] { return itCondSwitch;});  // Waiting for change of itCondSwitch (that is set by another thread..) 
-            //maybe even
-            // itCond.wait(lock);
-            if (chnl['H'].getIOChnl()->wait_for_interrupt()){
-
-                if(configRead == false){
-                    softLogic = loadSoftLogic(filename);
-                    configRead = true;
-                    printf("\n\nConfig has been reloaded!\n");
-                }
-
-                chnl['H'].getIOChnl()->flush();
-
-                parseIdentifiers(chnl, softLogic);
-
-                chnl['H'].getIOChnl()->flush();
-          
-                for (i = 0; i < 8; i++) {
-                    uint8_t pinStateRev =  chnl['H']['i']->read_pin(i); 
-                    printf("Input %d value: %d\n", (int)i, (int)pinStateRev);
-                }
+            
+            {
+            std::unique_lock<mutex> lock{isg.itCondMutex};
+            cout << "locked in mainloop " << endl;
+                
+            isg.itCond.wait(lock, [&isg] { return isg.itCondSwitch;});  // Waiting for change of itCondSwitch (that is set by another thread..) 
+            
+            // Todo: Put in a thread itself
+            if(configRead == false){
+               softLogic = loadSoftLogic(filename);
+               configRead = true;
+               printf("\n\nConfig has been reloaded!\n");
             }
-            else{
-                printf("Can't wait for input. Something went wrong!\n");
+            
+            chnl['H'].getIOChnl()->flush();
+            parseIdentifiers(chnl, softLogic);
+            chnl['H'].getIOChnl()->flush();
+            
+            isg.itCondSwitch = false; 
             }
+            
         }
         else{
             printf("Interrupts disabled. Aborting.\n");

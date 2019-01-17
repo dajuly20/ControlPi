@@ -20,6 +20,8 @@
       <itemPath>IO_Channel_AccesWrapper.h</itemPath>
       <itemPath>src/IOChannels/IO_Channel_Hw_PiFace.h</itemPath>
       <itemPath>boolLogicParser.h</itemPath>
+      <itemPath>globals.h</itemPath>
+      <itemPath>iterationSwitchGuard.h</itemPath>
       <itemPath>regReplaceExtension.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
@@ -50,6 +52,7 @@
       <itemPath>IO_Channel_AccesWrapper.cpp</itemPath>
       <itemPath>boolLogicParser.cpp</itemPath>
       <itemPath>bootstrap.sh</itemPath>
+      <itemPath>iterationSwitchGuard.cpp</itemPath>
       <itemPath>logic.conf</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>regReplaceExtension.cpp</itemPath>
@@ -110,6 +113,12 @@
       <item path="boolLogicParser.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="bootstrap.sh" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="globals.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="iterationSwitchGuard.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="iterationSwitchGuard.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="logic.conf" ex="false" tool="3" flavor2="0">
       </item>
@@ -259,6 +268,12 @@
       <item path="boolLogicParser.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="bootstrap.sh" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="globals.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="iterationSwitchGuard.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="iterationSwitchGuard.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="logic.conf" ex="false" tool="3" flavor2="0">
       </item>

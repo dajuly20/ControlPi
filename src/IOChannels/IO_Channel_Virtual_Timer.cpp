@@ -10,10 +10,14 @@
  * 
  * Created on December 18, 2018, 6:58 PM
  */
-
+#include "../../globals.h"
 #include "../ChannelEntitys/Channel_Entity.h"
 #include "../ChannelEntitys/Channel_Entity_TimerOutput.h"
 #include "../ChannelEntitys/Channel_Entity_TimerTrigger.h"
+
+#include <thread>
+#include <mutex>
+#include <condition_variable>
 
 #include "IO_Channel_Virtual_Timer.h"
 #include "../../timercppNew.h"
@@ -110,9 +114,16 @@ void IO_Channel_Virtual_Timer::trigger(bool _tvalu, uint8_t bit_num){
         
         t.setTimeout([this, bit_num]() {
             std::cout << "Hey.. After 1s. But I put the output to 1! BITNUM IS: " << std::to_string( (int)bit_num) << std::endl;
+            
             chEntities['o']->write_pin(1,bit_num);
+            {
+                std::unique_lock<std::mutex> lock{isg->itCondMutex};
+                isg->itCondSwitch = true;
+                
+           }
+            isg->itCond.notify_one();
             //t.stop();
-        }, 1000); 
+        }, 2000); 
       
     }
     else if(t_val && o_val){

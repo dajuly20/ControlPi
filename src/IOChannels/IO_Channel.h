@@ -15,6 +15,7 @@
 #define IO_CHANNEL_H
 //#include "src/Channel_Entities/Channel_Entity.h"
 #include "../ChannelEntitys/Channel_Entity.h"
+#include "../../iterationSwitchGuard.h"
 #include <iostream> //cout
 #include <memory>   // shared_ptr
 #include <map>      // map
@@ -23,6 +24,13 @@ typedef std::shared_ptr<Channel_Entity> ChannelEntitySP;
 
 class IO_Channel {
 public:
+    std::map<char, ChannelEntitySP> chEntities;
+    
+    iterationSwitchGuard* isg;
+    void assignIsg(iterationSwitchGuard* _isg){
+        isg = _isg;
+    }
+    
     IO_Channel();
     IO_Channel(const IO_Channel& orig);
     virtual ~IO_Channel();
@@ -54,7 +62,7 @@ public:
     virtual void flush(){};
     
     
-    std::map<char, ChannelEntitySP> chEntities;
+    
  protected:   
 
 };
