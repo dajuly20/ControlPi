@@ -343,6 +343,8 @@ cout << "Test 1.3 " << endl;
 
     
     std::thread hwInterrupt([&chnl,&isg](){
+    
+        pthread_setname_np(pthread_self(), "HW-Interrupt");
         cout << "Started interrupt thread " << endl;
         while(keepRunning){
             if (chnl['H'].getIOChnl()->wait_for_interrupt()){
@@ -368,8 +370,10 @@ cout << "Test 1.3 " << endl;
     hwInterrupt.detach();
     
     std::thread signalInterrupt([&isg](){
-        while(keepRunning);
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        pthread_setname_np(pthread_self(), "Signal-handler");
+        while(keepRunning){
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
         {
             std::unique_lock<mutex> lock{isg.itCondMutex};    
             cout << "Locked in signal thread " << endl;

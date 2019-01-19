@@ -23,26 +23,27 @@
 #include "../../timercppNew.h"
 #include <string>
 
-IO_Channel_Virtual_Timer::IO_Channel_Virtual_Timer() {
-     Channel_Entity_TimerTrigger* triggerEntityT = new Channel_Entity_TimerTrigger();
+IO_Channel_Virtual_Timer::IO_Channel_Virtual_Timer(){
+    Channel_Entity_TimerTrigger* triggerEntityT = new Channel_Entity_TimerTrigger();
     
-     ChannelEntitySP triggerEntity( triggerEntityT);
-     ChannelEntitySP outputEntity ( new Channel_Entity_TimerOutput());
+    ChannelEntitySP triggerEntity( triggerEntityT);
+    ChannelEntitySP outputEntity ( new Channel_Entity_TimerOutput());
     
-     chEntities.insert ( std::make_pair('t',triggerEntity) );
-     chEntities.insert ( std::make_pair('o',outputEntity) );
+    chEntities.insert ( std::make_pair('t',triggerEntity) );
+    chEntities.insert ( std::make_pair('o',outputEntity) );
   
      
      
     triggerEntityT->registerTrigger(this);
         
-    t = Timer();
+    t = new Timer();
 }
 
 IO_Channel_Virtual_Timer::IO_Channel_Virtual_Timer(const IO_Channel_Virtual_Timer& orig) {
 }
 
 IO_Channel_Virtual_Timer::~IO_Channel_Virtual_Timer() {
+    delete t;
 }
 
 
@@ -92,7 +93,8 @@ void IO_Channel_Virtual_Timer::trigger(bool _tvalu, uint8_t bit_num){
    
     
     if(!t_val){
-        // Reset powe-on delay timer. 
+        t->stop();
+        chEntities['o']->write_pin(0,bit_num);
     }
     
     if(t_val){
@@ -101,18 +103,19 @@ void IO_Channel_Virtual_Timer::trigger(bool _tvalu, uint8_t bit_num){
    
     if(!t_val && !o_val ){
     // Trigger = 0  | Output = 0     
+        std::cout << "Value T=0 O=0" << std::endl;
         
     }
     else if(!t_val && o_val){
-    // Triffer = 0 | Output = 1    
-    
-        chEntities['o']->write_pin(0,bit_num);
+    // Triffer = 0 | Output = 1  
+        std::cout << "Value went from 1 to zeri, stopping timer." << std::endl;
+      
     }
     else if(t_val && !o_val){
     // Trigger = 1 | Output = 0    
     // Power-on delay   
         
-        t.setTimeout([this, bit_num]() {
+        t->setTimeout([this, bit_num]() {
             std::cout << "Hey.. After 1s. But I put the output to 1! BITNUM IS: " << std::to_string( (int)bit_num) << std::endl;
             
             chEntities['o']->write_pin(1,bit_num);
@@ -122,7 +125,7 @@ void IO_Channel_Virtual_Timer::trigger(bool _tvalu, uint8_t bit_num){
                 
            }
             isg->itCond.notify_one();
-            //t.stop();
+           
         }, 2000); 
       
     }
