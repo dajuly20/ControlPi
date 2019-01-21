@@ -126,7 +126,7 @@ void IO_Channel_Virtual_Timer::trigger(bool _tvalu, uint8_t bit_num){
            }
             isg->itCond.notify_one();
            
-        }, 2000); 
+        }, std::chrono::milliseconds{2000}); 
       
     }
     else if(t_val && o_val){

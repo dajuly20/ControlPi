@@ -1,82 +1,161 @@
 #ifndef TIMERCPPNEW
 #define TIMERCPPNEW
 
-#include <iostream>
-#include <thread>
 #include <chrono>
-#include <mutex>
 #include <condition_variable>
-
-using namespace std::chrono_literals;
+#include <mutex>
+#include <thread>
 
 class Timer {
+
+  using clock = std::chrono::steady_clock;
     std::mutex clear_mtx;
-    
-    std::mutex cv_mutex;
+
     std::condition_variable cv;
     
-    bool clear = false;
+  bool clear;
     
-    public:
-        template<typename Function>
-        void setTimeout(Function function, int delay);
-        template<typename Function>
-        void setInterval(Function function, int interval);
-        
-        inline void stop(){  
-            {
-            std::unique_lock<std::mutex> lock{this->clear_mtx};
-            this->clear = true;
-            }
-            cv.notify_one();
-        };
-};
+  std::size_t th_count;
 
-template<typename Function>
-void Timer::setTimeout(Function function, int delay) {
-    this->clear = false;
-    std::thread t([=]() {
-        pthread_setname_np(pthread_self(), "Timer-setTimeout");
+    public:
+  Timer() : clear{false}, th_count{0} {};
         
+  ~Timer(){   stop();  }
+
+
+  void stop(){
+
+  std::unique_lock<std::mutex> lock{clear_mtx};
+  clear = true;
+
+  lock.unlock();
+  cv.notify_all();
+  lock.lock();
+
+  cv.wait(lock, [this]() { return th_count == 0; });
+}
+
+  template <typename Function, typename Rep, typename Period>
+  void setTimeout(Function &&function,
+                  const std::chrono::duration<Rep, Period> &delay);
+
+  template <typename Function, typename Rep, typename Period>
+  void setInterval(Function &&function,
+                   const std::chrono::duration<Rep, Period> &delay);
+        };
+        
+// " Timer.cpp "      
+//Timer::Timer() : clear{false}, th_count{0} {}
+
+//Timer::~Timer() { stop(); }
+
+//void Timer::stop() {
+//
+//  std::unique_lock<std::mutex> lock{clear_mtx};
+//  clear = true;
+//
+//  lock.unlock();
+//  cv.notify_all();
+//  lock.lock();
+//
+//  cv.wait(lock, [this]() { return th_count == 0; });
+//}
+// Timer.cpp
+        
+        
+        
+        
+
+template <typename Function, typename Rep, typename Period>
+void Timer::setTimeout(Function &&function,
+                       const std::chrono::duration<Rep, Period> &delay) {
         {
-        std::unique_lock<std::mutex> lock{this->clear_mtx};
-        std::cout << "Before" << std::endl;
-        if(this->clear) return;
+    std::lock_guard<std::mutex> lock{clear_mtx};
+    clear = false;
+    ++th_count;
         }
         
-        {
-        std::unique_lock<std::mutex> lock{this->clear_mtx};
-        cv.wait_for(lock, delay*1ms,  [this] { std::cout << "In Cond" << std::endl; return this->clear;});  // Waiting for change of itCondSwitch (that is set by another thread..) 
-        }
-        //std::this_thread::sleep_for(std::chrono::milliseconds(delay));
-        {
-        std::unique_lock<std::mutex> lock{this->clear_mtx};
-        std::cout << "After" << std::endl;
-        if(this->clear) return;
-        }
+  std::thread t{[this, delay, function]() {
+      pthread_setname_np(pthread_self(), "Timer-setTimeout");
+      auto deadline = clock::now() + delay;
+    while (clock::now() < deadline) {
+      std::unique_lock<std::mutex> lock{clear_mtx};
+      cv.wait_until(lock, deadline);
+      if (clear) {
+        break;
+      }
+    }
+        
+    std::unique_lock<std::mutex> lock{clear_mtx};
+    if (!clear) {
+      lock.unlock();
+      try {
         function();
-    });
+      } catch (...) {
+          // Todo Add error reporting for failed function!
+        }
+      lock.lock();
+        }
+
+    --th_count;
+    cv.notify_all(); // wichtig nicht vorher unlocken sonst race mit dem
+                     // destructor
+  }};
     t.detach();
 }
 
-template<typename Function>
-void Timer::setInterval(Function function, int interval) {
-    this->clear = false;
-    std::thread t([&]() {
+
+//template<typename Function>
+//void Timer::setInterval(Function function, int interval) {
+    
+    
+template <typename Function, typename Rep, typename Period>
+void Timer::setInterval(Function &&function,
+                       const std::chrono::duration<Rep, Period> &delay) {
+    
+     {
+    std::lock_guard<std::mutex> lock{clear_mtx};
+    clear = false;
+    ++th_count;
+        }
+        
+  std::thread t{[this, delay, function]() {
         pthread_setname_np(pthread_self(), "Timer-setInterval");
         while(true) {
             {
                 std::unique_lock<std::mutex> lock{this->clear_mtx};
                 if(this->clear) return;
             }
-            std::this_thread::sleep_for(std::chrono::milliseconds(interval));
-            {
-                std::unique_lock<std::mutex> lock{this->clear_mtx};
-                if(this->clear) return;
+            
+            
+            auto deadline = clock::now() + delay;
+            while (clock::now() < deadline) {
+              std::unique_lock<std::mutex> lock{clear_mtx};
+              cv.wait_until(lock, deadline);
+              if (clear) {
+                break;
+              }
             }
-            function();
+            
+            
+            std::unique_lock<std::mutex> lock{clear_mtx};
+            if (!clear) {
+              lock.unlock();
+              try {
+                function();
+              } catch (...) {
+                  //Todo... function threw an err
+              }
+            }
+            lock.lock();
+            
+            --th_count;
+            cv.notify_all(); // wichtig nicht vorher unlocken sonst race mit dem
+                             // destructor
+            
         }
-    });
+            
+    }};
     t.detach();
 }
 
