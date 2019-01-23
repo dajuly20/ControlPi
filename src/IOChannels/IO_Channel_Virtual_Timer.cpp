@@ -32,18 +32,23 @@ IO_Channel_Virtual_Timer::IO_Channel_Virtual_Timer(){
     chEntities.insert ( std::make_pair('t',triggerEntity) );
     chEntities.insert ( std::make_pair('o',outputEntity) );
   
-     
-     
+    for(int i=0; i<=7; i++){
+        powerOnTimers   .insert( std::make_pair(i,new Timer()));
+        powerOffTimers  .insert( std::make_pair(i,new Timer()));
+    }
+            
     triggerEntityT->registerTrigger(this);
         
-    t = new Timer();
+    powerOnDelay  = new Timer();
+    powerOffDelay = new Timer();
 }
 
 IO_Channel_Virtual_Timer::IO_Channel_Virtual_Timer(const IO_Channel_Virtual_Timer& orig) {
 }
 
 IO_Channel_Virtual_Timer::~IO_Channel_Virtual_Timer() {
-    delete t;
+    delete powerOnDelay;
+    delete powerOffDelay;
 }
 
 
@@ -90,32 +95,41 @@ void IO_Channel_Virtual_Timer::trigger(bool _tvalu, uint8_t bit_num){
     
     bool t_val = _tvalu;
     bool o_val = o->read_pin(bit_num);
-   
     
-    if(!t_val){
-        t->stop();
-        chEntities['o']->write_pin(0,bit_num);
-    }
-    
-    if(t_val){
-        // reset power-off delay timer
-    }
-   
+    // If the Output was 0 already, the power-on timer not yet expired and will be stopped.
+    // Output is 0 already, no need to re-set to zero.
+    // Also as the output has not yet gone to 1, we don't want to have a power off delay.
     if(!t_val && !o_val ){
-    // Trigger = 0  | Output = 0     
-        std::cout << "Value T=0 O=0" << std::endl;
-        
+            //powerOnTimers[bit_num]->stop();
+            powerOnDelay->stop();
     }
+    
+    // If Output is still 1 at this point, the power on timer is expired already
+    // and does not need to be stopped. But Trigger went to zero. So trigger power-off delay!
     else if(!t_val && o_val){
-    // Triffer = 0 | Output = 1  
-        std::cout << "Value went from 1 to zeri, stopping timer." << std::endl;
-      
+        // Todo: Power off delay here!
+        
+        powerOffDelay->setTimeout([this, bit_num]() {
+            std::cout << "Hey.. After 2s. I power off the bit./ BITNUM IS: " << std::to_string( (int)bit_num) << std::endl;
+            
+            chEntities['o']->write_pin(0,bit_num);
+            {
+                std::unique_lock<std::mutex> lock{isg->itCondMutex};
+                isg->itCondSwitch = true;
+                
+           }
+            isg->itCond.notify_one();
+           
+        }, std::chrono::milliseconds{3000}); 
+        
+        
+   
     }
     else if(t_val && !o_val){
     // Trigger = 1 | Output = 0    
     // Power-on delay   
         
-        t->setTimeout([this, bit_num]() {
+        powerOnDelay->setTimeout([this, bit_num]() {
             std::cout << "Hey.. After 1s. But I put the output to 1! BITNUM IS: " << std::to_string( (int)bit_num) << std::endl;
             
             chEntities['o']->write_pin(1,bit_num);
@@ -129,9 +143,12 @@ void IO_Channel_Virtual_Timer::trigger(bool _tvalu, uint8_t bit_num){
         }, std::chrono::milliseconds{2000}); 
       
     }
+    
+    // Trigger Value went from 0 -> 1 while Output's still 1.
+    // Smells like power-off delay's still not run out... 
+    // But as Trigger is 1 again, we can now stop it..
     else if(t_val && o_val){
-    // Trigger = 1 | Output = 1    
-        
+        powerOffDelay->stop();
     }
     
     

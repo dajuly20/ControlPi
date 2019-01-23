@@ -1,2 +1,2 @@
 #!/bin/bash
-kill -10 `pidof debug.out` 
+kill -10 `pidof ControlPi` 
