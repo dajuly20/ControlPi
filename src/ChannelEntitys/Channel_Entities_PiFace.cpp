@@ -19,11 +19,12 @@
 //    
 //}
 
-Channel_Entity_PiFace_Outputs::Channel_Entity_PiFace_Outputs(const Channel_Entity_PiFace_Outputs& orig) {
-}
+//Channel_Entity_PiFace_Outputs::Channel_Entity_PiFace_Outputs(const Channel_Entity_PiFace_Outputs& orig) {
+//}
 
 Channel_Entity_PiFace_Outputs::~Channel_Entity_PiFace_Outputs() {
 }
+
    void     Channel_Entity_PiFace_Outputs::write_pin(bool data, uint8_t bit_num){ 
                 check_range(bit_num); 
                 std::unique_lock<std::mutex> lock{entity_mtx}; 
@@ -48,8 +49,8 @@ Channel_Entity_PiFace_Outputs::~Channel_Entity_PiFace_Outputs() {
 //Channel_Entity_PiFace_Inputs::Channel_Entity_PiFace_Inputs() {
 //}
 
-Channel_Entity_PiFace_Inputs::Channel_Entity_PiFace_Inputs(const Channel_Entity_PiFace_Inputs& orig) {
-}
+//Channel_Entity_PiFace_Inputs::Channel_Entity_PiFace_Inputs(const Channel_Entity_PiFace_Inputs& orig) {
+//}
 
 Channel_Entity_PiFace_Inputs::~Channel_Entity_PiFace_Inputs() {
 }

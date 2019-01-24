@@ -16,17 +16,22 @@
 #include "pifacedigitalcpp.h"
 #include "../ChannelEntitys/Channel_Entities_PiFace.h"
 #include "IO_Channel_Hw.h"
-
+#include <memory>   // shared_ptr
+typedef std::shared_ptr<PiFaceDigital> PiFacePtr;
 
 class IO_Channel_Hw_PiFace : public IO_Channel_Hw {
+ private:
+    void init_pfd_object();
+     PiFacePtr pfdsp;
 public:
     
     IO_Channel_Hw_PiFace();
-    IO_Channel_Hw_PiFace(PiFaceDigital* pfd_init) ;
+    //IO_Channel_Hw_PiFace(PiFaceDigital* pfd_init) ;
     
     IO_Channel_Hw_PiFace(const IO_Channel_Hw_PiFace& orig);
     virtual ~IO_Channel_Hw_PiFace();
-    PiFaceDigital* pfd;
+   
+    //PiFaceDigital* pfd;
     
      
     bool interrupts_enabled() override;
@@ -36,8 +41,7 @@ public:
     void caching_disable() override;
     void flush() override; 
     
-private:
-    void init_pfd_object();
+
 };
 
 #endif /* IO_CHANNEL_HW_PIFACE_H */
