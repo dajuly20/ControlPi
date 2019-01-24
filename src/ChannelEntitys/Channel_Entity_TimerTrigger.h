@@ -36,7 +36,7 @@ public:
     }
     
 uint8_t read_pin(uint8_t bit_num){
-    
+   
     //  return the Value of the pin by invoking the parent's method. 
     return Channel_Entity_Memory::read_pin(bit_num);
 }

@@ -58,8 +58,8 @@ OBJECTFILES= \
 CFLAGS=-j 4
 
 # CC Compiler Flags
-CCFLAGS=-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined
-CXXFLAGS=-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined
+CCFLAGS=-pthread
+CXXFLAGS=-pthread
 
 # Fortran Compiler Flags
 FFLAGS=
@@ -80,7 +80,7 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/controlpi: /usr/local/lib/libmcp23s17
 
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/controlpi: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/controlpi ${OBJECTFILES} ${LDLIBSOPTIONS} -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined
+	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/controlpi ${OBJECTFILES} ${LDLIBSOPTIONS} -pthread
 
 ${OBJECTDIR}/IO_Channel_AccesWrapper.o: IO_Channel_AccesWrapper.cpp
 	${MKDIR} -p ${OBJECTDIR}

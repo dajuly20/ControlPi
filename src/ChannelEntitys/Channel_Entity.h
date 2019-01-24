@@ -15,6 +15,7 @@
 #define CHANNEL_ENTITY_H
 #include "stdint.h"
 #include <stdexcept>
+#include <mutex>
 
 class Channel_Entity {
 public:
@@ -38,8 +39,9 @@ protected:
     const bool read_only  = false;
     const uint8_t width   = 8;
     char name;
-    
+    std::mutex entity_mtx;
 
+   
 };
 
 #endif /* CHANNEL_ENTITY_H */

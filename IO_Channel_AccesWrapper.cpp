@@ -13,6 +13,11 @@
 
 #include "IO_Channel_AccesWrapper.h"
 
+IO_Channel_AccesWrapper::IO_Channel_AccesWrapper(iterationSwitchGuard* _isg){
+    isg = _isg;
+    
+}
+
 IO_Channel_AccesWrapper& IO_Channel_AccesWrapper::operator[](char a){
         //cout << "Value is " << a;
         options.push_back(a);
@@ -33,6 +38,12 @@ ChannelEntitySP IO_Channel_AccesWrapper::operator->(){
     auto ret = (*io_channels[options[0]])[options[1]];
     options.clear();
     return ret;
+}
+
+void IO_Channel_AccesWrapper::insert(std::pair<char, IOChannelPtr> pair){
+    
+    pair.second->assignIsg(isg);
+    io_channels.insert(std::move(pair));
 }
 
 IO_Channel* IO_Channel_AccesWrapper::getIOChnl(){

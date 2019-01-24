@@ -24,6 +24,9 @@
 #include <condition_variable>
 #include <atomic>
 #include <chrono>
+#include <sys/file.h>
+#include <errno.h>
+
 
 
 #include "pifacedigitalcpp.h"
@@ -299,38 +302,25 @@ int main( int argc, char *argv[] )
     signal(SIGTERM, intHandler);    // " "
     signal(SIGUSR1 ,usrSigHandler); // Re-Reads config, doesn't exit.
     
-    cout << "Test 1 " << endl;
-
+  
     // Push all the possible channels to the array. 
     // Could Access now via (*myte.io_channels['H'])['i']->read_pin(0) 
     // But IO_Channel_AccessWrapper hides it away, and simplyfies access. so obj['H']['i']->member
-    cout << "Test 1.0 " << endl;
-    IO_Channel_AccesWrapper chnl;
-    cout << "Test 1.0.1 " << endl;
-    chnl.io_channels.insert(std::make_pair('H', new IO_Channel_Hw_PiFace()));
-    cout << "Test 1.0.1 " << endl;
-    chnl.io_channels.insert(std::make_pair('M', new IO_Channel_Virtual_Memory()));
-    cout << "Test 1.0.1 " << endl;
-    chnl.io_channels.insert(std::make_pair('T', new IO_Channel_Virtual_Timer()));
-cout << "Test 1.1 " << endl;
-
-    chnl['H'].getIOChnl()->assignIsg(&isg);
-    chnl['M'].getIOChnl()->assignIsg(&isg);
-    chnl['T'].getIOChnl()->assignIsg(&isg);
-    // Usage e.g.:  chnl['H']['i'][0];  ==> (*io_channels['H'])['i']->read_pin(0);
-  cout << "Test 1.2 " << endl;
+    IO_Channel_AccesWrapper chnl(&isg);
+    chnl.insert(std::make_pair('H', IOChannelPtr(new IO_Channel_Hw_PiFace())));
+    chnl.insert(std::make_pair('M', IOChannelPtr(new IO_Channel_Virtual_Memory())));
+    chnl.insert(std::make_pair('T', IOChannelPtr(new IO_Channel_Virtual_Timer()))); 
+//    // Usage e.g.:  chnl['H']['i'][0];  ==> (*io_channels['H'])['i']->read_pin(0);
 
     // Mandatory for interrupt funktion.
     inputs = chnl['H']['o']->read_all();
     printf("Outputs: 0x%x\n", inputs);
-cout << "Test 1.3 " << endl;
+
     // Initially read the config    
     std::string filename = "logic.conf";
     std::vector<std::string>  softLogic;
     softLogic  = loadSoftLogic(filename);
     configRead = true;
-    
-    cout << "Test 2 " << endl;
     
     // Initially parse identifiers once.
     // (Necessary to let starting values take efect.

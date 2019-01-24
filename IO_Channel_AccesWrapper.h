@@ -21,15 +21,22 @@
 
  typedef std::unique_ptr<IO_Channel> IOChannelPtr;
      
-
+ 
 class IO_Channel_AccesWrapper{
 public:
+    
+    iterationSwitchGuard* isg;
+    void insert(std::pair<char, IOChannelPtr> pair);
+    IO_Channel_AccesWrapper(iterationSwitchGuard* _isg);
     IO_Channel_AccesWrapper& operator[](char a);
-      uint8_t operator[](int a);
+    uint8_t operator[](int a);
     ChannelEntitySP operator->();
-    std::vector<char> options;
-    std::map<char,IOChannelPtr> io_channels;
     IO_Channel* getIOChnl();
+   
+private:
+    std::vector<char> options;
+    std::map<char,IOChannelPtr> io_channels; // io_channels must not be leaked! (isg needs to be assigned!)
+    
 };
 
 

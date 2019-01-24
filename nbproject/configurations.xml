@@ -95,14 +95,14 @@
         </cTool>
         <ccTool>
           <standard>11</standard>
-          <commandLine>-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined</commandLine>
+          <commandLine>-pthread</commandLine>
         </ccTool>
         <linkerTool>
           <linkerLibItems>
             <linkerLibFileItem>/usr/local/lib/libpifacedigitalcpp.a</linkerLibFileItem>
             <linkerLibFileItem>/usr/local/lib/libmcp23s17.a</linkerLibFileItem>
           </linkerLibItems>
-          <commandLine>-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined</commandLine>
+          <commandLine>-pthread</commandLine>
         </linkerTool>
       </compileType>
       <item path="IO_Channel_AccesWrapper.cpp" ex="false" tool="1" flavor2="0">
