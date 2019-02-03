@@ -16,6 +16,7 @@
 #include "../../timercppNew.h"
 #include "IO_Channel_Virtual.h"
 #include <memory>
+#include <vector>
 typedef std::unique_ptr<Timer> TimerPtr;
 
 class IO_Channel_Virtual_Timer : public IO_Channel_Virtual {
@@ -26,14 +27,18 @@ public:
     void trigger(bool _bdata, uint8_t bit_num);
     void test();
     
-     
-       std::map<int,TimerPtr> powerOnTimers;
-       std::map<int,TimerPtr> powerOffTimers;
+      
        
+    
+    bool setTimersCfg(std::vector<std::string> const* cfgLines);
        
     Timer* powerOnDelay ;
     Timer* powerOffDelay;
 private:
+    std::map<int,unsigned long>      powerOnTimersCfg;
+    std::map<int,unsigned long>      powerOffTimersCfg;
+    std::map<int,TimerPtr> powerOnTimers;
+    std::map<int,TimerPtr> powerOffTimers;
     //TimerCpp t = TimerCpp();
  
 

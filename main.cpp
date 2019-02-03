@@ -49,6 +49,7 @@ using namespace std;
 std::atomic<bool>    keepRunning(true);     //Used to interrupt mainloop
 static volatile bool configRead  = false; //Used to re-read configuration
 
+
 typedef std::shared_ptr<IO_Channel_AccesWrapper> IO_Channel_AccessWrapperPTR;
 
 
@@ -142,7 +143,7 @@ bool evaluateLogicString(string input){
  */
 void printSoftLogic(std::vector<std::string>& softLogic){
     
-    cout << endl << endl << "Uising following config:" << endl << "---------------------------------------------" << endl;
+    cout << endl << endl << "Using following config:" << endl << "---------------------------------------------" << endl;
     
     for (std::string outStr: softLogic) { 
         cout << outStr << endl;
@@ -184,7 +185,7 @@ void parseIdentifiers(IO_Channel_AccesWrapper& chnl, std::vector<std::string>& s
 
         // Splits the output string by the '=' sign in two parts:
         // 1. the Output to use (e.g. Ora0) 2nd the rawLogicString including used inputs in brackets e.g. ![Ira1] & [Ira0] | [Ira2];
-        if ((found = softLogicRow.find('=')) != string::npos){ // Changed "" to '' 27.12.2018. Remove comment when it works ;) 
+        if ((found = softLogicRow.find('=')) != string::npos){ 
             // The part before the '=' is the variable, to which whe outcome will be asigned to ==> 'asigned' part7
             // TODO Check for length of String
             string asignedEntityStr         = softLogicRow.substr(0,found);
@@ -251,16 +252,19 @@ std::string strip_white(const std::string& input)
  * Strips anything starting from the first position of given delimiter.
  * e.g. "#" for Comments.
  */
-std::string strip_comments(const std::string& input, const std::string& delimiters)
-{
-   return strip_white(input.substr(0, input.find_first_of(delimiters)));
+std::string strip_comments(const std::string  & input, const std::string& delimiters)
+{  
+    std::string inp = input;
+           inp.erase(remove_if(inp.begin(), inp.end(), ::isspace), inp.end());
+   return strip_white(inp.substr(0, inp.find_first_of(delimiters)));
 }
 
+
 /*
- * loadSoftLogic
+ * loadConfigFile
  * Loads logic from given filename, and returns it as vector of strings.
  */
-std::vector<std::string>  loadSoftLogic(std::string filename){
+std::vector<std::string>  loadConfigfile(std::string filename, bool emptyLines){
     
     std::string                 line;
     std::vector<std::string>    logic;
@@ -273,7 +277,7 @@ std::vector<std::string>  loadSoftLogic(std::string filename){
     while (std::getline(data, line)){
         std::string delimiters("#;");
         line = strip_comments(line, delimiters);
-        if(line.size() > 0){
+        if(emptyLines || line.size() > 0){ // Test: If empty lines are present, we can tell what line# it was on error.
             // TODO Check Syntax
             logic.push_back(line+';');
         }
@@ -316,10 +320,19 @@ int main( int argc, char *argv[] )
     inputs = chnl['H']['o']->read_all();
     printf("Outputs: 0x%x\n", inputs);
 
+    // Initially read the timers config    
+    std::string fn_timers = "timers.conf";
+    std::vector<std::string>  timersConf;
+    timersConf  = loadConfigfile(fn_timers, true);
+    
+    // Giving out the timers config to the actual timer(s?)
+    ((IO_Channel_Virtual_Timer*) (chnl['T'].getIOChnl()))->setTimersCfg(&timersConf);
+
+    
     // Initially read the config    
     std::string filename = "logic.conf";
     std::vector<std::string>  softLogic;
-    softLogic  = loadSoftLogic(filename);
+    softLogic  = loadConfigfile(filename, false);
     configRead = true;
     
     // Initially parse identifiers once.
@@ -378,20 +391,13 @@ int main( int argc, char *argv[] )
     // fno-omit-frame-pointer -fsanitize=thread
     // -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined
     // Main loop. 
-    cout << "Test 3 " << endl;
+    
     while(keepRunning){
-        cout << "Test 4 " << endl;
+        
         if (chnl['H'].getIOChnl()->interrupts_enabled()) {
             printf("\n\nWaiting for input (press any button on the PiFaceDigital)\n");
-            /*
-             * Something like:
-
-            condition_variable itCond;
-            mutex              itCondMutex;
-            bool               itCondSwitch;
-
-             */
-            
+       
+        
             {
             std::unique_lock<mutex> lock{isg.itCondMutex};
             cout << "locked in mainloop " << endl;
@@ -400,10 +406,15 @@ int main( int argc, char *argv[] )
             
             // Todo: Put in a thread itself
             if(configRead == false){
-               softLogic = loadSoftLogic(filename);
-               configRead = true;
-               printf("\n\nConfig has been reloaded!\n");
+                softLogic   = loadConfigfile(filename, false); // Loads soft-logic
+                timersConf  = loadConfigfile(fn_timers, true); // Loads timer-config.
+                ((IO_Channel_Virtual_Timer*) (chnl['T'].getIOChnl()))->setTimersCfg(&timersConf);
+                
+                configRead = true;
+                printf("\n\nConfig has been reloaded!\n");
             }
+            
+            
             
             chnl['H'].getIOChnl()->flush();
             parseIdentifiers(chnl, softLogic);
