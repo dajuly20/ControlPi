@@ -7,9 +7,21 @@
 # Official repository: https://github.com/boostorg/beast
 #
 
+
+
+
+#SET(CMAKE_C_COMPILER /usr/local/gcc-8.1.0/bin/gcc-8.1.0)
+#SET(CMAKE_CXX_COMPILER /usr/local/gcc-8.1.0/bin/g++-8.1.0)
+# DONT DO THAT... INSTEAD export new gcc as such
+#export CC=/usr/local/gcc-8.1.0/bin/gcc-8.1.0
+#export CXX=/usr/local/gcc-8.1.0/bin/g++-8.1.0
+
+
 cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
+
 #project(CppCon2018 VERSION 0.1.0 LANGUAGES CXX)
 project(WebSocketServer)
+
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -60,11 +72,11 @@ file(GLOB APP_FILES
 source_group("" FILES ${APP_FILES})
 
 #add_executable(${PROJECT_NAME} ${APP_FILES} ${BEAST_FILES})
-add_library(${PROJECT_NAME}  SHARED ${APP_FILES} ${BEAST_FILES})
+add_library(${PROJECT_NAME}  STATIC  ${APP_FILES} ${BEAST_FILES})
 
 if(NOT WIN32)
   find_package(Threads)
-  target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads ${Boost_SYSTEM_LIBRARY})
+  target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads ${Boost_SYSTEM_LIBRARY} -latomic )
 endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

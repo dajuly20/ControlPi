@@ -1,3 +1,10 @@
+
+#export CC=/usr/local/gcc-8.1.0/bin/gcc-8.1.0
+#export CXX=/usr/local/gcc-8.1.0/bin/g++-8.1.0   
+
+#SET(CMAKE_C_COMPILER /usr/local/gcc-8.1.0/bin/gcc-8.1.0)
+#SET(CMAKE_CXX_COMPILER /usr/local/gcc-8.1.0/bin/g++-8.1.0)
+
 cmake_minimum_required (VERSION 3.0.0)
 
 project(ControlPi)
@@ -121,7 +128,7 @@ boolLogicParser.cpp
 
 
 #target_link_libraries(${PROJECT_NAME} asan)
-target_link_libraries(${PROJECT_NAME} ${CMAKE_HOME_DIRECTORY}/src/WebSocket/bin/libWebSocketServer.so)
+target_link_libraries(${PROJECT_NAME} WebSocketServer)
 #target_link_libraries(${PROJECT_NAME} ./src/WebSocket/bin/libWebSocketServer.so)
 
 target_link_libraries(${PROJECT_NAME} /usr/local/lib/libpifacedigitalcpp.a)
