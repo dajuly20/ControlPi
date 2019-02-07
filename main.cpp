@@ -27,6 +27,10 @@
 #include <sys/file.h>
 #include <errno.h>
 
+#include "src/WebSocket/listener.hpp"
+#include "src/WebSocket/shared_state.hpp"
+#include <boost/asio/signal_set.hpp>
+
 
 
 #include "pifacedigitalcpp.h"
@@ -391,6 +395,42 @@ int main( int argc, char *argv[] )
     // fno-omit-frame-pointer -fsanitize=thread
     // -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined
     // Main loop. 
+    
+    
+    std::string adress = "0.0.0.0";
+    std::string power  = "8080";
+    std::string docr    = ".";
+    
+    auto address = net::ip::make_address(adress);
+    auto port = static_cast<unsigned short>(std::stoi(power));
+    auto doc_root = docr;
+
+    // The io_context is required for all I/O
+    net::io_context ioc;
+
+    // Create and launch a listening port
+    std::make_shared<listener>(
+        ioc,
+        tcp::endpoint{address, port},
+        std::make_shared<shared_state>(doc_root))->run();
+
+    // Capture SIGINT and SIGTERM to perform a clean shutdown
+    net::signal_set signals(ioc, SIGINT, SIGTERM);
+    signals.async_wait(
+        [&ioc](boost::system::error_code const&, int)
+        {
+            // Stop the io_context. This will cause run()
+            // to return immediately, eventually destroying the
+            // io_context and any remaining handlers in it.
+            ioc.stop();
+        });
+
+    // Run the I/O service on the main thread
+    ioc.run();
+
+    
+    
+    
     
     while(keepRunning){
         
