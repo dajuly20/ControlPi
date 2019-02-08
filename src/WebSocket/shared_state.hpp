@@ -13,6 +13,7 @@
 #include <memory>
 #include <string>
 #include <unordered_set>
+#include <unordered_map>
 
 // Forward declaration
 class websocket_session;
@@ -25,12 +26,14 @@ class shared_state
     // This simple method of tracking
     // sessions only works with an implicit
     // strand (i.e. a single-threaded server)
-    std::unordered_set<websocket_session*> sessions_;
-
+    std::unordered_set<websocket_session*>                   sessions_;
+    std::unordered_multimap<websocket_session*, std::string> rec_queue_;
+    
 public:
     explicit
     shared_state(std::string doc_root);
-
+    
+    
     std::string const&
     doc_root() const noexcept
     {
@@ -39,7 +42,8 @@ public:
 
     void join  (websocket_session& session);
     void leave (websocket_session& session);
-    void send  (std::string message);
+    void broadcast  (std::string message);
+    void process(websocket_session& session, std::string message);
 };
 
 #endif

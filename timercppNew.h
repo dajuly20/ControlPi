@@ -76,7 +76,7 @@ void Timer::setTimeout(Function &&function,
         }
         
   std::thread t{[this, delay, function]() {
-      pthread_setname_np(pthread_self(), "Timer-setTimeout");
+      pthread_setname_np(pthread_self(), "Timer-Timeout");
       auto deadline = clock::now() + delay;
     while (clock::now() < deadline) {
       std::unique_lock<std::mutex> lock{clear_mtx};
@@ -120,7 +120,7 @@ void Timer::setInterval(Function &&function,
         }
         
   std::thread t{[this, delay, function]() {
-        pthread_setname_np(pthread_self(), "Timer-setInterval");
+        pthread_setname_np(pthread_self(), "Timer-Interval");
         while(true) {
             {
                 std::unique_lock<std::mutex> lock{this->clear_mtx};

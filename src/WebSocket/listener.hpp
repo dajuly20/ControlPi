@@ -28,6 +28,7 @@ class listener : public std::enable_shared_from_this<listener>
     void on_accept(error_code ec);
 
 public:
+    std::shared_ptr<shared_state> getSharedState();
     listener(
         net::io_context& ioc,
         tcp::endpoint endpoint,

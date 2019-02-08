@@ -67,6 +67,8 @@ run()
         {
             self->on_accept(ec);
         });
+        
+    
 }
 
 // Report a failure
@@ -100,4 +102,9 @@ on_accept(error_code ec)
         {
             self->on_accept(ec);
         });
+}
+
+std::shared_ptr<shared_state> listener::getSharedState(){
+    
+    return state_;
 }

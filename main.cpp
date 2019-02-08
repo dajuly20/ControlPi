@@ -99,7 +99,7 @@ class replaceIdentifier{
 
 void intHandler(int dummy) {
     keepRunning = false;
-
+   
 }
 
 /* Signal Handler
@@ -304,13 +304,78 @@ int main( int argc, char *argv[] )
     iterationSwitchGuard isg;
   
     // Register signalHandlers
-    signal(SIGINT,  intHandler);    // Stops program gracefully
-    signal(SIGKILL, intHandler);    // " "
-    signal(SIGHUP,  intHandler);    // " "
-    signal(SIGTERM, intHandler);    // " "
+  //  signal(SIGINT,  intHandler);    // Stops program gracefully
+   // signal(SIGKILL, intHandler);    // " "
+  //  signal(SIGHUP,  intHandler);    // " "
+   // signal(SIGTERM, intHandler);    // " "
     signal(SIGUSR1 ,usrSigHandler); // Re-Reads config, doesn't exit.
     
   
+    
+    
+    
+        std::string adress = "0.0.0.0";
+    std::string power  = "8080";
+    std::string docr    = "./www/";
+    
+    auto address = net::ip::make_address(adress);
+    auto port = static_cast<unsigned short>(std::stoi(power));
+    auto doc_root = docr;
+
+    // The io_context is required for all I/O
+    net::io_context ioc;
+    
+    //shared_state* sharedStatePtr = 0;
+    
+    // Create and launch a listening port
+    shared_ptr<listener> p=
+    std::make_shared<listener>(
+        ioc,
+        tcp::endpoint{address, port},
+        std::make_shared<shared_state>(doc_root));
+        
+    shared_ptr<shared_state> webSockeSessions =  p->getSharedState();
+    p->run();
+
+    // Capture SIGINT and SIGTERM to perform a clean shutdown
+    net::signal_set signals(ioc, SIGINT, SIGTERM, SIGHUP);
+    signals.async_wait(
+        [&ioc,&keepRunning,&isg](boost::system::error_code const&, int)
+        {
+       
+            // Stop the io_context. This will cause run()
+            // to return immediately, eventually destroying the
+            // io_context and any remaining handlers in it.
+            keepRunning = false; // Stops the rest of the Program :) 
+            ioc.stop();
+            
+            {
+            std::unique_lock<mutex> lock{isg.itCondMutex};    
+            cout << "Locked in Net thread " << endl;
+            isg.itCondSwitch = true;  
+            }
+            isg.itCond.notify_one();
+        });
+
+    // Run the I/O service on the main thread
+    //ioc.run();
+
+    int threads = 2;
+    // Run the I/O service on the requested number of threads
+    std::vector<std::thread> v;
+    v.reserve(threads );
+    for(auto i = threads ; i > 0; --i)
+        v.emplace_back(
+        [&ioc]
+        {
+            pthread_setname_np(pthread_self(), "Network");
+            ioc.run();
+        });
+    
+  
+    
+    
+    
     // Push all the possible channels to the array. 
     // Could Access now via (*myte.io_channels['H'])['i']->read_pin(0) 
     // But IO_Channel_AccessWrapper hides it away, and simplyfies access. so obj['H']['i']->member
@@ -331,8 +396,7 @@ int main( int argc, char *argv[] )
     
     // Giving out the timers config to the actual timer(s?)
     ((IO_Channel_Virtual_Timer*) (chnl['T'].getIOChnl()))->setTimersCfg(&timersConf);
-
-    
+  
     // Initially read the config    
     std::string filename = "logic.conf";
     std::vector<std::string>  softLogic;
@@ -397,39 +461,7 @@ int main( int argc, char *argv[] )
     // Main loop. 
     
     
-    std::string adress = "0.0.0.0";
-    std::string power  = "8080";
-    std::string docr    = ".";
-    
-    auto address = net::ip::make_address(adress);
-    auto port = static_cast<unsigned short>(std::stoi(power));
-    auto doc_root = docr;
-
-    // The io_context is required for all I/O
-    net::io_context ioc;
-
-    // Create and launch a listening port
-    std::make_shared<listener>(
-        ioc,
-        tcp::endpoint{address, port},
-        std::make_shared<shared_state>(doc_root))->run();
-
-    // Capture SIGINT and SIGTERM to perform a clean shutdown
-    net::signal_set signals(ioc, SIGINT, SIGTERM);
-    signals.async_wait(
-        [&ioc](boost::system::error_code const&, int)
-        {
-            // Stop the io_context. This will cause run()
-            // to return immediately, eventually destroying the
-            // io_context and any remaining handlers in it.
-            ioc.stop();
-        });
-
-    // Run the I/O service on the main thread
-    ioc.run();
-
-    
-    
+  
     
     
     while(keepRunning){
@@ -460,6 +492,13 @@ int main( int argc, char *argv[] )
             parseIdentifiers(chnl, softLogic);
             chnl['H'].getIOChnl()->flush();
             
+            uint8_t Ho = chnl['H']['o']->read_all();
+            uint8_t Hi = chnl['H']['i']->read_all();
+            
+            std::string message = "{\"Ho\":" + std::to_string(Ho) + ",\"Hi\":"+std::to_string(Hi)+"}";
+            //std::cout << "Hardware Outputs are : " << Ho << std::endl;
+            webSockeSessions->broadcast(message);
+            
             isg.itCondSwitch = false; 
             }
             
@@ -469,4 +508,8 @@ int main( int argc, char *argv[] )
             keepRunning = 0;
         }
     }  
+    
+    // Block until all the threads exit
+    for(auto& t : v)
+        t.join();
 }

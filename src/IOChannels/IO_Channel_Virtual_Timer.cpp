@@ -173,6 +173,7 @@ void IO_Channel_Virtual_Timer::trigger(bool _tvalu, uint8_t bit_num){
             // Todo: Power off delay here!
             std::cout << "\n\n\nPOWER OFF TIMER# " << bit_num << " is :" << powerOffTimersCfg[bit_num] << std::endl;
             powerOffTimers[bit_num]->setTimeout([this, bit_num]() {
+                pthread_setname_np(pthread_self(), "PowerOffTimer");
                 std::cout << "Hey.. After 2s. I power off the bit./ BITNUM IS: " << std::to_string( (int)bit_num) << std::endl;
 
                 chEntities['o']->write_pin(0,bit_num);
@@ -200,6 +201,7 @@ void IO_Channel_Virtual_Timer::trigger(bool _tvalu, uint8_t bit_num){
     
             std::cout << "\n\n\nPOWER ON TIMER# " << bit_num << " is :" << powerOnTimersCfg[bit_num] << std::endl;
             powerOnTimers[bit_num]->setTimeout([this, bit_num]() {
+                pthread_setname_np(pthread_self(), "PowerOnTimer");
                 std::cout << "Hey.. After 1s. But I put the output to 1! BITNUM IS: " << std::to_string( (int)bit_num) << std::endl;
 
                 chEntities['o']->write_pin(1,bit_num);

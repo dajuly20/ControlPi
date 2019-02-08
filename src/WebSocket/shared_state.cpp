@@ -7,6 +7,8 @@
 // Official repository: https://github.com/vinniefalco/CppCon2018
 //
 
+#include <unordered_map>
+
 #include "shared_state.hpp"
 #include "websocket_session.hpp"
 
@@ -28,14 +30,23 @@ shared_state::
 leave(websocket_session& session)
 {
     sessions_.erase(&session);
+    rec_queue_.erase(&session);
 }
 
 void
 shared_state::
-send(std::string message)
+broadcast(std::string message)
 {
     auto const ss = std::make_shared<std::string const>(std::move(message));
 
     for(auto session : sessions_)
         session->send(ss);
+}
+
+void
+shared_state::
+process(websocket_session& session, std::string ss){
+    rec_queue_.insert(std::make_pair(&session, ss));
+    this->broadcast("Simon says: "+ss);
+    
 }
