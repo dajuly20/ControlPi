@@ -10,6 +10,8 @@
  *
  * Created on 6. Januar 2019, 20:05
  */
+#include <iostream> // cout
+#include <stdexcept> // throw
 
 #ifndef CHANNEL_ENTITY_MEMORY_H
 #define CHANNEL_ENTITY_MEMORY_H
@@ -28,6 +30,8 @@ public:
     
     virtual uint8_t read_all() override;
     virtual void    write_all(uint8_t data) override;
+    
+    virtual void write_pin_force(bool _bdata, uint8_t bit_num) override;
 private:
     uint8_t data;
 };

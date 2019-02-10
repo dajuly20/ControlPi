@@ -50,6 +50,9 @@
 #include "src/IOChannels/IO_Channel_Virtual_Timer.h"
 #include "src/IOChannels/IO_Channel_Virtual_Pipe.h"
 
+#include <boost/algorithm/string/classification.hpp> // Include boost::for is_any_of
+#include <boost/algorithm/string/split.hpp> // Include for boost::split
+
 using namespace std;
 
 // Globals 
@@ -364,43 +367,56 @@ int main( int argc, char *argv[] )
 
         
       
+    // Push all the possible channels to the array. 
+    // Could Access now via (*myte.io_channels['H'])['i']->read_pin(0) 
+    // But IO_Channel_AccessWrapper hides it away, and simplyfies access. so obj['H']['i']->member
+    IO_Channel_AccesWrapper chnl(&isg);
+    chnl.insert(std::make_pair('H', IOChannelPtr(new IO_Channel_Hw_PiFace())));
+    chnl.insert(std::make_pair('M', IOChannelPtr(new IO_Channel_Virtual_Memory())));
+    chnl.insert(std::make_pair('T', IOChannelPtr(new IO_Channel_Virtual_Timer()))); 
+    chnl.insert(std::make_pair('P', IOChannelPtr(new IO_Channel_Virtual_Pipe()))); 
         
         
         
         
         
-        
-            std::thread remoteCmdProcessor([&webSockeSessions,&keepRunning](){
-                std::pair<websocket_session*, std::string>  command = make_pair((websocket_session*) NULL, "");
-                
-                while(keepRunning){
+    std::thread remoteCmdProcessor([&webSockeSessions,&keepRunning,&chnl](){
+        std::pair<websocket_session*, std::string>  command = make_pair((websocket_session*) NULL, "");
+
+        while(keepRunning){
+
+            webSockeSessions->commandQueue_wait_and_pop(command);
+
+            if(command.first == NULL) break;
+
+            std::cout << "Received command: " << command.second << std::endl;
+            std::string message = "Processing command: " + command.second;
+      
+            
+            std::vector<std::string> crumbs;
+            boost::split(crumbs, command.second, boost::is_any_of(":"), boost::token_compress_on);
+            
+            if(crumbs[0] == "set"){
+                if(crumbs[1] == "Pi0"){
                     
-                    webSockeSessions->commandQueue_wait_and_pop(command);
-                    
-                    if(command.first == NULL) break;
-                    
-                    std::cout << "Received command: " << command.second << std::endl;
-                    std::string message = "Processing command: " + command.second;
-                     auto const ss = std::make_shared<std::string const>(std::move(message));
-                    command.first->send(ss);
-                    webSockeSessions->broadcast("Ok.");
-                
+                  if(crumbs[2] == "high"){
+                    chnl['P']['i']->write_pin_force(1,0);
+                  }
+                  else{
+                    chnl['P']['i']->write_pin_force(1,0);  
+                  }
                 }
-            });
-    
-            remoteCmdProcessor.detach();
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-     
-        
+            }
+            
+            auto const ss = std::make_shared<std::string const>(std::move(message));
+            command.first->send(ss);
+            //webSockeSessions->broadcast("Ok.");
+
+        }
+    });
+
+    remoteCmdProcessor.detach();
+
      
     // Run the I/O service on the main thread
     //ioc.run();
@@ -416,19 +432,8 @@ int main( int argc, char *argv[] )
             pthread_setname_np(pthread_self(), "Network");
             ioc.run();
         });
-    
-  
-    
-    
-    
-    // Push all the possible channels to the array. 
-    // Could Access now via (*myte.io_channels['H'])['i']->read_pin(0) 
-    // But IO_Channel_AccessWrapper hides it away, and simplyfies access. so obj['H']['i']->member
-    IO_Channel_AccesWrapper chnl(&isg);
-    chnl.insert(std::make_pair('H', IOChannelPtr(new IO_Channel_Hw_PiFace())));
-    chnl.insert(std::make_pair('M', IOChannelPtr(new IO_Channel_Virtual_Memory())));
-    chnl.insert(std::make_pair('T', IOChannelPtr(new IO_Channel_Virtual_Timer()))); 
-    chnl.insert(std::make_pair('P', IOChannelPtr(new IO_Channel_Virtual_Pipe()))); 
+
+
 //    // Usage e.g.:  chnl['H']['i'][0];  ==> (*io_channels['H'])['i']->read_pin(0);
 
     // Mandatory for interrupt funktion.
