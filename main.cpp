@@ -401,11 +401,27 @@ int main( int argc, char *argv[] )
                     
                   if(crumbs[2] == "high"){
                     chnl['P']['i']->write_pin_force(1,0);
+                    message = "Set Pi0 to high";
                   }
                   else{
                     chnl['P']['i']->write_pin_force(1,0);  
+                    message = "Set Pi0 to high";
                   }
+                  
+                  { // Scope for lock
+                    std::unique_lock<mutex> lock{isg.itCondMutex};    
+                    cout << "Locked in signal thread " << endl;
+                    isg.itCondSwitch = true;  
+                  }
+                isg.itCond.notify_one();
+                  
                 }
+                else{
+                    message = "Command not understood(2) "+command.second;
+                }
+            }
+            else{
+                message = "Command not understood(1) "+command.second;
             }
             
             auto const ss = std::make_shared<std::string const>(std::move(message));
