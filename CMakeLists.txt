@@ -122,6 +122,8 @@ src/ChannelEntitys/Channel_Entity.cpp
 src/ChannelEntitys/Channel_Entities_PiFace.cpp
 src/ChannelEntitys/Channel_Entity_TimerOutput.cpp
 src/ChannelEntitys/Channel_Entity_TimerTrigger.cpp
+src/ChannelEntitys/Channel_Entity_Pipe_RX.cpp
+src/ChannelEntitys/Channel_Entity_Pipe_TX.cpp
 IO_Channel_AccesWrapper.cpp
 boolLogicParser.cpp
 )

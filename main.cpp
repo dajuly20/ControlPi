@@ -48,6 +48,7 @@
 #include "src/IOChannels/IO_Channel_Virtual_Memory.h"
 #include "IO_Channel_AccesWrapper.h"
 #include "src/IOChannels/IO_Channel_Virtual_Timer.h"
+#include "src/IOChannels/IO_Channel_Virtual_Pipe.h"
 
 using namespace std;
 
@@ -427,6 +428,7 @@ int main( int argc, char *argv[] )
     chnl.insert(std::make_pair('H', IOChannelPtr(new IO_Channel_Hw_PiFace())));
     chnl.insert(std::make_pair('M', IOChannelPtr(new IO_Channel_Virtual_Memory())));
     chnl.insert(std::make_pair('T', IOChannelPtr(new IO_Channel_Virtual_Timer()))); 
+    chnl.insert(std::make_pair('P', IOChannelPtr(new IO_Channel_Virtual_Pipe()))); 
 //    // Usage e.g.:  chnl['H']['i'][0];  ==> (*io_channels['H'])['i']->read_pin(0);
 
     // Mandatory for interrupt funktion.

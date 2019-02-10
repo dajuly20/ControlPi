@@ -10,10 +10,20 @@
  * 
  * Created on December 18, 2018, 6:57 PM
  */
-
+#include "../../globals.h"
 #include "IO_Channel_Virtual_Pipe.h"
+#include "../ChannelEntitys/Channel_Entity.h"
+#include "../ChannelEntitys/Channel_Entity_Pipe_RX.h"
+#include "../ChannelEntitys/Channel_Entity_Pipe_TX.h"
 
 IO_Channel_Virtual_Pipe::IO_Channel_Virtual_Pipe() {
+     
+    
+    ChannelEntitySP receiveEntity  ( new Channel_Entity_Pipe_RX());
+    ChannelEntitySP transmitEntity ( new Channel_Entity_Pipe_TX());
+   
+    chEntities.insert ( std::make_pair('i',receiveEntity) );
+    chEntities.insert ( std::make_pair('o',transmitEntity) );
 }
 
 IO_Channel_Virtual_Pipe::IO_Channel_Virtual_Pipe(const IO_Channel_Virtual_Pipe& orig) {
