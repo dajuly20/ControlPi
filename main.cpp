@@ -29,6 +29,8 @@
 
 #include "src/WebSocket/listener.hpp"
 #include "src/WebSocket/shared_state.hpp"
+#include "src/WebSocket/websocket_session.hpp"
+
 #include <boost/asio/signal_set.hpp>
 
 
@@ -314,7 +316,7 @@ int main( int argc, char *argv[] )
     
     
     
-        std::string adress = "0.0.0.0";
+    std::string adress = "0.0.0.0";
     std::string power  = "8080";
     std::string docr    = "./www/";
     
@@ -335,12 +337,12 @@ int main( int argc, char *argv[] )
         std::make_shared<shared_state>(doc_root));
         
     shared_ptr<shared_state> webSockeSessions =  p->getSharedState();
-    p->run();
+   p->run();
 
     // Capture SIGINT and SIGTERM to perform a clean shutdown
     net::signal_set signals(ioc, SIGINT, SIGTERM, SIGHUP);
     signals.async_wait(
-        [&ioc,&keepRunning,&isg](boost::system::error_code const&, int)
+        [&ioc,&keepRunning,&isg,&webSockeSessions](boost::system::error_code const&, int)
         {
        
             // Stop the io_context. This will cause run()
@@ -348,6 +350,8 @@ int main( int argc, char *argv[] )
             // io_context and any remaining handlers in it.
             keepRunning = false; // Stops the rest of the Program :) 
             ioc.stop();
+            
+            webSockeSessions->notify_shutdown();
             
             {
             std::unique_lock<mutex> lock{isg.itCondMutex};    
@@ -357,6 +361,46 @@ int main( int argc, char *argv[] )
             isg.itCond.notify_one();
         });
 
+        
+      
+        
+        
+        
+        
+        
+        
+            std::thread remoteCmdProcessor([&webSockeSessions,&keepRunning](){
+                std::pair<websocket_session*, std::string>  command = make_pair((websocket_session*) NULL, "");
+                
+                while(keepRunning){
+                    
+                    webSockeSessions->commandQueue_wait_and_pop(command);
+                    
+                    if(command.first == NULL) break;
+                    
+                    std::cout << "Received command: " << command.second << std::endl;
+                    std::string message = "Processing command: " + command.second;
+                     auto const ss = std::make_shared<std::string const>(std::move(message));
+                    command.first->send(ss);
+                    webSockeSessions->broadcast("Ok.");
+                
+                }
+            });
+    
+            remoteCmdProcessor.detach();
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+     
+        
+     
     // Run the I/O service on the main thread
     //ioc.run();
 

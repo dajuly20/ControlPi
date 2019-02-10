@@ -1,11 +1,12 @@
-//
-// Copyright (c) 2018 Vinnie Falco (vinnie dot falco at gmail dot com)
-//
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-//
-// Official repository: https://github.com/vinniefalco/CppCon2018
-//
+/*
+ Copyright (c) 2018 Vinnie Falco (vinnie dot falco at gmail dot com)
+
+ Distributed under the Boost Software License, Version 1.0. (See accompanying
+ file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+ Official repository: https://github.com/vinniefalco/CppCon2018
+
+ */
 
 #ifndef CPPCON2018_SHARED_STATE_HPP
 #define CPPCON2018_SHARED_STATE_HPP
@@ -14,6 +15,9 @@
 #include <string>
 #include <unordered_set>
 #include <unordered_map>
+#include <mutex>
+#include <condition_variable>
+#include <queue>
 
 // Forward declaration
 class websocket_session;
@@ -22,14 +26,21 @@ class websocket_session;
 class shared_state
 {
     std::string doc_root_;
-
-    // This simple method of tracking
-    // sessions only works with an implicit
-    // strand (i.e. a single-threaded server)
+    
+   //  This simple method of tracking
+   //  sessions only works with an implicit
+   //  strand (i.e. a single-threaded server)
     std::unordered_set<websocket_session*>                   sessions_;
-    std::unordered_multimap<websocket_session*, std::string> rec_queue_;
+   //std::unordered_multimap<websocket_session*, std::string>
+    std::queue<std::pair<websocket_session*, std::string>> commandQueue;
+    
+    std::mutex              commandQueue_mutex;
     
 public:
+    std::condition_variable commandQueue_ready;
+    
+    
+    
     explicit
     shared_state(std::string doc_root);
     
@@ -42,8 +53,13 @@ public:
 
     void join  (websocket_session& session);
     void leave (websocket_session& session);
-    void broadcast  (std::string message);
-    void process(websocket_session& session, std::string message);
+    void broadcast (std::string message); 
+    
+    void notify_shutdown();
+    void commandQueue_wait_for_data();
+    void commandQueue_wait_and_pop(std::pair<websocket_session*, std::string>& popedValue);
+    std::pair<websocket_session*, std::string> commandQueue_pop();
+    void commandQueue_push(websocket_session& session, std::string message);
 };
 
 #endif

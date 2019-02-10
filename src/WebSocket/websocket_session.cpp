@@ -11,7 +11,7 @@
 
 websocket_session::
 websocket_session(
-    tcp::socket socket,
+    [tcp::socket socket,
     std::shared_ptr<shared_state> const& state)
     : ws_(std::move(socket))
     , state_(state)
@@ -68,7 +68,7 @@ on_read(error_code ec, std::size_t)
 
     // Send to all connections
     //state_->broadcast(beast::buffers_to_string(buffer_.data()));
-    state_->process    (*this, beast::buffers_to_string(buffer_.data()));
+    state_->commandQueue_push    (*this, beast::buffers_to_string(buffer_.data()));
 
     // Clear the buffer
     buffer_.consume(buffer_.size());
