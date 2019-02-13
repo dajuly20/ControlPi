@@ -52,7 +52,12 @@ public:
     
      uint8_t read_pin(uint8_t bit_num) override {return pfd->read_pin(bit_num, PiFaceDigital::IN);}
      uint8_t read_all() override {return pfd->read_byte(PiFaceDigital::IN);}
-    
+                                                                                                                     
+   void   write_pin_force(bool data, uint8_t bit_num) override { check_range(bit_num); pfd->write_pin(data, bit_num, PiFaceDigital::IN);};
+   void   write_all_force(uint8_t data) override { pfd->write_byte(data, PiFaceDigital::IN); };                     
+                                                                                                                      
+                                                                                                                      
+ }; 
     
 };
 

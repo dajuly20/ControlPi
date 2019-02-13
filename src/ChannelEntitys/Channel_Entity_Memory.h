@@ -30,8 +30,7 @@ public:
     
     virtual uint8_t read_all() override;
     virtual void    write_all(uint8_t data) override;
-    
-    virtual void write_pin_force(bool _bdata, uint8_t bit_num) override;
+   
 private:
     uint8_t data;
 };

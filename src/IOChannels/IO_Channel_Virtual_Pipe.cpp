@@ -16,8 +16,10 @@
 #include "../ChannelEntitys/Channel_Entity_Pipe_RX.h"
 #include "../ChannelEntitys/Channel_Entity_Pipe_TX.h"
 
-IO_Channel_Virtual_Pipe::IO_Channel_Virtual_Pipe() {
-     
+IO_Channel_Virtual_Pipe::IO_Channel_Virtual_Pipe(std::string _token, int _permission) { //: token(_token), permission(_permission){
+    
+    token = _token;
+    permission = _permission;
     
     ChannelEntitySP receiveEntity  ( new Channel_Entity_Pipe_RX());
     ChannelEntitySP transmitEntity ( new Channel_Entity_Pipe_TX());

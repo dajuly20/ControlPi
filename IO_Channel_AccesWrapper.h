@@ -16,6 +16,7 @@
 #include <memory>   // shared_ptr
 #include <vector>
 #include <map>
+#include <mutex>
 #include "src/IOChannels/IO_Channel.h"
 #include "src/ChannelEntitys/Channel_Entity.h"
 
@@ -24,18 +25,30 @@
  
 class IO_Channel_AccesWrapper{
 public:
-    
+    std::mutex raceMutex;
     iterationSwitchGuard* isg;
     void insert(std::pair<char, IOChannelPtr> pair);
     IO_Channel_AccesWrapper(iterationSwitchGuard* _isg);
+    
+    IO_Channel_AccesWrapper(const IO_Channel_AccesWrapper& obj);
+    IO_Channel_AccesWrapper& operator=(const IO_Channel_AccesWrapper& obj);
     IO_Channel_AccesWrapper& operator[](char a);
+    bool is_valid(char& io_Chnl, char& io_Entity);
     uint8_t operator[](int a);
     ChannelEntitySP operator->();
     IO_Channel* getIOChnl();
-   
+    IO_Channel_AccesWrapper();
+    
+    const std::map<char,IOChannelPtr>& getAllChannels(){
+        return io_channels;
+    }
+    
+    
 private:
+    
+    static std::map<char,IOChannelPtr> io_channels; // io_channels must not be leaked! (isg needs to be assigned!)
     std::vector<char> options;
-    std::map<char,IOChannelPtr> io_channels; // io_channels must not be leaked! (isg needs to be assigned!)
+    
     
 };
 

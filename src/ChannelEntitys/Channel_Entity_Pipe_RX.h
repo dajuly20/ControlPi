@@ -25,7 +25,7 @@ public:
     Channel_Entity_Pipe_RX(const Channel_Entity_Pipe_RX& orig);
     virtual ~Channel_Entity_Pipe_RX();
     void write_pin(bool _bdata, uint8_t bit_num) override; 
-    //void write_pin_force(bool _bdata, uint8_t bit_num);
+    void write_pin_force(bool _bdata, uint8_t bit_num);
 private:
 
 };

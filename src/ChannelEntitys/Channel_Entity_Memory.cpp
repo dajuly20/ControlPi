@@ -38,11 +38,6 @@ void    Channel_Entity_Memory::write_pin(bool _bdata, uint8_t bit_num){
     }
 }
 
-void Channel_Entity_Memory::write_pin_force(bool _bdata, uint8_t bit_num){   
-    std::cout << " **************************** \n\nWrite pin invoked  " << _bdata << " on bit number" << (int) bit_num << " \n\n*******************" << std::endl;
-    // invoke parent write pin method to really save the pin value
-    Channel_Entity_Memory::write_pin(_bdata, bit_num);
-}
 
 uint8_t Channel_Entity_Memory::read_all(){
     std::unique_lock<std::mutex> lock{entity_mtx}; 

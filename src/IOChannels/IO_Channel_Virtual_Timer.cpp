@@ -25,6 +25,7 @@
 #include <algorithm>
 
 IO_Channel_Virtual_Timer::IO_Channel_Virtual_Timer(){
+    
     Channel_Entity_TimerTrigger* triggerEntityT = new Channel_Entity_TimerTrigger();
     
     ChannelEntitySP triggerEntity( triggerEntityT);

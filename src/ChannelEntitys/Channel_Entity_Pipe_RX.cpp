@@ -24,6 +24,7 @@ Channel_Entity_Pipe_RX::~Channel_Entity_Pipe_RX() {
 }
 
 
+
 void Channel_Entity_Pipe_RX::write_pin(bool _bdata, uint8_t bit_num){   
     std::cout << " **************************** \n\nWrite pin invoked  " << _bdata << " on bit number" << (int) bit_num << " \n\n*******************" << std::endl;
 
@@ -31,7 +32,11 @@ void Channel_Entity_Pipe_RX::write_pin(bool _bdata, uint8_t bit_num){
      throw std::invalid_argument("Error: Cannot assign readOnly entity with value! (e.g. Pi0=1; in logic.conf  ");
 }
 
-
+void Channel_Entity_Pipe_RX::write_pin_force(bool _bdata, uint8_t bit_num){   
+  
+    // Call parent write method
+    Channel_Entity_Memory::write_pin(_bdata, bit_num);
+}
 /*
  * 
  * Now defined in Chanel_Entity Baseclass ... See if that works as expected.

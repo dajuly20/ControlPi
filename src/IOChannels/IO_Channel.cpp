@@ -14,8 +14,9 @@
 #include "IO_Channel.h"
 
 IO_Channel::IO_Channel() {
+    token="none";
+    permission=0;
 }
-
 
 
 IO_Channel::IO_Channel(const IO_Channel& orig) {

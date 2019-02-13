@@ -24,10 +24,12 @@ public:
     virtual ~Channel_Entity();
     virtual uint8_t read_pin(uint8_t bit_num){                  throw std::invalid_argument("Must override read_pin() ");}
     virtual void   write_pin(bool data, uint8_t bit_num){       throw std::invalid_argument("Must override write_pin()");}
-    virtual void   write_pin_force(bool data, uint8_t bit_num){ throw std::invalid_argument("Must override write_pin()");}
+    virtual void   write_pin_force(bool data, uint8_t bit_num){ write_pin(data, bit_num);} // Delegated to write pin, unless overridden
     virtual uint8_t read_all(){                                 throw std::invalid_argument("Must override read_all() ");};
     virtual void    write_all(uint8_t data){                    throw std::invalid_argument("Must override write_all()");};
-       
+    virtual void    write_all_force(uint8_t data){              write_all(data);}; // Delegated to write pin, unless overridden
+    
+    
     void check_range( int bit_num){
  
         if( 

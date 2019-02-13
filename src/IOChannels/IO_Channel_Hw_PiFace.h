@@ -26,6 +26,10 @@ class IO_Channel_Hw_PiFace : public IO_Channel_Hw {
 public:
     
     IO_Channel_Hw_PiFace();
+    IO_Channel_Hw_PiFace(std::string _token, int _permission) : IO_Channel_Hw_PiFace(){ 
+        token      = _token;
+        permission = _permission;
+       }
     //IO_Channel_Hw_PiFace(PiFaceDigital* pfd_init) ;
     
     IO_Channel_Hw_PiFace(const IO_Channel_Hw_PiFace& orig);
