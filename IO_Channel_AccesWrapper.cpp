@@ -70,6 +70,11 @@ IO_Channel_AccesWrapper& IO_Channel_AccesWrapper::operator[](char a){
       return true;
   }
 
+  bool IO_Channel_AccesWrapper::is_valid(char& io_Chnl){
+      if(!IO_Channel_AccesWrapper::io_channels                       .count(io_Chnl))   return false;
+      return true;
+  }
+  
 ChannelEntitySP IO_Channel_AccesWrapper::operator->(){
    
     if(options.size() != 2){

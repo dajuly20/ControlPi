@@ -13,7 +13,10 @@
 
 #include "Channel_Entity.h"
 
-Channel_Entity::Channel_Entity() {
+Channel_Entity::Channel_Entity( int perm_read_ ,  int perm_write_ ) {
+    
+    perm_read  = perm_read_;
+    perm_write = perm_write_; 
 }
 
 Channel_Entity::Channel_Entity(const Channel_Entity& orig) {

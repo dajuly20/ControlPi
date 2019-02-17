@@ -13,9 +13,6 @@
 
 #include "Channel_Entity_Pipe_RX.h"
 
-Channel_Entity_Pipe_RX::Channel_Entity_Pipe_RX() {
-    
-}
 
 Channel_Entity_Pipe_RX::Channel_Entity_Pipe_RX(const Channel_Entity_Pipe_RX& orig) {
 }

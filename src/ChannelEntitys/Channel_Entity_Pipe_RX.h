@@ -21,7 +21,12 @@
 
 class Channel_Entity_Pipe_RX : public Channel_Entity_Memory {
 public:
-    Channel_Entity_Pipe_RX();
+    Channel_Entity_Pipe_RX( int perm_read_ = Channel_Entity::exp_none,  int perm_write_ = Channel_Entity::exp_none){
+    
+    perm_read  = perm_read_;
+    perm_write = perm_write_; 
+}
+    
     Channel_Entity_Pipe_RX(const Channel_Entity_Pipe_RX& orig);
     virtual ~Channel_Entity_Pipe_RX();
     void write_pin(bool _bdata, uint8_t bit_num) override; 

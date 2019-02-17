@@ -18,7 +18,9 @@
 #include "../../iterationSwitchGuard.h"
 #include <iostream> //cout
 #include <memory>   // shared_ptr
-#include <map>      // map
+#include <map>
+#include <vector>      // map
+#include "../WebSocket/websocket_session.hpp"
 
 typedef std::shared_ptr<Channel_Entity> ChannelEntitySP;
 
@@ -65,8 +67,32 @@ public:
     virtual void caching_disable(){};
     virtual void flush(){};
     
-    const int& getPermission(){
+    const int& getPermission(bool authorized){
         return permission;
+    }
+    
+    bool checkToken(std::string& token_is){
+        return (token_is == this->token);
+    }
+    
+    bool is_session_autorized(websocket_session* session){
+        //std::cout << "Sessions authorized:" << authorized_sessions.size() << "Session: " << (int) session <<  std::endl;
+        return (std::find(authorized_sessions.begin(), authorized_sessions.end(), session) != authorized_sessions.end());
+        
+        for(websocket_session* authorized_session : authorized_sessions){
+            if(authorized_session == session){
+                std::cout << "FOUND! " << std::endl;
+                return true;
+            }
+            else{
+                std::cout << "NOT found given session " << session << " != " << authorized_session << std::endl;
+            }
+        }
+    }
+    
+    void add_authorized_session(websocket_session* session){
+        authorized_sessions.push_back(session);
+        //std::cout << "Sessions authorized:" << authorized_sessions.size() << "Session: " << (int) session <<  std::endl;
     }
     
     const int u_r  = 0x400;
@@ -84,6 +110,8 @@ public:
     
  protected:   
   
+     std::vector<websocket_session*> authorized_sessions;
+     
     /* Like Unix File-rights, but only two digits, and no execute bit is ignored-
      * Having token       = user (owner)
      * Having global key  = group 

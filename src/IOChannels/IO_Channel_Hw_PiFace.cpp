@@ -43,8 +43,8 @@ IO_Channel_Hw_PiFace::IO_Channel_Hw_PiFace() {
 }
 
 void IO_Channel_Hw_PiFace::init_pfd_object(){
-    ChannelEntitySP output ( new Channel_Entity_PiFace_Outputs(pfdsp));
-    ChannelEntitySP input  ( new Channel_Entity_PiFace_Inputs (pfdsp));
+    ChannelEntitySP output ( new Channel_Entity_PiFace_Outputs(pfdsp, Channel_Entity::exp_public, Channel_Entity::exp_none));
+    ChannelEntitySP input  ( new Channel_Entity_PiFace_Inputs (pfdsp, Channel_Entity::exp_public, Channel_Entity::exp_none));
     
     chEntities.insert ( std::make_pair('o',output) );
     chEntities.insert ( std::make_pair('i',input)  );

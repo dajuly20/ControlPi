@@ -20,9 +20,9 @@ IO_Channel_Virtual_Pipe::IO_Channel_Virtual_Pipe(std::string _token, int _permis
     
     token = _token;
     permission = _permission;
-    
-    ChannelEntitySP receiveEntity  ( new Channel_Entity_Pipe_RX());
-    ChannelEntitySP transmitEntity ( new Channel_Entity_Pipe_TX());
+    // Perspective: This program so Receive are "switches" on the Web-Frontend and Transmit are "LED"s on the other side.
+    ChannelEntitySP receiveEntity  ( new Channel_Entity_Pipe_RX(Channel_Entity::exp_public, Channel_Entity::exp_private));
+    ChannelEntitySP transmitEntity ( new Channel_Entity_Pipe_TX(Channel_Entity::exp_public, Channel_Entity::exp_none));
    
     chEntities.insert ( std::make_pair('i',receiveEntity) );
     chEntities.insert ( std::make_pair('o',transmitEntity) );

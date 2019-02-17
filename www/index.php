@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -92,7 +93,7 @@ display:none;
 </div>
 
 <h3><?php echo "PHP ready!";?> 
-  Server URI: <input class="draw-border" id="uri" size="47" value="ws://<?php echo $_SERVER["HTTP_HOST"];?>" style="margin-bottom: 5px;">
+  Server URI: <input class="draw-border" id="uri" size="47" value="wss://<?php echo $_SERVER["HTTP_HOST"];?>" style="margin-bottom: 5px;">
   <button class="echo-button" id="connect">Connect</button>
   <button class="echo-button" id="disconnect">Disconnect</button><br>
   
@@ -220,5 +221,7 @@ $(".switches").mouseup(function(event){
 });
 
   </script>
-</body>
+
+
+  </body>
 </html>

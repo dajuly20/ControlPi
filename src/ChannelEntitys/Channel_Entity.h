@@ -16,10 +16,20 @@
 #include "stdint.h"
 #include <stdexcept>
 #include <mutex>
+#include <iostream>
 
 class Channel_Entity {
 public:
-    Channel_Entity();
+    
+    static const int exp_public  = 2;
+    static const int exp_private = 1;
+    static const int exp_none    = 0;
+
+    static const int op_write = 2;
+    static const int op_read  = 4;
+    
+    
+    Channel_Entity( int perm_read_ = Channel_Entity::exp_none,  int perm_write_ = Channel_Entity::exp_none);
     Channel_Entity(const Channel_Entity& orig);
     virtual ~Channel_Entity();
     virtual uint8_t read_pin(uint8_t bit_num){                  throw std::invalid_argument("Must override read_pin() ");}
@@ -30,6 +40,38 @@ public:
     virtual void    write_all_force(uint8_t data){              write_all(data);}; // Delegated to write pin, unless overridden
     
     
+   
+    bool checkPermission(int operation, bool authorized){
+        
+        std::cout << "Operation: " << operation << " perm_read: " << perm_read << " perm_write: " << perm_write << std::endl;
+        std::cout << (authorized ? " authorized " : " not authorized ") << std::endl;
+      
+        
+        switch(operation){
+        
+            case op_read: 
+                return       (perm_read == exp_public
+                        || ((perm_read == exp_private) && authorized));
+            break;
+                
+            case op_write:
+                std::cout << "Write " << std::endl;
+                return       (perm_write == exp_public
+                        || ((perm_write == exp_private) && authorized));
+            break;
+                
+            default:
+                throw std::invalid_argument("Error: checkPermission unrecognized operation.");
+                return false;
+                // Error
+            
+        }
+        
+       
+    }
+    
+    
+    
     void check_range( int bit_num){
  
         if( 
@@ -38,7 +80,12 @@ public:
            )    throw std::invalid_argument("Bit " + std::to_string(bit_num)  + " exceeds bit range of 0 - " +  std::to_string(width-1));
     };
   
+
+    int perm_read;
+    int perm_write;
 protected:
+
+    
     const bool read_only  = false;
     const uint8_t width   = 8;
     char name;

@@ -13,8 +13,6 @@
 
 #include "Channel_Entity_Pipe_TX.h"
 
-Channel_Entity_Pipe_TX::Channel_Entity_Pipe_TX() {
-}
 
 Channel_Entity_Pipe_TX::Channel_Entity_Pipe_TX(const Channel_Entity_Pipe_TX& orig) {
 }

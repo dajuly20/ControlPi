@@ -306,9 +306,25 @@ class commandProcessor{
     IO_Channel_AccesWrapper chnl;
     shared_ptr<shared_state>& webSocketSessions;
     
+     std::string command_auth(std::vector<std::string>& crumbs, websocket_session* session){
+         if(crumbs.size() != 3)
+             return this->errText(1);
+                     
+         char IO_Channel      = crumbs[1][0]; // Anything but the first character is ignored, so they can write "Hardware" if they like.
+         std::string token_is = crumbs[2]; 
+         
+         if(!chnl.is_valid(IO_Channel)) 
+             return this->errText(2);
+         
+         if(!chnl[IO_Channel].getIOChnl()->checkToken(token_is)) // Todo 2
+             return this->errText(4);
+         
+         chnl[IO_Channel].getIOChnl()->add_authorized_session(session); // Todo 3
+         return "ok.";
+         
+     }
     
-    
-    std::string command_set(std::vector<std::string>& crumbs){
+    std::string command_set(std::vector<std::string>& crumbs, websocket_session* session){
         // Check for parts "number of : "
         if(crumbs.size() != 3)
             return this->errText(1);
@@ -320,6 +336,7 @@ class commandProcessor{
             
         char IO_Channel  = (crumbs[1])[0];
         char IO_Entity   = (crumbs[1])[1];
+    
         std::string valstr    = crumbs[2];
         std::cout << "IO Chnl:" << IO_Channel << " IOEntity: " << IO_Entity << std::endl;
 
@@ -332,10 +349,12 @@ class commandProcessor{
             return out;
         }
         
-        const int& permission = chnl[IO_Channel].getIOChnl()->getPermission();
-        if(permission == 0){
-            return this->errText(3);
-        }
+        bool authorized = chnl[IO_Channel].getIOChnl()->is_session_autorized(session);
+           
+      
+        if(!chnl[IO_Channel][IO_Entity]->checkPermission(Channel_Entity::op_write, authorized))
+            return this->errText(3, authorized);
+        
         
         std::cout << " Command seems to be vaild! \n";
 
@@ -401,27 +420,56 @@ public:
     // Called from main thread...so needs its own copy of chnl, brought in from main thread.
     void iterationTriggered(IO_Channel_AccesWrapper& chnl){
         
+        bool is_first = true;
+        std::string json_resp;
+        json_resp = '{';
+        for(auto&& [chkey, channel] : chnl.getAllChannels()){
+            for(auto&& [entitykey, entity] : channel->chEntities){
+                if(entity->perm_read == Channel_Entity::exp_public){
+                    if(!is_first) json_resp += ','; 
+                    uint8_t value = entity->read_all();
+                    json_resp +=  '"';
+                    json_resp += chkey;
+                    json_resp += entitykey;
+                    json_resp += "\": \"";
+                    json_resp += std::to_string(value);
+                    json_resp += '"';
+                    is_first = false;
+                    
+                    //std::cout << "Child is public readable! " << entitykey << " Permission is: " << entity->perm_read << " ~~ " << std::endl;
+                }
+            }
+            //std::cout <<  "Key is: " << chkey <<  std::endl;
+            
+        }
         
-        uint8_t Ho = chnl['H']['o']->read_all();
-        uint8_t Hi = chnl['H']['i']->read_all();
+        json_resp += '}';
         
-        uint8_t Po = chnl['P']['o']->read_all();
-        uint8_t Pi = chnl['P']['i']->read_all();
+        //std::cout << "json is: " << json_resp.str();
         
-        std::string message = "{\"Ho\":" + std::to_string(Ho) + ",\"Hi\":"+std::to_string(Hi)+",\"Po\":"+std::to_string(Po)+",\"Pi\":"+std::to_string(Pi)+"}";
+//        uint8_t Ho = chnl['H']['o']->read_all();
+//        uint8_t Hi = chnl['H']['i']->read_all();
+//        
+//        uint8_t Po = chnl['P']['o']->read_all();
+//        uint8_t Pi = chnl['P']['i']->read_all();
+//        
+//        std::string message = "{\"Ho\":" + std::to_string(Ho) + ",\"Hi\":"+std::to_string(Hi)+",\"Po\":"+std::to_string(Po)+",\"Pi\":"+std::to_string(Pi)+"}";
         //std::cout << "Hardware Outputs are : " << Ho << std::endl;
-        webSocketSessions->broadcast(message);
+        webSocketSessions->broadcast(json_resp);
                 
         
     }
                                                 // COPY !!!
     commandProcessor(iterationSwitchGuard& _isg, IO_Channel_AccesWrapper _chnl, shared_ptr<shared_state>& _webSocketSessions) : isg(_isg), chnl(_chnl), webSocketSessions(_webSocketSessions) {}
     
-    std::string errText(int what){
+    std::string errText(int what, bool authorized = false){
+        string authstr = authorized ? "(authorized)" : "(not authorized)";
         switch(what){
             case 1: return "Command needs to consist out of 3 parts! e.g. set:Hi0";
             case 2: return "bla";
-            case 3: return "insufficent permission to write that Channel";
+            case 3: return "insufficent permission to write that Channel " +authstr;
+            case 4: return "token incorrect.";
+            
         }
         
     }
@@ -437,7 +485,7 @@ public:
         boost::split(crumbs, command.second, boost::is_any_of(":"), boost::token_compress_on);
 
         if(crumbs[0] == "set"){
-            message = this->command_set(crumbs);
+            message = this->command_set(crumbs, command.first);
             if(message == "ok"){
                 { // Scope for lock
                 std::unique_lock<mutex> lock{isg.itCondMutex};    
@@ -446,6 +494,10 @@ public:
                 }
                 isg.itCond.notify_one();
             }
+        }
+        else if(crumbs[0] == "auth"){
+            message = command_auth(crumbs, command.first);
+            
         }
         else{
             message = "Command not understood(1) "+command.second;
@@ -469,7 +521,7 @@ int main( int argc, char *argv[] )
     
     std::string adress = "127.0.0.1";
     std::string power  = "8080";
-    std::string docr    = "./www/";
+    std::string docr   = "./www/";
     
     auto address = net::ip::make_address(adress);
     auto port = static_cast<unsigned short>(std::stoi(power));
@@ -595,15 +647,15 @@ int main( int argc, char *argv[] )
     chnl['H'].getIOChnl()->caching_enable();  
  
     // chnl COPIED here !!!  (fails on copy construct... ) 
-    IO_Channel_AccesWrapper chnll = chnl;
-    std::thread hwInterrupt([&chnll, &isg](){
+    IO_Channel_AccesWrapper chnl_cpy__hwinterrupt = chnl;
+    std::thread hwInterrupt([&chnl_cpy__hwinterrupt, &isg](){
     
         pthread_setname_np(pthread_self(), "HW-Interrupt");
         cout << "Started interrupt thread " << endl;
         while(keepRunning){
-            if (chnll['H'].getIOChnl()->wait_for_interrupt()){
+            if (chnl_cpy__hwinterrupt['H'].getIOChnl()->wait_for_interrupt()){
                 for (int i = 0; i < 8; i++) {
-                    uint8_t pinStateRev =  chnll['H']['i']->read_pin(i); 
+                    uint8_t pinStateRev =  chnl_cpy__hwinterrupt['H']['i']->read_pin(i); 
                     printf("Input %d value: %d\n", (int)i, (int)pinStateRev);
                 }
             

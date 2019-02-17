@@ -27,7 +27,11 @@ private:
     PiFacePtr& pfd;
 
     public:
-    Channel_Entity_PiFace_Outputs(PiFacePtr& pfd_init) : pfd(pfd_init){};
+    Channel_Entity_PiFace_Outputs(PiFacePtr& pfd_init, int perm_read_ = Channel_Entity::exp_none,  int perm_write_ = Channel_Entity::exp_none) : pfd(pfd_init)
+   {
+    perm_read  = perm_read_;
+    perm_write = perm_write_; 
+    };
 //    Channel_Entity_PiFace_Outputs(const Channel_Entity_PiFace_Outputs& orig);
     virtual ~Channel_Entity_PiFace_Outputs();
     
@@ -46,7 +50,12 @@ class Channel_Entity_PiFace_Inputs : public Channel_Entity {
 private:
     PiFacePtr& pfd;
 public:
-    Channel_Entity_PiFace_Inputs(PiFacePtr& pfd_init) : pfd(pfd_init){};
+        Channel_Entity_PiFace_Inputs(PiFacePtr& pfd_init, int perm_read_ = Channel_Entity::exp_none,  int perm_write_ = Channel_Entity::exp_none) : pfd(pfd_init)
+   {
+    perm_read  = perm_read_;
+    perm_write = perm_write_; 
+    };
+   // Channel_Entity_PiFace_Inputs(PiFacePtr& pfd_init) : pfd(pfd_init){};
 //    Channel_Entity_PiFace_Inputs(const Channel_Entity_PiFace_Inputs& orig);
     virtual ~Channel_Entity_PiFace_Inputs();
     
@@ -59,7 +68,7 @@ public:
                                                                                                                       
  }; 
     
-};
+
 
 
 

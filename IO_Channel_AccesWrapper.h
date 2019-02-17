@@ -34,6 +34,7 @@ public:
     IO_Channel_AccesWrapper& operator=(const IO_Channel_AccesWrapper& obj);
     IO_Channel_AccesWrapper& operator[](char a);
     bool is_valid(char& io_Chnl, char& io_Entity);
+    bool is_valid(char& io_Chnl);
     uint8_t operator[](int a);
     ChannelEntitySP operator->();
     IO_Channel* getIOChnl();
