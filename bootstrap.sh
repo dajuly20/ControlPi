@@ -168,14 +168,29 @@ if [ -d "$mcp" ]; then
 else
         git clone https://github.com/$user/$mcp
         cd $mcp
-        git checkout IncludeNewCppLibPiFaceDigital #This can only be temporary ... replace on demand.
+        git checkout WebSocketInclude #This can only be temporary ... replace on demand.
 fi
-sudo make
-echo "Everything set up. Exec ./StartMyControl in your home dir"
+
+
+#Trigger Script to update Cmake
+./h/updateCmake.sh
+
+#Trigger Script to update GCC
+./h/install-gcc-8.2-ARM.sh
+
+
+echo ""
+echo ""
+echo "All dependencies set."
+echo "Start Building Project... "
+echo ""
+echo ""
+# Trigger Cmake and make
+./h/build.sh
 echo ""
 name="StartPiControl"
 sudo rm ~/$name
-ln  ~/$mcp/dist/Debug/GNU-Linux/mycontroldigital ~/$name
+ln  ./bin/ControlPi ~/$name
 cd ~
 if [[ "yes" == $(ask_yes_or_no "Start PiControl now?") ]]
 then

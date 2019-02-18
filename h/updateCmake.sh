@@ -5,6 +5,29 @@ INSTALLED_VERS=`cmake --version | head -n 1`
 # Download version
 CMAKE_VERS="3.13.4"
 
+extract () {
+     if [ -f $1 ] ; then
+         case $1 in
+             *.tar.bz2)   tar xjf $1        ;;
+             *.tar.gz)    tar xzf $1     ;;
+             *.bz2)       bunzip2 $1       ;;
+             *.rar)       rar x $1     ;;
+             *.gz)        gunzip $1     ;;
+             *.tar)       tar xf $1        ;;
+             *.tbz2)      tar xjf $1      ;;
+             *.tgz)       tar xzf $1       ;;
+             *.zip)       unzip $1     ;;
+             *.Z)         uncompress $1  ;;
+             *.7z)        7z x $1    ;;
+             *)           echo "'$1' cannot be extracted via extract()" ;;
+         esac
+     else
+         echo "'$1' is not a valid file"
+     fi
+}
+
+
+
 function ask_yes_or_no() {
     read -p "$1 ([y]es or [N]o): "
     case $(echo $REPLY | tr '[A-Z]' '[a-z]') in
@@ -37,4 +60,11 @@ function ask_yes_or_no() {
 		 sudo make install
 		fi
 	fi
+	
+	if [[ "yes" == $(ask_yes_or_no "Remove installation files?") ]]   
+	then 
+	/bin/rm -rf ~/cmake-$CMAKE_VERS.tar.gz
+	/bin/rm -rf ~/cmake-$CMAKE_VERS/
+	fi
+
 	
