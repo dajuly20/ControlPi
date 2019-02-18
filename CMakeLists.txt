@@ -110,6 +110,7 @@ add_executable(${PROJECT_NAME}
 regReplaceExtension.cpp
 main.cpp
 iterationSwitchGuard.cpp
+src/CommandProcessor.cpp
 src/IOChannels/IO_Channel_Virtual_Pipe.cpp
 src/IOChannels/IO_Channel_Hw.cpp
 src/IOChannels/IO_Channel_Virtual.cpp
