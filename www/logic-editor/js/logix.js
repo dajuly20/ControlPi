@@ -285,8 +285,8 @@ function setup() {
         if (logix_project_id != 0) {
             $('.loadingIcon').fadeIn();
             $.ajax({
-                url: '/simulator/get_data',
-                type: 'POST',
+                url: '/logicUpdateApi.php?i=json',
+                type: 'GET',
                 beforeSend: function(xhr) {
                     xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
                 },
@@ -294,6 +294,7 @@ function setup() {
                     "id": logix_project_id
                 },
                 success: function(response) {
+                    console.log(response);
                     data = (response);
 
                     if (data) {

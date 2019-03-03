@@ -427,12 +427,13 @@ function save() {
     $('.loadingIcon').fadeIn();
     var data = generateSaveData();
 
-    if (!userSignedIn) {
+    /*if (!userSignedIn) {
         // user not signed in, save locally temporarily and force user to sign in
         localStorage.setItem("recover_login", data);
         alert("You have to login to save the project, you will be redirected to the login page.")
         window.location.href = "/users/sign_in"
-    } else if (logix_project_id == 0) {
+    } else
+       if (logix_project_id == 0) {
 
         // Create new project - this part needs to be improved and optimised
         var form = $("<form/>", {
@@ -472,10 +473,10 @@ function save() {
         $('body').append(form);
         form.submit();
     } else {
-
+*/
         // updates project - this part needs to be improved and optimised
         $.ajax({
-            url: '/simulator/update_data',
+            url: '/logicUpdateApi.php?i=json',
             type: 'POST',
             beforeSend: function(xhr) {
                 xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
@@ -483,20 +484,22 @@ function save() {
             data: {
                 "data": data,
                 "id": logix_project_id,
-                "image": generateImageForOnline(),
+                //"image": generateImageForOnline(),
                 name: projectName
             },
             success: function(response) {
-                showMessage("We have saved your project: " + projectName + " in our servers.")
+                console.log(response);
+                showMessage("Project: " + projectName + "  saved online.")
                 $('.loadingIcon').fadeOut();
                 localStorage.removeItem("recover");
             },
             failure: function(err) {
+                console.log("Error: "+err);
                 showMessage("There was an error, we couldn't save to our servers")
                 $('.loadingIcon').fadeOut();
             }
         });
-    }
+    //}
 
     // Restore everything
     resetup();

@@ -213,7 +213,7 @@ function showProperties(obj) {
     var tooltipText = obj && (obj.tooltipText || help[obj.objectType]);
     console.log("ToolTip:");
     console.log(obj);
-    console.log(obj.objectType);
+    //console.log(obj.objectType);
     if (tooltipText) {
         $('#moduleProperty-inner').append('<p><button id="toolTipButton" class="btn btn-primary btn-xs" type="button" >CircuitVerse Tip</button></p>');
         $('#toolTipButton').hover(function() {

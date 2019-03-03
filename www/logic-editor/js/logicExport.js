@@ -30,6 +30,39 @@ globDbg = true;
     });
 }
 
+
+function saveExportedViaApi(data){
+    
+    $('.loadingIcon').fadeIn();
+    
+    $.ajax({
+            url: '/logicUpdateApi.php?i=txt',
+            type: 'POST',
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
+            },
+            data: {
+                "data": data,
+               // "id": logix_project_id,
+                //"image": generateImageForOnline(),
+                //name: projectName
+            },
+            success: function(response) {
+                console.log(response);
+                showMessage("Project: " + projectName + "  saved online.")
+                $('.loadingIcon').fadeOut();
+                //localStorage.removeItem("recover");
+            },
+            failure: function(err) {
+                console.log("Error: "+err);
+                showMessage("There was an error, we couldn't save to our servers")
+                $('.loadingIcon').fadeOut();
+            }
+        });
+    
+}
+
+
  function createOutputPrompt(output) {
     $('#outputConfirmDialog').empty();
     //var projectList = JSON.parse(localStorage.getItem("projectList"));
@@ -45,8 +78,12 @@ globDbg = true;
         buttons: [{
             text: "Hinzufügen",
             click: function() {
-                if (!$("input[name=projectId]:checked").val()) return;
-                load(JSON.parse(localStorage.getItem($("input[name=projectId]:checked").val())));
+                //if (!$("input[name=projectId]:checked").val()) return;
+                //load(JSON.parse(localStorage.getItem($("input[name=projectId]:checked").val())));
+                
+                console.log($("textarea[name=softLogic]").val());
+                
+                saveExportedViaApi($("textarea[name=softLogic]").val());
                 $(this).dialog("close");
             },
         }]
