@@ -1,0 +1,15 @@
+blaj
+<div id ="result"></div>
+
+
+
+<script src="logicExport.js"></script>
+<script>
+var j = {"name":"Kartoffel","timePeriod":500,"clockEnabled":true,"projectId":"lpdqGScMFWwDz0oy9JKZ","focussedCircuit":67058288059,"scopes":[{"layout":{"width":100,"height":80,"title_x":50,"title_y":13,"titleEnabled":true},"allNodes":[{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[4]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[5]},{"x":-110,"y":-30,"type":2,"bitWidth":1,"label":"","connections":[4,7]},{"x":10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[12]},{"x":-110,"y":-40,"type":2,"bitWidth":1,"label":"","connections":[0,2]},{"x":-40,"y":30,"type":2,"bitWidth":1,"label":"","connections":[1,6]},{"x":-40,"y":-10,"type":2,"bitWidth":1,"label":"","connections":[5,16]},{"x":40,"y":-30,"type":2,"bitWidth":1,"label":"","connections":[2,13]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[10]},{"x":70,"y":-30,"type":2,"bitWidth":1,"label":"","connections":[10,14]},{"x":70,"y":-100,"type":2,"bitWidth":1,"label":"","connections":[9,8]},{"x":290,"y":-20,"type":2,"bitWidth":1,"label":"","connections":[12,17]},{"x":290,"y":0,"type":2,"bitWidth":1,"label":"","connections":[3,11]},{"x":40,"y":-20,"type":2,"bitWidth":1,"label":"","connections":[7,15]},{"x":-20,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[9]},{"x":-20,"y":0,"type":0,"bitWidth":1,"label":"","connections":[13]},{"x":-20,"y":10,"type":0,"bitWidth":1,"label":"","connections":[6]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[11]}],"id":67058288059,"name":"Main","Input":[{"x":-200,"y":-40,"objectType":"Input","label":"[Hi1]","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":0},"values":{"state":1},"constructorParamaters":["RIGHT",1,{"x":0,"y":20,"id":"okuR6xt5KcjkFYzwYcYS"}]}},{"x":-120,"y":30,"objectType":"Input","label":"[Hi2]","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":1},"values":{"state":0},"constructorParamaters":["RIGHT",1,{"x":0,"y":40,"id":"YI8q3mt7Ev6R8L73F4AT"}]}},{"x":-170,"y":-100,"objectType":"Input","label":"[Hi0]","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":8},"values":{"state":1},"constructorParamaters":["RIGHT",1,{"x":0,"y":60,"id":"cEDZs6s3r1kOChd6ze8u"}]}}],"Output":[{"x":320,"y":0,"objectType":"Output","label":"Ho0","direction":"LEFT","labelDirection":"RIGHT","propagationDelay":0,"customData":{"nodes":{"inp1":3},"constructorParamaters":["LEFT",1,{"x":100,"y":20,"id":"mlQPcsNOyw51aNfXe1wO"}]}}],"XorGate":[{"x":160,"y":-20,"objectType":"XorGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",3,1],"nodes":{"inp":[14,15,16],"output1":17}}}],"nodes":[2,4,5,6,7,9,10,11,12,13]}]};
+
+logicStrings = logicExport(j);
+
+console.log(logicStrings);
+
+document.getElementById("result").innerHTML += logicStrings + "<br>";
+</script>

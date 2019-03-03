@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="30"
+   height="30"
+   id="svg4003"
+   sodipodi:docname="InputPiper.svg"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+  <metadata
+     id="metadata4007">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1025"
+     id="namedview4005"
+     showgrid="false"
+     inkscape:lockguides="true"
+     inkscape:zoom="7.8666667"
+     inkscape:cx="15"
+     inkscape:cy="15"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g4001" />
+  <defs
+     id="defs3989" />
+  <g
+     id="g4001">
+    <path
+       d=" M 5 5 L 25 5 L 25 25 L 5 25 L 5 5 Z"
+       stroke-miterlimit="10"
+       id="path3991"
+       paint-order="fill stroke markers"
+       stroke-dasharray=""
+       stroke-width="3"
+       stroke="black"
+       fill="white" />
+    <path
+       fill="none"
+       stroke="none"
+       id="path3993" />
+    <path
+       fill="none"
+       stroke="none"
+       id="path3995" />
+    <text
+       font-size="20px"
+       font-style="normal"
+       font-weight="normal"
+       text-decoration="normal"
+       x="11.31356"
+       y="17.203392"
+       dominant-baseline="alphabetic"
+       id="text3997"
+       style="font-style:normal;font-weight:normal;font-size:13.33333302px;font-family:Georgia;dominant-baseline:alphabetic;text-anchor:middle;fill:#008000;stroke:none">P</text>
+    <path
+       fill="green"
+       stroke="none"
+       paint-order="stroke fill markers"
+       d=" M 28 15 A 3 3 0 1 1 27.999998500000125 14.997000000499998 Z"
+       id="path3999" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.66666667px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#008000;fill-opacity:1;stroke:none;"
+       x="12.330508"
+       y="20.211864"
+       id="text4011"><tspan
+         sodipodi:role="line"
+         id="tspan4009"
+         x="12.330508"
+         y="55.602489" /></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:8px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#008000;fill-opacity:1;stroke:none"
+       x="14.364407"
+       y="22.754236"
+       id="text4015"><tspan
+         sodipodi:role="line"
+         id="tspan4013"
+         x="14.364407"
+         y="22.754236">IN</tspan></text>
+  </g>
+</svg>
