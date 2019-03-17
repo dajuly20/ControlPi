@@ -1,5 +1,5 @@
 #!/bin/bash
-# TO Upgrade cmake to 3.10
+# TO Upgrade cmake to 3.13.4
 which cmake
 INSTALLED_VERS=`cmake --version | head -n 1`
 # Download version
