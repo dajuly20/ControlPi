@@ -87,19 +87,23 @@ echo "Upgrade complete.. "
 fi
 
 
+#Call sub-script to check for boost. 
+.h/installBoost-1.6.9.sh
 #Todo check if boost was installed by hand.
-package="libboost-all-dev"
-if [ $(dpkg-query -W -f='${Status}' $package 2>/dev/null | grep -c "ok installed") -eq 0 ]  &&  [[ "yes" == $(ask_yes_or_no "Did not find boostLibrary. Install $package? ") ]]
-then 
-sudo apt-get install $package -y
-fi
+#package="libboost-all-dev"
+#if [ $(dpkg-query -W -f='${Status}' $package 2>/dev/null | grep -c "ok installed") -eq 0 ]  &&  [[ "yes" == $(ask_yes_or_no "Did not find boostLibrary. Install $package? ") ]]
+#then 
+#sudo apt-get install $package -y
+#fi
 
-if [ $(dpkg-query -W -f='${Status}' $package 2>/dev/null | grep -c "ok installed") -eq 0 ] 
-then
-echo "Boost Library is required! Aborting."
-exit -1
-fi
+#if [ $(dpkg-query -W -f='${Status}' $package 2>/dev/null | grep -c "ok installed") -eq 0 ] 
+#then
+#echo "Boost Library is required! Aborting."
+#exit -1
+#fi
 
+#Call sub script to check for BoostBeast.
+./h/installBoostBeast.sh
 
 
 # first change to home, clone libmcp23s17 and build.

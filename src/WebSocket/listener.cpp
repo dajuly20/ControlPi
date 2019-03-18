@@ -79,6 +79,8 @@ fail(error_code ec, char const* what)
     // Don't report on canceled operations
     if(ec == net::error::operation_aborted)
         return;
+    if(ec == net::error::address_in_use)
+        throw std::invalid_argument( ec.message() +"\nIs another instance running?");
     std::cerr << what << ": " << ec.message() << "\n";
 }
 

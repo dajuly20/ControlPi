@@ -313,8 +313,21 @@ int main( int argc, char *argv[] )
     signal(SIGUSR1 ,usrSigHandler); // Re-Reads config, doesn't exit.
     
     std::string adress = "127.0.0.1";
+    
+    // Expose server? 
+    if(argc >=2){
+        if(std::string(argv[1]) == "--expose"){
+            adress = "0.0.0.0";
+        }
+    }
+    
+    
     std::string power  = "8080";
     std::string docr   = "./www/";
+    
+    //std::cout << "Arc = " << argc << " Argv1" << argv[1] << "\n";
+    std::cout << "Starting WebSocket server " << adress << ":" << power << "\n";
+    
     
     auto address = net::ip::make_address(adress);
     auto port = static_cast<unsigned short>(std::stoi(power));
