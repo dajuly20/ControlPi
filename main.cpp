@@ -165,8 +165,9 @@ void printSoftLogic(std::vector<std::string>& softLogic){
 }
 
 /*
- * parseIdentifiers
- * Pases a vector of strings, and replaces square brakets to their 
+ * logicEngine (parseIdentifiers)
+ * Parses a vector of Logic-strings, and replaces square brakets to their values,
+ * to finally solve the equation and asign the value to the Output 
  * 
  * One row may come as follows:
  * One OutputString might be Ora0=![Ira1] & [Ira0] | [Ira2];
@@ -182,7 +183,7 @@ void printSoftLogic(std::vector<std::string>& softLogic){
  * Ora0=!0 & 1 | 0 
  *
  */
-void parseIdentifiers(IO_Channel_AccesWrapper& chnl, std::vector<std::string>& softLogic){
+void logicEngine(IO_Channel_AccesWrapper& chnl, std::vector<std::string>& softLogic){
       // Cut the string in halves at the "=" sign
     bool        dbg         =  true;
     std::string delimiter   = "=";
@@ -202,41 +203,41 @@ void parseIdentifiers(IO_Channel_AccesWrapper& chnl, std::vector<std::string>& s
             if(asignedEntityStr.size() != 3){
                 throw std::invalid_argument("Error: Asignee needs to have 3 letters/digits in '"+asignedEntityStr+"'");
             }
-            char   asigned_IOChannel        = asignedEntityStr.at(0);
-            char   asigned_ChannelEntity    = asignedEntityStr.at(1);
-            int    asigned_Pin              = asignedEntityStr.at(2) - '0'; 
+            char   c_io_channel        = asignedEntityStr.at(0);
+            char   c_channel_entity    = asignedEntityStr.at(1);
+            int    c_pin_num           = asignedEntityStr.at(2) - '0'; 
 
            // The part after the '=' is the equation string. It consists of identifiers 
            //   (like [Ho0]) arithmetic operators ( &, | ) and round brakets. Also allowed  are literals (0 or 1)
-           string equationString  = softLogicRow.substr(found+1, string::npos);
+           string equationStringVariables  = softLogicRow.substr(found+1, string::npos);
 
-           if(dbg) cout << "HardwareOutput is: " << asigned_Pin << endl;
-           if(dbg) cout << "RawLogicString is: " << equationString << endl;
+           if(dbg) cout << "HardwareOutput is: " << c_pin_num << endl;
+           if(dbg) cout << "RawLogicString is: " << equationStringVariables << endl;
 
            // Instantiate the replace-identifier Functor/Class that is used to
-           //   inject the IO_Channel_AccessWrapper into the actual replace-function.
+           // inject the IO_Channel_AccessWrapper into the actual replace-function.
            replaceIdentifier rplacIds(chnl);
            
            // Calls a function for each match on "[ira0]" a string of 4 characters in '[' brackets,
            // 1st char of which may be i/o (in/out), 2nd r/v (real/virtual), 3rd hardware idendifier (a-z), 4re input identifier (0-8)
            // eventually every occurance of brackets should be replaced either by a 0 or 1. 
            // For the example state of (Ira1 = 0, Ira0 =1, Ira2 = 1), the example logic string would look like !0 & 1 | 1;
-           string outLogicString  = regex_replace(  equationString, 
+           string equationStringLiterals  = regex_replace(  equationStringVariables, 
                                                     regex("\\[([A-Z][a-z][0-8])\\]"),
                                                     rplacIds
                                                   );
            
-           if(dbg) cout << "Resulting logic string is: " << outLogicString << endl;
+           if(dbg) cout << "Resulting logic string is: " << equationStringLiterals << endl;
 
            // Eventually the example logic string (e.g. !0 & 1 | 1;) will be parsed to 1
-           bool parsedOut = evaluateLogicString(outLogicString);
+           bool logic_equation_res = evaluateLogicString(equationStringLiterals);
 
-           if(dbg) cout << "IO_chnl: " << asigned_IOChannel;
-           if(dbg) cout << " Entity: " << asigned_ChannelEntity;
-           if(dbg) cout << " Pin: " << asigned_Pin;
-           if(dbg) cout << " is assigned " << (parsedOut ? "true" : "false") << endl << endl;
+           if(dbg) cout << "IO_chnl: " << c_io_channel;
+           if(dbg) cout << " Entity: " << c_channel_entity;
+           if(dbg) cout << " Pin: " << c_pin_num;
+           if(dbg) cout << " is assigned " << (logic_equation_res ? "true" : "false") << endl << endl;
            
-           chnl[asigned_IOChannel][asigned_ChannelEntity]->write_pin(parsedOut, asigned_Pin);
+           chnl [c_io_channel] [c_channel_entity] -> write_pin(logic_equation_res, c_pin_num);
            
         }
         else{
@@ -446,7 +447,7 @@ int main( int argc, char *argv[] )
     // Initially parse identifiers once.
     // (Necessary to let starting values take efect.
     // e.g. if Output 1 is assigned static true)
-    parseIdentifiers(chnl, softLogic);
+    logicEngine(chnl, softLogic);
    
     // Enable Caching
     // TODO: Make infrastructure to enable caching on all channels at once
@@ -530,7 +531,7 @@ int main( int argc, char *argv[] )
             
             
             chnl['H'].getIOChnl()->flush();
-            parseIdentifiers(chnl, softLogic);
+            logicEngine(chnl, softLogic);
             chnl['H'].getIOChnl()->flush();
             
             cp.iterationTriggered(chnl);
