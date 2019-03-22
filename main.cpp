@@ -26,6 +26,7 @@
 #include <chrono>
 #include <sys/file.h>
 #include <errno.h>
+#include <sys/stat.h> // Check if file exists.
 
 #include "src/WebSocket/listener.hpp"
 #include "src/WebSocket/shared_state.hpp"
@@ -59,6 +60,11 @@ using namespace std;
 std::atomic<bool>    keepRunning(true);     //Used to interrupt mainloop
 static volatile bool configRead  = false; //Used to re-read configuration
 
+// Paths for config files
+static const std::string                 path_prio1 = "./conf/";
+static const std::string                 path_prio2 = "/opt/controlpi/";
+
+    
 
 typedef std::shared_ptr<IO_Channel_AccesWrapper> IO_Channel_AccessWrapperPTR;
 
@@ -271,18 +277,36 @@ std::string strip_comments(const std::string  & input, const std::string& delimi
 }
 
 
+inline bool file_exist (const std::string& name) {
+  struct stat buffer;   
+  return (stat (name.c_str(), &buffer) == 0); 
+}
+
 /*
  * loadConfigFile
  * Loads logic from given filename, and returns it as vector of strings.
  */
 std::vector<std::string>  loadConfigfile(std::string filename, bool emptyLines){
     
+    if(file_exist(path_prio1+""+filename)){
+        filename = path_prio1+""+filename;
+        cout << "### Using path prio1" << filename << endl;
+    }
+    else if(file_exist(path_prio2+""+filename)){
+        filename = path_prio2+""+filename;
+        cout << "### Using path prio2" << filename << endl;
+    }
+    else{
+        throw std::invalid_argument("Error: File not exist: "+filename+" ");
+    }
+    
+    
     std::string                 line;
     std::vector<std::string>    logic;
     std::ifstream               data(filename);
     
     if(!data.is_open()){
-       throw std::invalid_argument("Error: File not exist: "+filename+" ");
+       throw std::invalid_argument("Error: Cant open file: "+filename+" Insufficent permission?");
     }    
 
     while (std::getline(data, line)){
@@ -430,6 +454,7 @@ int main( int argc, char *argv[] )
     inputs = chnl['H']['o']->read_all();
     printf("Outputs: 0x%x\n", inputs);
 
+    
     // Initially read the timers config    
     std::string fn_timers = "timers.conf";
     std::vector<std::string>  timersConf;
