@@ -222,6 +222,10 @@ $(".switches").mouseup(function(event){
 
   </script>
 
-
+  
+  <ifame src="./logic-editor"></iframe>
+<iframe src="logic-editor/" 
+width="60%" height="500" name="sprichwort_des_tages">
+</iframe>
   </body>
 </html>
