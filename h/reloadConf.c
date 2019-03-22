@@ -10,9 +10,13 @@
 // enabling e.g. www-data to  restart the backend, evenn though the process is owned by someone else. 
 // so just make sure this script and the main executable are owned by the same user. Also the executable-name must match!
 
-// Comile with gcc reloadConf.c -o reloadConf
+// Comile with gcc reloadConf.c -o ../www/reloadConf
 // Then sudo chmod u+g reloadConf
 #include <stdlib.h>
+#include <stdio.h>
 int main(){
-system("kill -10 `pidof ControlPi`");
+	int ret = system("kill -10 `pidof ControlPi`");
+if(ret == 256)  return EXIT_FAILURE;
+
+ printf("Returns: %i", ret);
 }
