@@ -206,12 +206,12 @@ void logicEngine(IO_Channel_AccesWrapper& chnl, std::vector<std::string>& softLo
             // The part before the '=' is the variable, to which whe outcome will be asigned to ==> 'asigned' part7
             // TODO Check for length of String
             string asignedEntityStr         = softLogicRow.substr(0,found);
-            if(asignedEntityStr.size() != 3){
+            if(asignedEntityStr.size() != 5){
                 throw std::invalid_argument("Error: Asignee needs to have 3 letters/digits in '"+asignedEntityStr+"'");
             }
-            char   c_io_channel        = asignedEntityStr.at(0);
-            char   c_channel_entity    = asignedEntityStr.at(1);
-            int    c_pin_num           = asignedEntityStr.at(2) - '0'; 
+            char   c_io_channel        = asignedEntityStr.at(1);
+            char   c_channel_entity    = asignedEntityStr.at(2);
+            int    c_pin_num           = asignedEntityStr.at(3) - '0'; 
 
            // The part after the '=' is the equation string. It consists of identifiers 
            //   (like [Ho0]) arithmetic operators ( &, | ) and round brakets. Also allowed  are literals (0 or 1)
