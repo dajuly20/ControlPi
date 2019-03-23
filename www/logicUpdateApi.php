@@ -1,7 +1,7 @@
 <?php
 
-$jsonfn = "./logic.json";
-$txtfn  = "./logic.conf";
+$jsonfn = "/opt/controlpi/logic.json";
+$txtfn  = "/opt/controlpi/logic.conf";
 
 if($_SERVER['REQUEST_METHOD'] == "GET"){
 

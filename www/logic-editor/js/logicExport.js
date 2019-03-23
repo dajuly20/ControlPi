@@ -69,7 +69,7 @@ function saveExportedViaApi(data){
     //var flag = true;
    // for (id in projectList) {
    //     flag = false;
-        $('#outputConfirmDialog').append('<label class="option"><textarea rows="'+output.length+'"  cols="60" name="softLogic">'+output.join('\n')+' </textarea></label>');
+        $('#outputConfirmDialog').append('<label class="option"><textarea rows="'+(output.length+7)+'"  cols="60" rows="10" name="softLogic">'+output.join('\n')+' </textarea></label>');
         
     //}
   //  if (flag) $('#inputChooseDialog').append('<p>Looks like no circuit has been saved yet. Create a new one and save it!</p>')

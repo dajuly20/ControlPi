@@ -23,7 +23,7 @@
     logix_project_id = 1; //<%= @logix_project_id%>;
     projectName = "ControlPi"
 </script>
-<nav class="navbar navbar-default toolbar navbar-inverse">
+<nav class="navbar navbar-default toolbar navbar ">
   <div class="container-fluid">
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
@@ -50,12 +50,14 @@
             <li class="toolbarButton logixButton" id="newProject" ><a>New Project</a></li>
             <li class="toolbarButton logixButton" id="clearProject" ><a>Clear Project</a></li>
             <li class="toolbarButton logixButton" id="save"><a>Save Online</a></li>
+            <li class="toolbarButton logixButton" id="logicExport"><a>Export to ControlPi</a></li>
             <li class="toolbarButton logixButton" id="saveOffline"><a>Save Offline</a></li>
             <li class="toolbarButton logixButton" id="createOpenLocalPrompt"><a>Open Offline</a></li>
             <li class="toolbarButton logixButton" id="recoverProject"><a>Recover project</a></li>
           </ul>
         </li>
-        <li class="dropdown">
+      <!--
+      <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Circuit<span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li class="toolbarButton logixButton" id="newCircuit"><a>New Circuit +</a></li>
@@ -63,12 +65,13 @@
           </ul>
         </li>
         </li>
+        -->
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools<span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li class="toolbarButton logixButton" id="createCombinationalAnalysisPrompt"><a>Combinational Analysis</a></li>
             <li class="toolbarButton logixButton" id="startPlot"><a>Start Plot</a></li>
-            <li class="toolbarButton logixButton" id="logicExport"><a>Export Logic</a></li>
+            
             
             <li class="toolbarButton logixButton" id="createSaveAsImgPrompt" ><a>Download Image</a></li>
           </ul>
@@ -108,7 +111,7 @@
 </nav>
 
 <div>
-  <div class="side left" id="sideBar" style="overflow-y: scroll;">
+  <div class="side left" id="sideBar" style="overflow-y: hidden;overflow-x: hidden;">
     <div class="modules noSelect defaultCursor" >
       <div id="modules-header">Circuit Elements</div>
       <div class="accordion" id="menu">
@@ -116,7 +119,7 @@
         <div class="panel">
           <div class="icon logixModules" id="Input" tooltip="Hardware Input 0-7;  Reads value of a Harware input." img="InputHW"    name="Hi" range="8"></div>
           <div class="icon logixModules" id="Input" tooltip="Hardware Output 0-7 (as Input, read only!) Reads value of Hardware Output. "               img="InputHWOut"     name="Ho" range="8"></div>
-          <div class="icon logixModules" id="Input" tooltip="Output/Fire of Timer 0-7; Please use corresponding <b>Timer-Trigger</b> to fire this output!" img="TimerFire"  name="Tt" range="8"></div>
+          <div class="icon logixModules" id="Input" tooltip="Output/Fire of Timer 0-7; Please use corresponding <b>Timer-Trigger</b> to fire this output!" img="TimerFire"  name="To" range="8"></div>
           <div class="icon logixModules" id="Input" tooltip="Output of Memory 0-7; Please use corresponding <b>Memory</b> as Output to set this Memory" img="InputMerker"  name="Ma" range="8"></div>
           <div class="icon logixModules" id="Input" tooltip="Input of Pipe 0-7  (Virtual Input, showing data that is input remotely)" img="InputPipe"  name="Pi" range="8"></div>
           
@@ -158,6 +161,7 @@
           <div class="icon logixModules" id="XnorGate" ></div>
         </div>
 
+        <!--
         <div class="panelHeader">Decoders & Plexers</div>
         <div class="panel">
           <div class="icon logixModules" id="Multiplexer" ></div>
@@ -168,7 +172,9 @@
           <div class="icon logixModules" id="PriorityEncoder" ></div>
           <div class="icon logixModules" id="Decoder" ></div>
         </div>
+-->
 
+<!--
         <div class="panelHeader">Sequential Elements</div>
         <div class="panel">
           <div class="icon logixModules" id="DflipFlop" ></div>
@@ -182,14 +188,22 @@
           <div class="icon logixModules" id="Rom" ></div>
           <div class="icon logixModules" id="RAM" ></div>
         </div>
+-->
 
+<!--
         <div class="panelHeader">Test Bench</div>
-        <div class="panel">
+      -->
+      
+       <!--
+       <div class="panel">
           <div class="icon logixModules" id="TB_Input" ></div>
           <div class="icon logixModules" id="TB_Output" ></div>
           <div class="icon logixModules" id="ForceGate" ></div>
-
+        
         </div>
+        -->
+        
+        <!--
         <div class="panelHeader">Misc</div>
         <div class="panel">
           <div class="icon logixModules" id="Flag" ></div>
@@ -204,7 +218,14 @@
           <div class="icon logixModules" id="Text" ></div>
           <div class="icon logixModules" id="Tunnel" ></div>
         </div>
+        
+        -->
+        
       </div>
+      
+      
+  
+      
     </div>
     <div class="moduleProperty effect1" id="moduleProperty">
       <div id="moduleProperty-title" class="noSelect pointerCursor">Properties</div>
@@ -214,7 +235,8 @@
   </div>
 
   <div class="rightPanel">
-    <div id="tabsBar" class="noSelect pointerCursor">
+  
+    <div id="tabsBar" class="noSelect pointerCursor" style="display:none">
       <!-- <div> Circuits: </div> -->
     </div>
     <div class="simulation" id="simulation" >
@@ -343,7 +365,7 @@
     <div id="insertSubcircuitDialog" style="display:none;"  title="Insert SubCircuit"></div>
     <div id="openProjectDialog" style="display:none;"  title="Open Project"></div>
     <div id="inputChooseDialog" style="display:none;"  title="Choose Input"></div>
-    <div id="outputConfirmDialog" style="display:none;"  title="Choose Input"></div>
+    <div id="outputConfirmDialog" style="display:none;"  title="Exportergbnis überprüfen"></div>
 
 
 

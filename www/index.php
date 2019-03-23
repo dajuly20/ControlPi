@@ -218,10 +218,19 @@ $(".switches").mouseup(function(event){
     ws.send(sendStr);
 });
 
+$("#reloadConf").click(function(event){
+
+$.get( "reloadConf.php", function( data ) {
+  alert(data);
+});
+
+});
+
 });
 
   </script>
 
+  <button type="button" id="reloadConf">Reload Conf</button><br>
   
   <ifame src="./logic-editor"></iframe>
 <iframe src="logic-editor/" 
