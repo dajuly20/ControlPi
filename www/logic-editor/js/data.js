@@ -413,7 +413,7 @@ function generateImageForOnline() {
     // Ensure image is approximately 700 x 440
     resolution = Math.min(700 / (simulationArea.maxWidth - simulationArea.minWidth), 440 / (simulationArea.maxHeight - simulationArea.minHeight));
 
-    data = generateImage("jpeg", "current", false, resolution, download = false);
+    data = generateImage("png", "current", true, resolution, download = false);
 
     // Restores Focus
     globalScope.centerFocus(false);
@@ -482,9 +482,10 @@ function save() {
                 xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
             },
             data: {
+                "Dita":"Falsch",
                 "data": data,
                 "id": logix_project_id,
-                //"image": generateImageForOnline(),
+                "image": generateImageForOnline(),
                 name: projectName
             },
             success: function(response) {

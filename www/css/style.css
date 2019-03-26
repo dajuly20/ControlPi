@@ -14,12 +14,27 @@ body {
   font-family: "Raleway";
   height: 100%;
 }
+
 body h1 {
   text-align: center;
   color: #428BFF;
   font-weight: 300;
   padding: 40px 0 20px 0;
   margin: 0;
+}
+
+img.logicpreview{
+ border-top: 1px solid #CCC;  
+ border-left: 1px solid #CCC;
+  background:
+    repeating-linear-gradient(to right,
+        transparent 0,transparent calc(15px - 1px),
+        #CCC calc(15px - 1px),#CCC 15px),
+        
+    repeating-linear-gradient(to bottom,
+        transparent 0,transparent calc(15px - 1px),
+        #CCC calc(15px - 1px),#CCC 15px)     
+    white;
 }
 
 .tabs {

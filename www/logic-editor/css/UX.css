@@ -15,7 +15,7 @@ body{
     padding: 3px;
     color: #fff;
     border-side: 1px solid #0099ff;
-    border-bottom: 40px solid #0099ff;
+    border-bottom: 1px solid #333; //0099ff;
     padding: 0.5em;
 }
 
