@@ -26,7 +26,6 @@
 #include <chrono>
 #include <sys/file.h>
 #include <errno.h>
-#include <sys/stat.h> // Check if file exists.
 
 #include "src/WebSocket/listener.hpp"
 #include "src/WebSocket/shared_state.hpp"
@@ -35,10 +34,10 @@
 #include <boost/asio/signal_set.hpp>
 
 
-
 #include "pifacedigitalcpp.h"
 #include "boolLogicParser.h"    
 #include "regReplaceExtension.h" // Extended reg-replace for inserting callback function.
+#include "src/ConfigParser.h"
 
 #include "globals.h"
 #include "iterationSwitchGuard.h"
@@ -60,9 +59,6 @@ using namespace std;
 std::atomic<bool>    keepRunning(true);     //Used to interrupt mainloop
 static volatile bool configRead  = false; //Used to re-read configuration
 
-// Paths for config files
-static const std::string                 path_prio1 = "./conf/";
-static const std::string                 path_prio2 = "/opt/controlpi/";
 
     
 
@@ -252,78 +248,7 @@ void logicEngine(IO_Channel_AccesWrapper& chnl, std::vector<std::string>& softLo
     }
 }
 
-/*
- * stripWhite
- * Stripes any whitespace from given string.
- * (used for reading configuration)
- */     
-std::string strip_white(const std::string& input)
-{
-   size_t b = input.find_first_not_of(' ');
-   if (b == std::string::npos) b = 0;
-   return input.substr(b, input.find_last_not_of(' ') + 1 - b);
-}
- 
-/*
- * strip_comments
- * Strips anything starting from the first position of given delimiter.
- * e.g. "#" for Comments.
- */
-std::string strip_comments(const std::string  & input, const std::string& delimiters)
-{  
-    std::string inp = input;
-           inp.erase(remove_if(inp.begin(), inp.end(), ::isspace), inp.end());
-   return strip_white(inp.substr(0, inp.find_first_of(delimiters)));
-}
 
-
-inline bool file_exist (const std::string& name) {
-  struct stat buffer;   
-  return (stat (name.c_str(), &buffer) == 0); 
-}
-
-/*
- * loadConfigFile
- * Loads logic from given filename, and returns it as vector of strings.
- */
-std::vector<std::string>  loadConfigfile(std::string filename, bool emptyLines){
-    
-    if(file_exist(path_prio1+""+filename)){
-        filename = path_prio1+""+filename;
-        cout << "### Using path prio1" << filename << endl;
-    }
-    else if(file_exist(path_prio2+""+filename)){
-        filename = path_prio2+""+filename;
-        cout << "### Using path prio2" << filename << endl;
-    }
-    else{
-        throw std::invalid_argument("Error: File not exist: "+filename+" ");
-    }
-    
-    
-    std::string                 line;
-    std::vector<std::string>    logic;
-    std::ifstream               data(filename);
-    
-    if(!data.is_open()){
-       throw std::invalid_argument("Error: Cant open file: "+filename+" Insufficent permission?");
-    }    
-
-    while (std::getline(data, line)){
-        std::string delimiters("#;");
-        line = strip_comments(line, delimiters);
-        if(emptyLines || line.size() > 0){ // Test: If empty lines are present, we can tell what line# it was on error.
-            // TODO Check Syntax
-            logic.push_back(line+';');
-        }
-    }
-
-    if(logic.size() == 0){
-        throw std::invalid_argument("Error: Config file empty!");
-    }
-   
-    return logic;
-}
 
 
 int main( int argc, char *argv[] )
@@ -347,6 +272,10 @@ int main( int argc, char *argv[] )
     }
     
     
+    globalConf conf("ControlPi.conf");
+    
+   
+    std::cout << "^^^^^^^^^^^ Print above ^^^^^^^^^^^^^";
     std::string power  = "8080";
     std::string docr   = "./www/";
     
@@ -401,10 +330,31 @@ int main( int argc, char *argv[] )
     // Could Access now via (*myte.io_channels['H'])['i']->read_pin(0) 
     // But IO_Channel_AccessWrapper hides it away, and simplyfies access. so obj['H']['i']->member
     IO_Channel_AccesWrapper chnl(&isg);
-    chnl.insert(std::make_pair('H', IOChannelPtr(new IO_Channel_Hw_PiFace("none", 0x07))));
-    chnl.insert(std::make_pair('M', IOChannelPtr(new IO_Channel_Virtual_Memory())));
-    chnl.insert(std::make_pair('T', IOChannelPtr(new IO_Channel_Virtual_Timer()))); 
-    chnl.insert(std::make_pair('P', IOChannelPtr(new IO_Channel_Virtual_Pipe("r7123d97a3", 0x07)))); 
+    
+    int ii = 0;
+    for(auto const& con  : conf.confEnties){
+        std::cout << ii++ << "# " << con.first << " Token: " << (con.second)->private_token << " EntityType:" << con.second->entity_type << std::endl;
+        switch (con.second->entity_type){
+            case globalConf::CONTEXT_HARDWARE:
+                chnl.insert(std::make_pair(con.first, IOChannelPtr(new IO_Channel_Hw_PiFace(con.second))));
+            break;
+            case globalConf::CONTEXT_MEMORY:
+                chnl.insert(std::make_pair(con.first, IOChannelPtr(new IO_Channel_Virtual_Memory())));
+                break;
+            case globalConf::CONTEXT_PIPE:
+                chnl.insert(std::make_pair(con.first, IOChannelPtr(new IO_Channel_Virtual_Pipe(con.second->private_token, 0x07)))); 
+                break;
+            case globalConf::CONTEXT_TIMER:
+                chnl.insert(std::make_pair(con.first, IOChannelPtr(new IO_Channel_Virtual_Timer()))); 
+                break;
+               
+            
+        }
+    }
+    
+    
+    
+    
         
         
                             // chnl is copied here!

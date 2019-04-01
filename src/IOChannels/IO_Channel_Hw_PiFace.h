@@ -16,6 +16,7 @@
 #include "pifacedigitalcpp.h"
 #include "../ChannelEntitys/Channel_Entities_PiFace.h"
 #include "IO_Channel_Hw.h"
+#include "../ConfigParser.h"
 #include <memory>   // shared_ptr
 typedef std::shared_ptr<PiFaceDigital> PiFacePtr;
 
@@ -26,6 +27,11 @@ class IO_Channel_Hw_PiFace : public IO_Channel_Hw {
 public:
     
     IO_Channel_Hw_PiFace();
+    IO_Channel_Hw_PiFace(configEntity* conf) : IO_Channel_Hw_PiFace(){
+        token = conf->private_token;
+        permission = 0x77;
+    }
+    
     IO_Channel_Hw_PiFace(std::string _token, int _permission) : IO_Channel_Hw_PiFace(){ 
         token      = _token;
         permission = _permission;
