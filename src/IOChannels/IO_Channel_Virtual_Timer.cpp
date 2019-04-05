@@ -35,7 +35,7 @@ IO_Channel_Virtual_Timer::IO_Channel_Virtual_Timer(configEntity* _conf) {
         int kind = x.second->entityKind;
         //ChannelEntitySP entity;
         switch(kind){
-            case (EntityDetails::ENTITY_INPUT):
+            case (Channel_Entity::ENTITY_INPUT):
                 {
                  Channel_Entity_TimerTrigger* triggerEntityT = new Channel_Entity_TimerTrigger(x.second->perm_read, x.second->perm_write);
                  ChannelEntitySP triggerEntity( triggerEntityT);
@@ -44,7 +44,7 @@ IO_Channel_Virtual_Timer::IO_Channel_Virtual_Timer(configEntity* _conf) {
                 }
             break;
                 
-            case (EntityDetails::ENTITY_OUTPUT):
+            case (Channel_Entity::ENTITY_OUTPUT):
                 {
                 ChannelEntitySP outputEntity ( new Channel_Entity_TimerOutput(x.second->perm_read, x.second->perm_write));
                 chEntities.insert ( std::make_pair(x.first,outputEntity) );
@@ -52,8 +52,8 @@ IO_Channel_Virtual_Timer::IO_Channel_Virtual_Timer(configEntity* _conf) {
                 }
             break;
                 
-            case (EntityDetails::ENTITY_DUPLEX): // fallthrough
-            case (EntityDetails::ENTITY_ERROR):  // fallthrough
+            case (Channel_Entity::ENTITY_DUPLEX): // fallthrough
+            case (Channel_Entity::ENTITY_ERROR):  // fallthrough
             default: 
                 throw std::invalid_argument("Err: Invalid Config for HardwarePiface. Use inputEntityKey or outputEntityKey");    
             break;

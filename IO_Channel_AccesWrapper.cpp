@@ -93,6 +93,20 @@ void IO_Channel_AccesWrapper::insert(std::pair<char, IOChannelPtr> pair){
     IO_Channel_AccesWrapper::io_channels.insert(std::move(pair));
 }
 
+//ChannelEntitySP IO_Channel_AccesWrapper::getFirstInput(){
+//    if(options.size() != 1){
+//       std::cerr << "Size is:" << options.size();
+//       throw std::invalid_argument("Error: Array must have one dimen"); 
+//    }
+//       
+//    for (auto const& entity : this->getIOChnl()->chEntities){
+//        if(entity->entityType == Channel_Entity::ENTITY_INPUT){
+//            return entity;
+//        }
+//    }
+//
+//}
+
 IO_Channel* IO_Channel_AccesWrapper::getIOChnl(){
     options.clear();
     return &(*IO_Channel_AccesWrapper::io_channels[options[0]]);

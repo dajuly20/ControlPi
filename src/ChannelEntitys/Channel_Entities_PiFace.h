@@ -27,8 +27,12 @@ private:
     PiFacePtr& pfd;
 
     public:
+    
+    
+    
     Channel_Entity_PiFace_Outputs(PiFacePtr& pfd_init, int perm_read_ = Channel_Entity::exp_none,  int perm_write_ = Channel_Entity::exp_none) : pfd(pfd_init)
    {
+    entityType = Channel_Entity::ENTITY_OUTPUT;
     perm_read  = perm_read_;
     perm_write = perm_write_; 
     };
@@ -52,6 +56,7 @@ private:
 public:
         Channel_Entity_PiFace_Inputs(PiFacePtr& pfd_init, int perm_read_ = Channel_Entity::exp_none,  int perm_write_ = Channel_Entity::exp_none) : pfd(pfd_init)
    {
+    entityType = Channel_Entity::ENTITY_INPUT;
     perm_read  = perm_read_;
     perm_write = perm_write_; 
     };

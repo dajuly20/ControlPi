@@ -18,6 +18,8 @@ Channel_Entity_Pipe_RX::Channel_Entity_Pipe_RX(const Channel_Entity_Pipe_RX& ori
 }
 
 Channel_Entity_Pipe_RX::~Channel_Entity_Pipe_RX() {
+            
+
 }
 
 

@@ -14,7 +14,7 @@
 #include "Channel_Entity.h"
 
 Channel_Entity::Channel_Entity( int perm_read_ ,  int perm_write_ ) {
-    
+    entityType = ENTITY_ERROR;    
     perm_read  = perm_read_;
     perm_write = perm_write_; 
 }

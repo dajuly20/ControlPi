@@ -61,12 +61,7 @@ using namespace std;
 std::atomic<bool>    keepRunning(true);     //Used to interrupt mainloop
 static volatile bool configRead  = false; //Used to re-read configuration
 
-
-    
-
 typedef std::shared_ptr<IO_Channel_AccesWrapper> IO_Channel_AccessWrapperPTR;
-
-
 
 /*
  Functor to inject the IO Object into the replace identifier function.
@@ -335,7 +330,9 @@ int main( int argc, char *argv[] )
     // Could Access now via (*myte.io_channels['H'])['i']->read_pin(0) 
     // But IO_Channel_AccessWrapper hides it away, and simplyfies access. so obj['H']['i']->member
     IO_Channel_AccesWrapper chnl(&isg);
-    
+//    
+    std::vector< char> timerEntityKeys;
+    std::vector< char> hardwareEntityKeys;
     
     int ii = 0;
     for(auto const& con  : conf.confEnties){
@@ -343,8 +340,14 @@ int main( int argc, char *argv[] )
         switch (con.second->entity_type){
             case globalConf::CONTEXT_HARDWARE:
                 chnl.insert(std::make_pair(con.first, IOChannelPtr(new IO_Channel_Hw_PiFace(con.second))));
+                hardwareEntityKeys.push_back (con.first);
                 // Mandatory for interrupt funktion.
-                inputs = chnl[con.first]['o']->read_all();
+                for (auto const& entity : chnl[con.first].getIOChnl()->chEntities)
+                {
+                    std::cout << entity.first << std::endl;
+                }
+                inputs = chnl[con.first].getIOChnl()->output->read_all();
+                //inputs = chnl[con.first]['o']->read_all();
                 printf("Outputs: 0x%x\n", inputs);
 
                 break;
@@ -358,7 +361,7 @@ int main( int argc, char *argv[] )
                 {
                 chnl.insert(std::make_pair(con.first, IOChannelPtr(new IO_Channel_Virtual_Timer(con.second)))); 
                 
-
+                timerEntityKeys.push_back(con.first);
                 timersConf  = loadConfigfile(fn_timers, true);
 
                 // Giving out the timers config to the actual timer(s?)
@@ -433,18 +436,24 @@ int main( int argc, char *argv[] )
    
     // Enable Caching
     // TODO: Make infrastructure to enable caching on all channels at once
-    chnl['H'].getIOChnl()->caching_enable();  
- 
+    chnl[hardwareEntityKeys[0]].getIOChnl()->caching_enable();  
+    
+    
+    
+    //char firstHardwareEntityKey = hardwareEntityKeys[0];
     // chnl COPIED here !!!  (fails on copy construct... ) 
     IO_Channel_AccesWrapper chnl_cpy__hwinterrupt = chnl;
-    std::thread hwInterrupt([&chnl_cpy__hwinterrupt, &isg](){
+    std::thread hwInterrupt([&chnl_cpy__hwinterrupt, &isg, hardwareEntityKeys](){
     
         pthread_setname_np(pthread_self(), "HW-Interrupt");
         cout << "Started interrupt thread " << endl;
         while(keepRunning){
-            if (chnl_cpy__hwinterrupt['H'].getIOChnl()->wait_for_interrupt()){
+            // Interrupt only on the first HW Channel. 
+            
+            if (chnl_cpy__hwinterrupt[hardwareEntityKeys[0]].getIOChnl()->wait_for_interrupt()){
                 for (int i = 0; i < 8; i++) {
-                    uint8_t pinStateRev =  chnl_cpy__hwinterrupt['H']['i']->read_pin(i); 
+                    uint8_t pinStateRev =  chnl_cpy__hwinterrupt[hardwareEntityKeys[0]].getIOChnl()->input->read_pin(i); 
+                    
                     printf("Input %d value: %d\n", (int)i, (int)pinStateRev);
                 }
             
@@ -490,7 +499,7 @@ int main( int argc, char *argv[] )
     
     while(keepRunning){
         
-        if (chnl['H'].getIOChnl()->interrupts_enabled()) {
+        if (chnl[hardwareEntityKeys[0]].getIOChnl()->interrupts_enabled()) {
             printf("\n\nWaiting for input (press any button on the PiFaceDigital)\n");
        
         
@@ -504,17 +513,24 @@ int main( int argc, char *argv[] )
             if(configRead == false){
                 softLogic   = loadConfigfile(filename, false); // Loads soft-logic
                 timersConf  = loadConfigfile(fn_timers, true); // Loads timer-config.
-                ((IO_Channel_Virtual_Timer*) (chnl['T'].getIOChnl()))->setTimersCfg(&timersConf);
+                for (char timerKey : timerEntityKeys){
+                    ((IO_Channel_Virtual_Timer*) (chnl[timerKey].getIOChnl()))->setTimersCfg(&timersConf);
+                }
                 
                 configRead = true;
                 printf("\n\nConfig has been reloaded!\n");
             }
             
             
+            for(char hwKey : hardwareEntityKeys){
+                chnl[hwKey].getIOChnl()->flush();
+            }
             
-            chnl['H'].getIOChnl()->flush();
             logicEngine(chnl, softLogic);
-            chnl['H'].getIOChnl()->flush();
+            
+            for(char hwKey : hardwareEntityKeys){
+                chnl[hwKey].getIOChnl()->flush();
+            }
             
             cp.iterationTriggered(chnl);
             

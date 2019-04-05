@@ -18,8 +18,16 @@
 #include <mutex>
 #include <iostream>
 
+
 class Channel_Entity {
 public:
+    
+    int entityType; 
+    
+    static const int ENTITY_INPUT = 1;
+    static const int ENTITY_OUTPUT = 2;
+    static const int ENTITY_DUPLEX = 3;
+    static const int ENTITY_ERROR = -1;
     
     static const int exp_public  = 2;
     static const int exp_private = 1;

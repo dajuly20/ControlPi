@@ -28,8 +28,9 @@ class IO_Channel_Hw_PiFace : public IO_Channel_Hw {
  
     //IO_Channel_Hw_PiFace();
 public:
-   
-    
+//    ChannelEntitySP input;
+//    ChannelEntitySP output;
+//    
     IO_Channel_Hw_PiFace(configEntity* _conf);
         
       

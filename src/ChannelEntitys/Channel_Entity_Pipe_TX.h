@@ -20,7 +20,7 @@
 class Channel_Entity_Pipe_TX : public Channel_Entity_Memory {
 public:
     Channel_Entity_Pipe_TX( int perm_read_ = Channel_Entity::exp_none,  int perm_write_ = Channel_Entity::exp_none){
-    
+    entityType = Channel_Entity::ENTITY_OUTPUT;
     perm_read  = perm_read_;
     perm_write = perm_write_; 
 }

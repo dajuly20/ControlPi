@@ -43,8 +43,9 @@ public:
     const std::map<char,IOChannelPtr>& getAllChannels(){
         return io_channels;
     }
-    
-    
+//    
+//    ChannelEntitySP IO_Channel_AccesWrapper::getFirstInput();
+//    
 private:
     
     static std::map<char,IOChannelPtr> io_channels; // io_channels must not be leaked! (isg needs to be assigned!)

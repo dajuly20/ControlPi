@@ -58,19 +58,19 @@ IO_Channel_Virtual_Pipe::IO_Channel_Virtual_Pipe(configEntity* _conf){
         int kind = x.second->entityKind;
         //ChannelEntitySP entity;
         switch(kind){
-            case (EntityDetails::ENTITY_INPUT):
+            case (Channel_Entity::ENTITY_INPUT):
                 //entity  ( new Channel_Entity_Pipe_RX(Channel_Entity::exp_public, Channel_Entity::exp_private));
                 //chEntities.insert ( std::make_pair(x.first,entity) );
                 chEntities.insert ( std::make_pair(x.first, ChannelEntitySP( new Channel_Entity_Pipe_RX(x.second->perm_read, x.second->perm_write))) );   
             break;
                 
-            case (EntityDetails::ENTITY_OUTPUT):
+            case (Channel_Entity::ENTITY_OUTPUT):
                 
                 chEntities.insert ( std::make_pair(x.first, ChannelEntitySP( new Channel_Entity_Pipe_TX(x.second->perm_read, x.second->perm_write))) );   
             break;
                 
-            case (EntityDetails::ENTITY_DUPLEX): // fallthrough
-            case (EntityDetails::ENTITY_ERROR):  // fallthrough
+            case (Channel_Entity::ENTITY_DUPLEX): // fallthrough
+            case (Channel_Entity::ENTITY_ERROR):  // fallthrough
             default: 
                 throw std::invalid_argument("Err: Invalid Config for Pipe. Use inputEntityKey or outputEntityKey");    
             break;

@@ -51,22 +51,22 @@ void IO_Channel_Hw_PiFace::init_pfd_object(){
         int kind = x.second->entityKind;
         //ChannelEntitySP entity;
         switch(kind){
-            case (EntityDetails::ENTITY_INPUT):
-                {
-                ChannelEntitySP input  ( new Channel_Entity_PiFace_Inputs (pfdsp, /*Channel_Entity::exp_none, Channel_Entity::exp_none*/ x.second->perm_read, x.second->perm_write));
+            case (Channel_Entity::ENTITY_INPUT):
+                
+                input = ChannelEntitySP  ( new Channel_Entity_PiFace_Inputs (pfdsp, /*Channel_Entity::exp_none, Channel_Entity::exp_none*/ x.second->perm_read, x.second->perm_write));
                 chEntities.insert ( std::make_pair(x.first ,input)  );
-                }
+                
             break;
                 
-            case (EntityDetails::ENTITY_OUTPUT):
-                {
-                ChannelEntitySP output ( new Channel_Entity_PiFace_Outputs(pfdsp, /*Channel_Entity::exp_none, Channel_Entity::exp_none*/ x.second->perm_read, x.second->perm_write));
+            case (Channel_Entity::ENTITY_OUTPUT):
+                
+                output = ChannelEntitySP( new Channel_Entity_PiFace_Outputs(pfdsp, /*Channel_Entity::exp_none, Channel_Entity::exp_none*/ x.second->perm_read, x.second->perm_write));
                 chEntities.insert ( std::make_pair(x.first ,output) );
-                }
+               
             break;
                 
-            case (EntityDetails::ENTITY_DUPLEX): // fallthrough
-            case (EntityDetails::ENTITY_ERROR):  // fallthrough
+            case (Channel_Entity::ENTITY_DUPLEX): // fallthrough
+            case (Channel_Entity::ENTITY_ERROR):  // fallthrough
             default: 
                 throw std::invalid_argument("Err: Invalid Config for HardwarePiface. Use inputEntityKey or outputEntityKey");    
             break;

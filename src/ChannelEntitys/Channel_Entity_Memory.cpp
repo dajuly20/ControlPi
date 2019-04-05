@@ -14,7 +14,7 @@
 #include "Channel_Entity_Memory.h"
 
 Channel_Entity_Memory::Channel_Entity_Memory() {
-    
+                entityType = Channel_Entity::ENTITY_DUPLEX;
 }
 
 Channel_Entity_Memory::Channel_Entity_Memory(const Channel_Entity_Memory& orig) {

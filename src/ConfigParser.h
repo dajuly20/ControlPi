@@ -61,15 +61,15 @@ public:
     int perm_write;
     int entityKind;
     
-    static const int ENTITY_INPUT = 1;
-    static const int ENTITY_OUTPUT = 2;
-    static const int ENTITY_DUPLEX = 3;
-    static const int ENTITY_ERROR = -1;
+//    static const int ENTITY_INPUT = 1;
+//    static const int ENTITY_OUTPUT = 2;
+//    static const int ENTITY_DUPLEX = 3;
+//    static const int ENTITY_ERROR = -1;
      
     EntityDetails(){
         perm_read  = Channel_Entity::exp_none;
         perm_write = Channel_Entity::exp_none; 
-        entityKind = ENTITY_ERROR;
+        entityKind = Channel_Entity::ENTITY_ERROR;
     }
     
     EntityDetails(int _entityKind) : EntityDetails(){
@@ -301,18 +301,22 @@ public:
                 
                     if(key == "inputentitykey"){
                         entity = valueO[0];
-                        allg->entity_detail.insert(std::make_pair(entity, new EntityDetails(EntityDetails::ENTITY_INPUT)));
+                        allg->entity_detail.insert(std::make_pair(entity, new EntityDetails(Channel_Entity::ENTITY_INPUT)));
                         //allg->entity_detail[entity]->perm_write = Channel_Entity::exp_none;
                         //allg->entity_detail[entity]->perm_read  = Channel_Entity::exp_none;
                     }
                     
                     if(key == "outputentitykey"){
                         entity = valueO[0];
-                        allg->entity_detail.insert(std::make_pair(entity, new EntityDetails(EntityDetails::ENTITY_OUTPUT)));
+                        allg->entity_detail.insert(std::make_pair(entity, new EntityDetails(Channel_Entity::ENTITY_OUTPUT)));
                         //allg->entity_detail[entity]->perm_write = Channel_Entity::exp_none;
-                        //allg->entity_detail[entity]->perm_read  = Channel_Entity::exp_none;
-                        
-                                
+                        //allg->entity_detail[entity]->perm_read  = Channel_Entity::exp_none;                                
+                    }
+                    if(key == "duplexentitykey"){
+                        entity = valueO[0];
+                        allg->entity_detail.insert(std::make_pair(entity, new EntityDetails(Channel_Entity::ENTITY_DUPLEX)));
+                        //allg->entity_detail[entity]->perm_write = Channel_Entity::exp_none;
+                        //allg->entity_detail[entity]->perm_read  = Channel_Entity::exp_none;                                
                     }
                     
                     

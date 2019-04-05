@@ -35,6 +35,10 @@ public:
     void assignIsg(iterationSwitchGuard* _isg){
         isg = _isg;
     }
+    
+    ChannelEntitySP input;
+    ChannelEntitySP output;
+    
     IO_Channel();
     //IO_Channel(configEntity* _conf);
     
