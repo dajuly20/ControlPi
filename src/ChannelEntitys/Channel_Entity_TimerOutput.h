@@ -24,7 +24,7 @@
 
 class Channel_Entity_TimerOutput : public Channel_Entity_Memory{
 public:
-    Channel_Entity_TimerOutput();
+    Channel_Entity_TimerOutput(int perm_read_ = Channel_Entity::exp_none,  int perm_write_ = Channel_Entity::exp_none);
     Channel_Entity_TimerOutput(const Channel_Entity_TimerOutput& orig);
     virtual ~Channel_Entity_TimerOutput();
     

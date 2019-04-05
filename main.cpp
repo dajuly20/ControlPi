@@ -37,7 +37,6 @@
 #include "pifacedigitalcpp.h"
 #include "boolLogicParser.h"    
 #include "regReplaceExtension.h" // Extended reg-replace for inserting callback function.
-#include "src/ConfigParser.h"
 
 #include "globals.h"
 #include "iterationSwitchGuard.h"
@@ -50,8 +49,11 @@
 #include "src/IOChannels/IO_Channel_Virtual_Timer.h"
 #include "src/IOChannels/IO_Channel_Virtual_Pipe.h"
 #include "src/CommandProcessor.h"
+#include "src/ConfigParser.h"
+
 #include <boost/algorithm/string/classification.hpp> // Include boost::for is_any_of
 #include <boost/algorithm/string/split.hpp> // Include for boost::split
+
 
 using namespace std;
 
@@ -324,12 +326,16 @@ int main( int argc, char *argv[] )
             isg.itCond.notify_one();
         });
 
-        
+    
+    std::vector<std::string>  timersConf;
+    // Initially read the timers config    
+    std::string fn_timers = "timers.conf";
       
     // Push all the possible channels to the array. 
     // Could Access now via (*myte.io_channels['H'])['i']->read_pin(0) 
     // But IO_Channel_AccessWrapper hides it away, and simplyfies access. so obj['H']['i']->member
     IO_Channel_AccesWrapper chnl(&isg);
+    
     
     int ii = 0;
     for(auto const& con  : conf.confEnties){
@@ -337,15 +343,27 @@ int main( int argc, char *argv[] )
         switch (con.second->entity_type){
             case globalConf::CONTEXT_HARDWARE:
                 chnl.insert(std::make_pair(con.first, IOChannelPtr(new IO_Channel_Hw_PiFace(con.second))));
-            break;
+                // Mandatory for interrupt funktion.
+                inputs = chnl[con.first]['o']->read_all();
+                printf("Outputs: 0x%x\n", inputs);
+
+                break;
             case globalConf::CONTEXT_MEMORY:
-                chnl.insert(std::make_pair(con.first, IOChannelPtr(new IO_Channel_Virtual_Memory())));
+                chnl.insert(std::make_pair(con.first, IOChannelPtr(new IO_Channel_Virtual_Memory(con.second))));
                 break;
             case globalConf::CONTEXT_PIPE:
-                chnl.insert(std::make_pair(con.first, IOChannelPtr(new IO_Channel_Virtual_Pipe(con.second->private_token, 0x07)))); 
+                chnl.insert(std::make_pair(con.first, IOChannelPtr(new IO_Channel_Virtual_Pipe(con.second)))); 
                 break;
             case globalConf::CONTEXT_TIMER:
-                chnl.insert(std::make_pair(con.first, IOChannelPtr(new IO_Channel_Virtual_Timer()))); 
+                {
+                chnl.insert(std::make_pair(con.first, IOChannelPtr(new IO_Channel_Virtual_Timer(con.second)))); 
+                
+
+                timersConf  = loadConfigfile(fn_timers, true);
+
+                // Giving out the timers config to the actual timer(s?)
+                ((IO_Channel_Virtual_Timer*) (chnl[con.first].getIOChnl()))->setTimersCfg(&timersConf);
+                }
                 break;
                
             
@@ -400,19 +418,8 @@ int main( int argc, char *argv[] )
 
 //    // Usage e.g.:  chnl['H']['i'][0];  ==> (*io_channels['H'])['i']->read_pin(0);
 
-    // Mandatory for interrupt funktion.
-    inputs = chnl['H']['o']->read_all();
-    printf("Outputs: 0x%x\n", inputs);
-
     
-    // Initially read the timers config    
-    std::string fn_timers = "timers.conf";
-    std::vector<std::string>  timersConf;
-    timersConf  = loadConfigfile(fn_timers, true);
     
-    // Giving out the timers config to the actual timer(s?)
-    ((IO_Channel_Virtual_Timer*) (chnl['T'].getIOChnl()))->setTimersCfg(&timersConf);
-  
     // Initially read the config    
     std::string filename = "logic.conf";
     std::vector<std::string>  softLogic;

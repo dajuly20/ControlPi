@@ -12,8 +12,9 @@
  */
 
 #include "IO_Channel_Hw.h"
-
-IO_Channel_Hw::IO_Channel_Hw() {
+#include "../ConfigParser.h"
+IO_Channel_Hw::IO_Channel_Hw(configEntity* _conf) {
+    conf = _conf;
 }
 
 IO_Channel_Hw::IO_Channel_Hw(const IO_Channel_Hw& orig) {

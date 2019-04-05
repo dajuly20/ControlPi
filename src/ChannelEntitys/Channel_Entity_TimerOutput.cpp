@@ -13,8 +13,11 @@
 
 #include "Channel_Entity_TimerOutput.h"
 
-Channel_Entity_TimerOutput::Channel_Entity_TimerOutput() {
-}
+Channel_Entity_TimerOutput::Channel_Entity_TimerOutput(int perm_read_,  int perm_write_ )
+{
+    perm_read  = perm_read_;
+    perm_write = perm_write_; 
+};
 
 Channel_Entity_TimerOutput::Channel_Entity_TimerOutput(const Channel_Entity_TimerOutput& orig) {
 }

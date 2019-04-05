@@ -193,7 +193,7 @@ public:
         switch(what){
             case 1: return "Command needs to consist out of 3 parts! e.g. set:Hi0";
             case 2: return "bla";
-            case 3: return "insufficent permission to write that Channel " +authstr;
+            case 3: return "insufficent permission to write that Channel " +authstr+"\nUse command 'auth:<IO-Channel>:<token>' to authorize for a channel.";
             case 4: return "token incorrect.";
             
         }

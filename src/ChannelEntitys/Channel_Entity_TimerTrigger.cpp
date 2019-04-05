@@ -13,8 +13,11 @@
 
 #include "Channel_Entity_TimerTrigger.h"
 
-Channel_Entity_TimerTrigger::Channel_Entity_TimerTrigger() {
-}
+Channel_Entity_TimerTrigger::Channel_Entity_TimerTrigger(int perm_read_,  int perm_write_ )
+{
+    perm_read  = perm_read_;
+    perm_write = perm_write_; 
+};
 
 Channel_Entity_TimerTrigger::Channel_Entity_TimerTrigger(const Channel_Entity_TimerTrigger& orig) {
 }

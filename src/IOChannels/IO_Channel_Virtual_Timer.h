@@ -15,13 +15,16 @@
 #define IO_CHANNEL_VIRTUAL_TIMER_H
 #include "../../timercppNew.h"
 #include "IO_Channel_Virtual.h"
+#include "../ConfigParser.h"
+
+
 #include <memory>
 #include <vector>
 typedef std::unique_ptr<Timer> TimerPtr;
 
 class IO_Channel_Virtual_Timer : public IO_Channel_Virtual {
 public:
-    IO_Channel_Virtual_Timer();
+    IO_Channel_Virtual_Timer(configEntity* _conf);
     IO_Channel_Virtual_Timer(const IO_Channel_Virtual_Timer& orig);
     virtual ~IO_Channel_Virtual_Timer();
     void trigger(bool _bdata, uint8_t bit_num);
@@ -39,6 +42,7 @@ private:
     std::map<int,unsigned long>      powerOffTimersCfg;
     std::map<int,TimerPtr> powerOnTimers;
     std::map<int,TimerPtr> powerOffTimers;
+    ChannelEntitySP o;
     //TimerCpp t = TimerCpp();
  
 

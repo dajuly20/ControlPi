@@ -25,7 +25,7 @@
 
 class Channel_Entity_TimerTrigger : public Channel_Entity_Memory{
 public:
-    Channel_Entity_TimerTrigger();
+    Channel_Entity_TimerTrigger(int perm_read_ = Channel_Entity::exp_none,  int perm_write_ = Channel_Entity::exp_none);
     Channel_Entity_TimerTrigger(const Channel_Entity_TimerTrigger& orig);
     virtual ~Channel_Entity_TimerTrigger();
 

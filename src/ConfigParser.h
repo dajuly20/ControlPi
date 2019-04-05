@@ -10,7 +10,14 @@
 #include <sys/stat.h> // Check if file exists.
 #include <vector>
 #include <map>
-#include <stdexcept> // throw
+#include <stdexcept>
+
+
+#include "ChannelEntitys/Channel_Entity.h"
+
+namespace Config{
+static const std::string NO_TOKEN = "";
+}
 
 
 // Paths for config files
@@ -48,9 +55,31 @@ inline bool file_exist (const std::string& name) {
 std::vector<std::string>  loadConfigfile(std::string filename, bool emptyLines, bool addLineTermination = true);
 
 
-
-
-
+class EntityDetails{
+public:
+    int perm_read;
+    int perm_write;
+    int entityKind;
+    
+    static const int ENTITY_INPUT = 1;
+    static const int ENTITY_OUTPUT = 2;
+    static const int ENTITY_DUPLEX = 3;
+    static const int ENTITY_ERROR = -1;
+     
+    EntityDetails(){
+        perm_read  = Channel_Entity::exp_none;
+        perm_write = Channel_Entity::exp_none; 
+        entityKind = ENTITY_ERROR;
+    }
+    
+    EntityDetails(int _entityKind) : EntityDetails(){
+        entityKind = _entityKind;
+    }
+    
+   
+    
+    
+};
 
 class configEntity{
 public: 
@@ -62,7 +91,9 @@ public:
     int entity_type = ENTITY_ERROR;
     char entityKey = ' ';
     
-    std::string private_token = "-1";
+    std::string private_token = Config::NO_TOKEN; //IO_Channel::NO_TOKEN;
+    
+    std::map<char, EntityDetails*> entity_detail;
     
     virtual void print(){
     
@@ -138,6 +169,7 @@ private:
     
     int         context    = CONTEXT_ERROR;
     char        instance   = CONTEXT_ERROR; 
+    char        entity     = CONTEXT_ERROR;
     int         cfglineNr = 0;
     
     std::string delimiter   = "=";
@@ -235,6 +267,7 @@ public:
                        allg->entityKey= instance;
                        allg->entity_type =  context;
                        entity_hardware = (configEntityHardware*) confEnties[instance];
+                       
                     }
                     // Here comes specific settings for HW
                 }
@@ -265,8 +298,55 @@ public:
                 
                 // Unspecific properties 
                 if(context != CONTEXT_ERROR && instance != CONTEXT_ERROR){
+                
+                    if(key == "inputentitykey"){
+                        entity = valueO[0];
+                        allg->entity_detail.insert(std::make_pair(entity, new EntityDetails(EntityDetails::ENTITY_INPUT)));
+                        //allg->entity_detail[entity]->perm_write = Channel_Entity::exp_none;
+                        //allg->entity_detail[entity]->perm_read  = Channel_Entity::exp_none;
+                    }
+                    
+                    if(key == "outputentitykey"){
+                        entity = valueO[0];
+                        allg->entity_detail.insert(std::make_pair(entity, new EntityDetails(EntityDetails::ENTITY_OUTPUT)));
+                        //allg->entity_detail[entity]->perm_write = Channel_Entity::exp_none;
+                        //allg->entity_detail[entity]->perm_read  = Channel_Entity::exp_none;
+                        
+                                
+                    }
                     
                     
+                    if(key == "expose_read"){
+                       if(entity == CONTEXT_ERROR){
+                           std::string err_msg = "Err Line "+std::to_string(cfglineNr)+": Entity key is not set properly "+entity;
+                           throw std::invalid_argument(err_msg);
+                       }
+                       if(valueL == "public"){
+                           allg->entity_detail[entity]->perm_read = Channel_Entity::exp_public;
+                       } 
+                       else if(valueL == "private"){
+                           allg->entity_detail[entity]->perm_read = Channel_Entity::exp_private;
+                       }
+                       else{
+                           allg->entity_detail[entity]->perm_read = Channel_Entity::exp_none;
+                       }
+                    }
+                    
+                    if(key == "expose_write"){
+                       if(entity == CONTEXT_ERROR){
+                           std::string err_msg = "Err Line "+ std::to_string(cfglineNr)+": Entity key is not set properly "+entity;
+                           throw std::invalid_argument(err_msg);
+                       }
+                       if(valueL == "public"){
+                           allg->entity_detail[entity]->perm_write = Channel_Entity::exp_public;
+                       } 
+                       else if(valueL == "private"){
+                           allg->entity_detail[entity]->perm_write = Channel_Entity::exp_private;
+                       }
+                       else{
+                           allg->entity_detail[entity]->perm_write = Channel_Entity::exp_none;
+                       }
+                    }
                                           
                 }
                 
@@ -287,8 +367,14 @@ public:
     virtual ~globalConf(){
         // renove config objects.
         for(auto const& x  : confEnties){
+            for(auto const& z  : x.second->entity_detail){
+                delete z.second;
+            }
             delete x.second;
+            
         }
+        
+   
     } 
     
 };

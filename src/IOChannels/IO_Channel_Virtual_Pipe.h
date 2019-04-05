@@ -20,14 +20,14 @@
 
 class IO_Channel_Virtual_Pipe : public IO_Channel_Virtual {
 public:
-    IO_Channel_Virtual_Pipe(std::string _token, int _permission);
+   
     IO_Channel_Virtual_Pipe(configEntity* conf);
     
-    IO_Channel_Virtual_Pipe(const IO_Channel_Virtual_Pipe& orig);
+    //IO_Channel_Virtual_Pipe(const IO_Channel_Virtual_Pipe& orig);
     virtual ~IO_Channel_Virtual_Pipe();
     
 private:
-  
+//    IO_Channel_Virtual_Pipe(std::string _token, int _permission);
 };
 
 #endif /* IO_CHANNEL_VIRTUAL_PIPE_H */

@@ -20,20 +20,23 @@
 #include <memory>   // shared_ptr
 #include <map>
 #include <vector>      // map
+#include <string>   // std::string
 #include "../WebSocket/websocket_session.hpp"
+#include "../ConfigParser.h"
 
 typedef std::shared_ptr<Channel_Entity> ChannelEntitySP;
 
 class IO_Channel {
 public:
     std::map<char, ChannelEntitySP> chEntities;
-    
+    configEntity* conf;
+    //configEntity* conf;
     iterationSwitchGuard* isg;
     void assignIsg(iterationSwitchGuard* _isg){
         isg = _isg;
     }
-    
     IO_Channel();
+    //IO_Channel(configEntity* _conf);
     
     IO_Channel(std::string _token, int _permission) : token(_token), permission(_permission){ }
 
@@ -72,6 +75,7 @@ public:
     }
     
     bool checkToken(std::string& token_is){
+        if(this->token == Config::NO_TOKEN) return false;
         return (token_is == this->token);
     }
     

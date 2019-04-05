@@ -14,6 +14,7 @@
 #include "IO_Channel.h"
 
 IO_Channel::IO_Channel() {
+    //conf = _conf;
     token="none";
     permission=0;
 }

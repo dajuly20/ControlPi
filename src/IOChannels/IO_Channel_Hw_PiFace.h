@@ -24,21 +24,24 @@ class IO_Channel_Hw_PiFace : public IO_Channel_Hw {
  private:
     void init_pfd_object();
      PiFacePtr pfdsp;
+     //configEntity* conf = 0;
+ 
+    //IO_Channel_Hw_PiFace();
 public:
+   
     
-    IO_Channel_Hw_PiFace();
-    IO_Channel_Hw_PiFace(configEntity* conf) : IO_Channel_Hw_PiFace(){
-        token = conf->private_token;
-        permission = 0x77;
-    }
+    IO_Channel_Hw_PiFace(configEntity* _conf);
+        
+      
     
-    IO_Channel_Hw_PiFace(std::string _token, int _permission) : IO_Channel_Hw_PiFace(){ 
-        token      = _token;
-        permission = _permission;
-       }
+    
+    //IO_Channel_Hw_PiFace(std::string _token, int _permission) : IO_Channel_Hw_PiFace(){ 
+    //    token      = _token;
+   //    }
+     
     //IO_Channel_Hw_PiFace(PiFaceDigital* pfd_init) ;
     
-    IO_Channel_Hw_PiFace(const IO_Channel_Hw_PiFace& orig);
+    //IO_Channel_Hw_PiFace(const IO_Channel_Hw_PiFace& orig);
     virtual ~IO_Channel_Hw_PiFace();
    
     //PiFaceDigital* pfd;

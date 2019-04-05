@@ -10,12 +10,13 @@
  * 
  * Created on December 18, 2018, 6:57 PM
  */
+#include <stdexcept>
 #include "../../globals.h"
 #include "IO_Channel_Virtual_Pipe.h"
 #include "../ChannelEntitys/Channel_Entity.h"
 #include "../ChannelEntitys/Channel_Entity_Pipe_RX.h"
 #include "../ChannelEntitys/Channel_Entity_Pipe_TX.h"
-#include "../ConfigParser.h"
+
 /*
  permission: 2 digit hex
  * e.g.  
@@ -35,32 +36,66 @@
 
 
 
-IO_Channel_Virtual_Pipe::IO_Channel_Virtual_Pipe(std::string _token, int _permission) { //: token(_token), permission(_permission){
-    
-    token = _token;
-    permission = _permission;
-    // Perspective: This program so Receive are "switches" on the Web-Frontend and Transmit are "LED"s on the other side.
-    ChannelEntitySP receiveEntity  ( new Channel_Entity_Pipe_RX(Channel_Entity::exp_public, Channel_Entity::exp_private));
-    ChannelEntitySP transmitEntity ( new Channel_Entity_Pipe_TX(Channel_Entity::exp_public, Channel_Entity::exp_none));
-   
-    chEntities.insert ( std::make_pair('i',receiveEntity) );
-    chEntities.insert ( std::make_pair('o',transmitEntity) );
-}
+//IO_Channel_Virtual_Pipe::IO_Channel_Virtual_Pipe(std::string _token, int _permission) { //: token(_token), permission(_permission){
+//    
+//    token = _token;
+//    permission = _permission;
+//    // Perspective: This program so Receive are "switches" on the Web-Frontend and Transmit are "LED"s on the other side.
+//    ChannelEntitySP receiveEntity  ( new Channel_Entity_Pipe_RX(Channel_Entity::exp_public, Channel_Entity::exp_private));
+//    ChannelEntitySP transmitEntity ( new Channel_Entity_Pipe_TX(Channel_Entity::exp_public, Channel_Entity::exp_none));
+//   
+//    chEntities.insert ( std::make_pair('i',receiveEntity) );
+//    chEntities.insert ( std::make_pair('o',transmitEntity) );
+//}
 
-IO_Channel_Virtual_Pipe::IO_Channel_Virtual_Pipe(configEntity* conf){
-    
+
+IO_Channel_Virtual_Pipe::IO_Channel_Virtual_Pipe(configEntity* _conf){
+    conf =  _conf; 
     token = conf->private_token;
-    permission = -1;
-    // Perspective: This program so Receive are "switches" on the Web-Frontend and Transmit are "LED"s on the other side.
-    ChannelEntitySP receiveEntity  ( new Channel_Entity_Pipe_RX(Channel_Entity::exp_public, Channel_Entity::exp_private));
-    ChannelEntitySP transmitEntity ( new Channel_Entity_Pipe_TX(Channel_Entity::exp_public, Channel_Entity::exp_none));
-   
-    chEntities.insert ( std::make_pair('i',receiveEntity) );
-    chEntities.insert ( std::make_pair('o',transmitEntity) );
+    
+    for(auto const& x  : conf->entity_detail){
+        std::cout << x.first << ": Read:" << x.second->perm_read << " Write:" << x.second->perm_write << " Kind: " << x.second->entityKind << std::endl;
+        int kind = x.second->entityKind;
+        //ChannelEntitySP entity;
+        switch(kind){
+            case (EntityDetails::ENTITY_INPUT):
+                //entity  ( new Channel_Entity_Pipe_RX(Channel_Entity::exp_public, Channel_Entity::exp_private));
+                //chEntities.insert ( std::make_pair(x.first,entity) );
+                chEntities.insert ( std::make_pair(x.first, ChannelEntitySP( new Channel_Entity_Pipe_RX(x.second->perm_read, x.second->perm_write))) );   
+            break;
+                
+            case (EntityDetails::ENTITY_OUTPUT):
+                
+                chEntities.insert ( std::make_pair(x.first, ChannelEntitySP( new Channel_Entity_Pipe_TX(x.second->perm_read, x.second->perm_write))) );   
+            break;
+                
+            case (EntityDetails::ENTITY_DUPLEX): // fallthrough
+            case (EntityDetails::ENTITY_ERROR):  // fallthrough
+            default: 
+                throw std::invalid_argument("Err: Invalid Config for Pipe. Use inputEntityKey or outputEntityKey");    
+            break;
+                
+        }
+         
+            
+        
     }
-
-IO_Channel_Virtual_Pipe::IO_Channel_Virtual_Pipe(const IO_Channel_Virtual_Pipe& orig) {
+    
+    
+    permission = -1;
+    
+    // Perspective: This program so Receive are "switches" on the Web-Frontend and Transmit are "LED"s on the other side.
+    //    
+    //    ChannelEntitySP receiveEntity  ( new Channel_Entity_Pipe_RX(Channel_Entity::exp_public, Channel_Entity::exp_private));
+    //    ChannelEntitySP transmitEntity ( new Channel_Entity_Pipe_TX(Channel_Entity::exp_public, Channel_Entity::exp_none));
+    //   
+    //    chEntities.insert ( std::make_pair('i',receiveEntity) );
+    //    chEntities.insert ( std::make_pair('o',transmitEntity) );
+    
 }
+//
+//IO_Channel_Virtual_Pipe::IO_Channel_Virtual_Pipe(const IO_Channel_Virtual_Pipe& orig) {
+//}
 
 IO_Channel_Virtual_Pipe::~IO_Channel_Virtual_Pipe() {
 }

@@ -13,8 +13,11 @@
 
 #include "IO_Channel_Virtual_Memory.h"
 #include "../ChannelEntitys/Channel_Entity_Memory.h"
+#include "../ConfigParser.h"
 
-IO_Channel_Virtual_Memory::IO_Channel_Virtual_Memory() {
+IO_Channel_Virtual_Memory::IO_Channel_Virtual_Memory(configEntity* _conf) {
+    conf = _conf;
+    token = _conf->private_token;
     ChannelEntitySP memoryEntity_a ( new Channel_Entity_Memory());
      chEntities.insert ( std::make_pair('a',memoryEntity_a) );
     
