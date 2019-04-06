@@ -259,36 +259,53 @@ int main( int argc, char *argv[] )
     // Register signalHandlers
     signal(SIGUSR1 ,usrSigHandler); // Re-Reads config, doesn't exit.
     
-    std::string adress = "127.0.0.1";
+    globalConf conf("ControlPi.conf");  
     
-    // Expose server? 
+    std::string _port;
+    std::string _docr; 
+    std::string _adress;
+    bool startWebSockServer;
+     
+    
+    
+ 
+      
+          configEntityNetwork* cen = conf.entity_network;
+          _adress = cen->address;
+          _port   = cen->port;
+          _docr   = cen->docroot;
+          startWebSockServer = cen->active;
+          
+      
+        
+    
+    
+    // Argument for expose overrides settings. 
     if(argc >=2){
         if(std::string(argv[1]) == "--expose"){
-            adress = "0.0.0.0";
+            _adress = "0.0.0.0";
         }
     }
     
+    if(startWebSockServer){
+        std::cout << "Starting WebSocket Server " << _adress << ":" << _port << "\n";
+     }
+     else{
+       std::cout << "WebSocket Server DISABLED " << "\n";  
+     }
     
-    globalConf conf("ControlPi.conf");
-    
-   
-    std::cout << "^^^^^^^^^^^ Print above ^^^^^^^^^^^^^";
-    std::string power  = "8080";
-    std::string docr   = "./www/";
-    
-    //std::cout << "Arc = " << argc << " Argv1" << argv[1] << "\n";
-    std::cout << "Starting WebSocket server " << adress << ":" << power << "\n";
-    
-    
-    auto address = net::ip::make_address(adress);
-    auto port = static_cast<unsigned short>(std::stoi(power));
-    auto doc_root = docr;
+    auto address = net::ip::make_address(_adress);
+    auto port = static_cast<unsigned short>(std::stoi(_port));
+    auto doc_root = _docr;
 
+    
+    
     // The io_context is required for all I/O
     net::io_context ioc;
-    
-    //shared_state* sharedStatePtr = 0;
-    
+       
+    shared_ptr<shared_state> webSocketSessions;
+            
+    if(startWebSockServer){
     // Create and launch a listening port
     shared_ptr<listener> p=
     std::make_shared<listener>(
@@ -296,13 +313,15 @@ int main( int argc, char *argv[] )
         tcp::endpoint{address, port},
         std::make_shared<shared_state>(doc_root));
         
-    shared_ptr<shared_state> webSocketSessions =  p->getSharedState();
-   p->run();
-
+        webSocketSessions = p->getSharedState();
+   
+    
+        p->run();
+    }
     // Capture SIGINT and SIGTERM to perform a clean shutdown
     net::signal_set signals(ioc, SIGINT, SIGTERM, SIGHUP);
     signals.async_wait(
-        [&ioc,&keepRunning,&isg,&webSocketSessions](boost::system::error_code const&, int)
+        [&ioc,&keepRunning,&isg,&webSocketSessions,startWebSockServer](boost::system::error_code const&, int)
         {
        
             // Stop the io_context. This will cause run()
@@ -311,8 +330,9 @@ int main( int argc, char *argv[] )
             keepRunning = false; // Stops the rest of the Program :) 
             ioc.stop();
             
-            webSocketSessions->notify_shutdown();
-            
+            if(startWebSockServer){
+                webSocketSessions->notify_shutdown();
+            }
             {
             std::unique_lock<mutex> lock{isg.itCondMutex};    
             cout << "Locked in Net thread " << endl;
@@ -320,7 +340,9 @@ int main( int argc, char *argv[] )
             }
             isg.itCond.notify_one();
         });
-
+        
+    
+    
     
     std::vector<std::string>  timersConf;
     // Initially read the timers config    
@@ -375,18 +397,18 @@ int main( int argc, char *argv[] )
     
     
     
+ 
     
-        
-        
+            
                             // chnl is copied here!
     commandProcessor cp(isg, chnl, webSocketSessions);
-             
         
-    std::thread remoteCmdProcessor([&webSocketSessions,&keepRunning,&chnl,&isg,&cp](){
+        
+    std::thread remoteCmdProcessor([&webSocketSessions,&keepRunning,&chnl,&isg,&cp,startWebSockServer](){
         std::pair<websocket_session*, std::string>  command = make_pair((websocket_session*) NULL, "");
         
         
-        while(keepRunning){
+        while(keepRunning && startWebSockServer){
 
             webSocketSessions->commandQueue_wait_and_pop(command);
 
@@ -400,7 +422,8 @@ int main( int argc, char *argv[] )
     });
 
     remoteCmdProcessor.detach();
-
+    
+    
      
     // Run the I/O service on the main thread
     //ioc.run();
@@ -423,7 +446,7 @@ int main( int argc, char *argv[] )
 
     
     
-    // Initially read the config    
+    // Initially read the logic program    
     std::string filename = "logic.conf";
     std::vector<std::string>  softLogic;
     softLogic  = loadConfigfile(filename, false);
@@ -532,8 +555,9 @@ int main( int argc, char *argv[] )
                 chnl[hwKey].getIOChnl()->flush();
             }
             
-            cp.iterationTriggered(chnl);
-            
+            if(startWebSockServer){
+                cp.iterationTriggered(chnl);
+            }
           
             isg.itCondSwitch = false; 
             }

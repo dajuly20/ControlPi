@@ -157,6 +157,23 @@ public:
 };
 
 
+class configEntityNetwork : public configEntity{
+public:
+    std::string address = "127.0.0.1";
+    std::string port    = "8080";
+    std::string docroot = "./www/";
+    bool        active  = true;
+    
+    void print() override{
+        std::cout << "Entity " << entityKey     << std::endl;
+        std::cout << "token "  << private_token << std::endl;
+        std::cout << "entityType" << entity_type << std::endl;
+        
+    }
+    
+    //std::string private_token = "-1";    
+};
+
 
 class globalConf{
 public:
@@ -164,6 +181,7 @@ public:
     static const int CONTEXT_TIMER       = 2;
     static const int CONTEXT_HARDWARE    = 3;
     static const int CONTEXT_MEMORY      = 4;
+    static const int CONTEXT_NETWORK     = 5;
     static const int CONTEXT_ERROR       = -1;
 private:
     
@@ -180,7 +198,7 @@ private:
 public:
     
     std::map<char, configEntity*> confEnties;
-    
+    configEntityNetwork*  entity_network = new configEntityNetwork;
    
     
     void print(){
@@ -199,6 +217,7 @@ public:
         configEntityHardware* entity_hardware;
         configEntityMemory*   entity_memory;
         configEntityTimer*    entity_timer;
+        
         configEntity*         allg;
         
         for(std::string& ln : globalConf){
@@ -226,6 +245,17 @@ public:
                     }
                     else if(valueL =="timer"){
                         context = CONTEXT_TIMER;
+                    }
+                    else if(valueL =="network"){
+                       // This one can only exist once. 
+                       // The others could make a second instance on another instance key.
+                       context = CONTEXT_NETWORK;
+                      
+                       allg = this->entity_network;
+                       allg->entityKey= instance;
+                       allg->entity_type =  context;
+                       //entity_network = (configEntityNetwork*) confEnties[instance];
+                       std::cout << "Switching context to network!" << std::endl;
                     }
                     else{
                         throw std::invalid_argument("Err: Unknown context "+valueL);
@@ -294,7 +324,30 @@ public:
                     }
                     // Here comes specific settings for timer
                 }
-                
+               
+                else if(context == CONTEXT_NETWORK){
+                    std::cout << "Next entry in  context to network!" << key << std::endl;
+                    if(entity_network == 0){
+                        std::cout << "Network Entity is null!!" << std::endl;
+                    }
+                    if(key == "address"){ 
+                        entity_network->address = valueO;
+                    }
+                    
+                    if(key == "port"){ 
+                        entity_network->port = valueO;
+                    }
+                    
+                    if(key == "docroot"){ 
+                        entity_network->docroot = valueO;
+                    }
+                    
+                    if(key == "active"){ 
+                        entity_network->active = (valueL == "yes" || valueL == "true");
+                    }
+                    
+                    // Here comes specific settings for timer
+                }
                 
                 // Unspecific properties 
                 if(context != CONTEXT_ERROR && instance != CONTEXT_ERROR){
