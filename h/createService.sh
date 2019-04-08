@@ -18,6 +18,7 @@ sudo ln  conf/logic.conf  /opt/controlpi/logic.conf
 sudo chgrp www-data conf/logic.conf
 sudo chmod g+rw     conf/logic.conf
 sudo ln  conf/timers.conf /opt/controlpi/timers.conf
+sudo ln conf/ControlPi.conf /opt/controlpi/ControlPi.conf
 sudo chgrp www-data conf/timers.conf
 sudo chmod g+rw     conf/timers.conf
 
