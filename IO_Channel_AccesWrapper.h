@@ -39,15 +39,24 @@ public:
     ChannelEntitySP operator->();
     IO_Channel* getIOChnl();
     IO_Channel_AccesWrapper();
-    
+     
     const std::map<char,IOChannelPtr>& getAllChannels(){
         return io_channels;
     }
 //    
 //    ChannelEntitySP IO_Channel_AccesWrapper::getFirstInput();
-//    
+//  
+    std::map<char,IOChannelPtr>::const_iterator begin(){
+        return io_channels.begin();
+    }
+    
+    std::map<char,IOChannelPtr>::const_iterator end(){
+        return io_channels.end();
+    }
+    
 private:
     
+    // Race on static ressource? 
     static std::map<char,IOChannelPtr> io_channels; // io_channels must not be leaked! (isg needs to be assigned!)
     std::vector<char> options;
     

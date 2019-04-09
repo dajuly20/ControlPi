@@ -342,7 +342,7 @@ int main( int argc, char *argv[] )
         });
         
     
-    
+        
     
     std::vector<std::string>  timersConf;
     // Initially read the timers config    
@@ -352,7 +352,8 @@ int main( int argc, char *argv[] )
     // Could Access now via (*myte.io_channels['H'])['i']->read_pin(0) 
     // But IO_Channel_AccessWrapper hides it away, and simplyfies access. so obj['H']['i']->member
     IO_Channel_AccesWrapper chnl(&isg);
-//    
+    webSocketSessions->reg_iochannels(&chnl);  // pointer used to de-register websocket sessions.
+//  
     std::vector< char> timerEntityKeys;
     std::vector< char> hardwareEntityKeys;
     

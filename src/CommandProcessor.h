@@ -19,6 +19,7 @@
 #include <string>   // std::string
 #include <mutex>
 #include <iostream>
+#include <string>   // std::string
 #include "../IO_Channel_AccesWrapper.h"
 #include "../iterationSwitchGuard.h"
 #include "WebSocket/websocket_session.hpp"
@@ -42,10 +43,10 @@ class commandProcessor{
          if(!chnl.is_valid(IO_Channel)) 
              return this->errText(2);
          
-         if(!chnl[IO_Channel].getIOChnl()->checkToken(token_is)) // Todo 2
+         if(!chnl[IO_Channel].getIOChnl()->checkToken(token_is)) 
              return this->errText(4);
          
-         chnl[IO_Channel].getIOChnl()->add_authorized_session(session); // Todo 3
+         chnl[IO_Channel].getIOChnl()->add_authorized_session(session); 
          return "ok.";
          
      }
@@ -164,10 +165,35 @@ public:
                     
                     //std::cout << "Child is public readable! " << entitykey << " Permission is: " << entity->perm_read << " ~~ " << std::endl;
                 }
+                else if(entity->perm_read == Channel_Entity::exp_private){
+                    {
+                    uint8_t value = entity->read_all();
+                    std::string json_resp ="{";
+                    json_resp +=  '"';
+                    json_resp += chkey;
+                    json_resp += entitykey;
+                    json_resp += "\": \"";
+                    json_resp += std::to_string(value);
+                    json_resp += '"}';
+                    
+                    for (auto it = channel->auth_session_begin(); it != channel->auth_session_end(); it++ ){
+                        
+                        (*it)->send(std::make_shared<std::string const>(json_resp));
+                        
+                    }
+                    }
+                    /*
+                     1* Loop Authorized sessions of channel
+                     2* session->send(message)   auto const ss = std::make_shared<std::string const>(std::move(message)); 
+                     */
+                }
             }
             //std::cout <<  "Key is: " << chkey <<  std::endl;
             
         }
+        
+        // Get Autorized sessions... but first check if sessions are removed if invalid. 
+        //chnl[IO_Channel].getIOChnl()->add_authorized_session(session); 
         
         json_resp += '}';
         
@@ -182,6 +208,14 @@ public:
 //        std::string message = "{\"Ho\":" + std::to_string(Ho) + ",\"Hi\":"+std::to_string(Hi)+",\"Po\":"+std::to_string(Po)+",\"Pi\":"+std::to_string(Pi)+"}";
         //std::cout << "Hardware Outputs are : " << Ho << std::endl;
         webSocketSessions->broadcast(json_resp);
+        
+        std::cout << "Active Sessions hier "  << std::endl;
+        
+        for (auto it = webSocketSessions->begin(); it != webSocketSessions->end(); it++ )
+        {
+         std::cout << "Active Session: " <<  (*it)  << std::endl;
+        }
+        
                 
         
     }

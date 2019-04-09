@@ -18,15 +18,26 @@
 #include <mutex>
 #include <condition_variable>
 #include <queue>
+#include <memory>   // shared_ptr
+#include <map>
+
 
 // Forward declaration
 class websocket_session;
+class IO_Channel;
+typedef std::unique_ptr<IO_Channel> IOChannelPtr;
+     
+class IO_Channel_AccesWrapper;
+//const std::map<char,IOChannelPtr>& IO_Channel_AccesWrapper::getAllChannels();
+
+
+
 
 // Represents the shared server state
 class shared_state
 {
     std::string doc_root_;
-    
+    IO_Channel_AccesWrapper* chnl;
    //  This simple method of tracking
    //  sessions only works with an implicit
    //  strand (i.e. a single-threaded server)
@@ -39,7 +50,8 @@ class shared_state
 public:
     std::condition_variable commandQueue_ready;
     
-    
+    std::unordered_set<websocket_session*>::const_iterator begin();
+    std::unordered_set<websocket_session*>::const_iterator end();
     
     explicit
     shared_state(std::string doc_root);
@@ -51,6 +63,8 @@ public:
         return doc_root_;
     }
 
+    void reg_iochannels(IO_Channel_AccesWrapper* _chnl);
+    
     void join  (websocket_session& session);
     void leave (websocket_session& session);
     void broadcast (std::string message); 

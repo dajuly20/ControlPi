@@ -11,12 +11,34 @@
 
 #include "shared_state.hpp"
 #include "websocket_session.hpp"
+#include "../../IO_Channel_AccesWrapper.h"
 #include <mutex>
+
+std::unordered_set<websocket_session*>::const_iterator
+shared_state::
+begin(){
+    return sessions_.begin();
+}
+    
+std::unordered_set<websocket_session*>::const_iterator
+shared_state::
+end()
+{
+    return sessions_.end();
+}
 
 shared_state::
 shared_state(std::string doc_root)
     : doc_root_(std::move(doc_root))
 {
+}
+
+void
+shared_state::
+reg_iochannels(IO_Channel_AccesWrapper* _chnl)
+{
+   chnl = _chnl; 
+    
 }
 
 void
@@ -31,6 +53,18 @@ shared_state::
 leave(websocket_session& session)
 {
     sessions_.erase(&session);
+   //map<string, int>::iterator it;
+    
+    //const std::map<char,IOChannelPtr>& chnls = chnl->getAllChannels();
+    // Loops through all IO_Channels and executes rm_autorized_session on each of them. 
+    for (auto const& x : chnl->getAllChannels()){
+        x.second->rm_authorized_session(&session);
+    }
+    // Also remove session from all IO_Channels where it can be found.
+    //for (auto it = chnl->begin(); it != chnl->end(); it++ )
+    //{ 
+    
+    //}
     //commandQueue.erase(&session); // Commands are still executed!
 }
 

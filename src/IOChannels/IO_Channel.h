@@ -98,11 +98,24 @@ public:
         }
     }
     
+    void rm_authorized_session(websocket_session* session){
+        authorized_sessions.erase(std::remove(authorized_sessions.begin(), authorized_sessions.end(), session), authorized_sessions.end());
+    }
+    
     void add_authorized_session(websocket_session* session){
         authorized_sessions.push_back(session);
         //std::cout << "Sessions authorized:" << authorized_sessions.size() << "Session: " << (int) session <<  std::endl;
     }
     
+    
+     std::vector<websocket_session*>::const_iterator auth_session_begin(){
+        return authorized_sessions.begin();
+    }
+    
+     std::vector<websocket_session*>::const_iterator auth_session_end(){
+        return authorized_sessions.end();
+    }
+     
     const int u_r  = 0x400;
     const int u_w  = 0x200;
     const int u_x  = 0x100;
