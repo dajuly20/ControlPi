@@ -132,7 +132,8 @@ bool evaluateLogicString(string input){
         bool ok = qi::phrase_parse(f,l,p > ';',qi::space,result);
 
         if (!ok)
-            std::cerr << "Error: Given logic string invalid >" << input << "<" << endl;
+            throw std::invalid_argument("Error: Given logic string invalid >" + input + "<");
+            
         else
         {
             if(dbg) std::cout << "parseLogic: Input " << input << " resulting into" << result << " evaluated to " << evaluate(result) << endl;
@@ -142,7 +143,7 @@ bool evaluateLogicString(string input){
 
     } 
     catch (const qi::expectation_failure<It>& e){
-        std::cerr << "parseLogic: expectation_failure at '" << std::string(e.first, e.last) << "'\n";
+        throw std::invalid_argument("Error: parseLogic: expectation_failure at '" + std::string(e.first, e.last));
     }  
 }
 
