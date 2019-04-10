@@ -39,6 +39,7 @@ public:
     ChannelEntitySP operator->();
     IO_Channel* getIOChnl();
     IO_Channel_AccesWrapper();
+    void setZero();
      
     const std::map<char,IOChannelPtr>& getAllChannels(){
         return io_channels;

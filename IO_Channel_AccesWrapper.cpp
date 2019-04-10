@@ -13,6 +13,8 @@
 
 #include "IO_Channel_AccesWrapper.h"
 #include <stdexcept> // throw
+#include "src/IOChannels/IO_Channel.h"
+#include "src/ChannelEntitys/Channel_Entity.h"
 
 
 std::map<char,IOChannelPtr> IO_Channel_AccesWrapper::io_channels;
@@ -91,6 +93,19 @@ void IO_Channel_AccesWrapper::insert(std::pair<char, IOChannelPtr> pair){
     
     pair.second->assignIsg(isg);
     IO_Channel_AccesWrapper::io_channels.insert(std::move(pair));
+}
+
+
+// Loops over all Channels and sets them to zero. 
+void IO_Channel_AccesWrapper::setZero(){
+    for (auto const& channel : IO_Channel_AccesWrapper::io_channels)
+    {
+        for (auto const& entity : channel.second->chEntities)
+        {
+            entity.second->write_all_force(0);
+        }
+    }
+
 }
 
 //ChannelEntitySP IO_Channel_AccesWrapper::getFirstInput(){

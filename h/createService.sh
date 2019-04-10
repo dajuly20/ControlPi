@@ -10,6 +10,7 @@ sudo chmod u+s www/reloadConf
 sudo rm /usr/bin/ControlPi
 sudo ln `realpath ControlPi` /usr/bin/ControlPi 
 #Link service config 
+sudo rm /etc/systemd/system/ControlPi.service
 sudo ln h/ControlPi.service /etc/systemd/system/
 
 #Creating Config-dir and
@@ -22,6 +23,7 @@ sudo ln conf/ControlPi.conf /opt/controlpi/ControlPi.conf
 sudo chgrp www-data conf/timers.conf
 sudo chmod g+rw     conf/timers.conf
 
+sudo systemctl daemon-reload
 sudo service ControlPi start
 sudo service ControlPi enable
 sudo service ControlPi status

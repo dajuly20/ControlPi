@@ -187,12 +187,12 @@ void logicEngine(IO_Channel_AccesWrapper& chnl, std::vector<std::string>& softLo
     bool        dbg         =  true;
     std::string delimiter   = "=";
     size_t      found;
-
+    int         linectr     = 0;
     // Output softlogic for debugging purposes.
     if(dbg) printSoftLogic(softLogic);
     
     for (std::string softLogicRow: softLogic) { 
-
+        linectr++;
         // Splits the output string by the '=' sign in two parts:
         // 1. the Output to use (e.g. Ora0) 2nd the rawLogicString including used inputs in brackets e.g. ![Ira1] & [Ira0] | [Ira2];
         if ((found = softLogicRow.find('=')) != string::npos){ 
@@ -227,17 +227,21 @@ void logicEngine(IO_Channel_AccesWrapper& chnl, std::vector<std::string>& softLo
                                                   );
            
            if(dbg) cout << "Resulting logic string is: " << equationStringLiterals << endl;
-
            // Eventually the example logic string (e.g. !0 & 1 | 1;) will be parsed to 1
-           bool logic_equation_res = evaluateLogicString(equationStringLiterals);
+           try{ 
+            bool logic_equation_res = evaluateLogicString(equationStringLiterals);
 
-           if(dbg) cout << "IO_chnl: " << c_io_channel;
-           if(dbg) cout << " Entity: " << c_channel_entity;
-           if(dbg) cout << " Pin: " << c_pin_num;
-           if(dbg) cout << " is assigned " << (logic_equation_res ? "true" : "false") << endl << endl;
-           
-           chnl [c_io_channel] [c_channel_entity] -> write_pin(logic_equation_res, c_pin_num);
-           
+            if(dbg) cout << "IO_chnl: " << c_io_channel;
+            if(dbg) cout << " Entity: " << c_channel_entity;
+            if(dbg) cout << " Pin: " << c_pin_num;
+            if(dbg) cout << " is assigned " << (logic_equation_res ? "true" : "false") << endl << endl;
+
+            chnl [c_io_channel] [c_channel_entity] -> write_pin(logic_equation_res, c_pin_num);
+           }
+           catch (...) { 
+               // Replacing the error with something better understandable.. 
+               throw std::invalid_argument("Error: Invalid characters in logic string on line "+std::to_string(linectr)+": '"+softLogicRow+"'");
+           }
         }
         else{
             // Todo: Error, = sign not in string.
@@ -501,7 +505,19 @@ int main( int argc, char *argv[] )
         pthread_setname_np(pthread_self(), "Signal-handler");
         while(keepRunning){
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            // To trigger a iteration when USERSIG1 is detected. 
+            if(configRead == false){
+                {
+                std::unique_lock<mutex> lock{isg.itCondMutex};    
+                cout << "Locked in signal thread " << endl;
+                isg.itCondSwitch = true;  
+                }
+                isg.itCond.notify_one();    
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            }
         }
+        
+        //To end the programm, we must trigger an iteration as well... 
         {
             std::unique_lock<mutex> lock{isg.itCondMutex};    
             cout << "Locked in signal thread " << endl;
@@ -540,6 +556,9 @@ int main( int argc, char *argv[] )
                 for (char timerKey : timerEntityKeys){
                     ((IO_Channel_Virtual_Timer*) (chnl[timerKey].getIOChnl()))->setTimersCfg(&timersConf);
                 }
+                
+                // Sets everything to zero. :-) 
+                chnl.setZero();
                 
                 configRead = true;
                 printf("\n\nConfig has been reloaded!\n");
