@@ -157,6 +157,36 @@ input[type=radio]:checked~label {
     border: 1px solid #333;//#0099ff;
 }
 
+.panelBackend {
+    padding: 0em;
+    background-color: white; //#333;
+    color:#333;
+    padding: 5px;
+    height: 130px;
+    
+    border-radius: 0;
+    margin-bottom: 0em;
+    border: 1px solid #333;//#0099ff;
+}
+
+.panelBackend img{
+  display:  inline;
+}
+
+.panelBackend p{
+  display: inline;
+  padding: none;
+  maring: none;
+  marin-left: 5px;
+}
+
+#backendStatusDetail{
+ float:left;    
+}
+
+#backendStatusText{
+margin-left:10px;
+}
 .ui-accordion-header {
     background-color: white; //#333;
     color: #333; //#fff;

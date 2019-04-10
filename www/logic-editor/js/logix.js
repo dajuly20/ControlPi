@@ -69,11 +69,12 @@ function showError(error) {
     if (error == prevErrorMessage) return;
     prevErrorMessage = error;
     var id = Math.floor(Math.random() * 10000);
+    error = error.replace(/(?:\r\n|\r|\n)/g, '<br>');
     $('#MessageDiv').append("<div class='alert alert-danger' role='alert' id='" + id + "'> " + error + "</div>");
     setTimeout(function() {
         prevErrorMessage = undefined;
         $('#' + id).fadeOut();
-    }, 1500);
+    }, 9000);
 }
 
 // Helper function to show message
@@ -85,7 +86,7 @@ function showMessage(mes) {
     setTimeout(function() {
         prevShowMessage = undefined;
         $('#' + id).fadeOut()
-    }, 2500);
+    }, 5000);
 }
 
 // Helper function to open a new tab

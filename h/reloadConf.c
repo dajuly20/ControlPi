@@ -26,6 +26,7 @@ if(ret != 0){
 }
 
 	int ret2 = system("kill -10 `pidof ControlPi`");
+	system("whoami");
 //        printf("Returns Second : %i\n", ret2);
 
 

@@ -1,33 +1,38 @@
 <?php
 
 
-$user  = shell_exec('stat -c "%U" `which ControlPi`');
-$owner = shell_exec('stat -c "%U" reloadConf');
-if ($user != $owner){
-fail(403, "<h3>Error: ControlPi binary and reloadConf binary must be owned by the same user!</h3> <i>Please execute sudo chmod u+s reloadConf</i> <br>ControlPi binary owned by: $user<br>Reload Conf owned by: $owner<br><br>");
-}
-
-$res = exec("./reloadConf 2>&1",$result_arr, $ret_val);
+$res = exec("systemctl is-active --quiet ControlPi 2>&1",$result_arr, $ret_val);
 
 if($ret_val == 0){
-echo "Successfully restarted!\n";
+echo "active";
 }
 else{
 
+$res = exec("systemctl show -p ActiveState --value ControlPi 2>&1",$result_arr, $ret_val);
 
-$errmsg = "Restart Failed:\n";
-
-$errmsg .=  "Output was:\n";
 foreach($result_arr as $err){
    $errmsg .= "$err \n";
 }
+
+$res2 = exec("journalctl -n 100 | grep what | grep ControlPi 2>&1",$result_arr2, $ret_val);
+foreach($result_arr2 as $err2){
+   $errmsg .= "$err2 \n";
+}
+
+
 fail(503, $errmsg);
 }
 
 
 function fail($errno, $errmsg){
 header_status($errno);
-die("Error: $errno $errmsg");
+$origmsg = $errmsg;
+$date =  implode(" ",array_splice(explode(" ",preg_replace("/\r|\n/", "", $origmsg)),1,3));
+echo var_dump($date);
+$errmsg = str_replace('what():', "\n",$errmsg); 
+$errmsg = str_replace('  ', "",$errmsg); 
+
+die("$errmsg\n$date\n$origmsg");
 }
 
 

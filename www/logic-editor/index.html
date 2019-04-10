@@ -22,6 +22,10 @@
     userSignedIn = false;
     logix_project_id = 1; //<%= @logix_project_id%>;
     projectName = "ControlPi"
+
+    
+    
+    
 </script>
 <nav class="navbar navbar-default toolbar navbar ">
   <div class="container-fluid">
@@ -49,6 +53,7 @@
           <ul class="dropdown-menu">
            <!-- <li class="toolbarButton logixButton" id="newProject" ><a>New Project</a></li>-->
             <li class="toolbarButton logixButton" id="clearProject" ><a>Clear Project</a></li>
+            <li class="toolbarButton logixButton" id="saveAndExport"><a>Save & Export</a></li>
             <li class="toolbarButton logixButton" id="save"><a>Save Online</a></li>
             <li class="toolbarButton logixButton" id="logicExport"><a>Export to ControlPi</a></li>
             <li class="toolbarButton logixButton" id="saveOffline"><a>Save Offline</a></li>
@@ -122,6 +127,8 @@
           <div class="icon logixModules" id="Input" tooltip="Output/Fire of Timer 0-7; Please use corresponding <b>Timer-Trigger</b> to fire this output!" img="TimerFire"  name="To" range="8"></div>
           <div class="icon logixModules" id="Input" tooltip="Output of Memory 0-7; Please use corresponding <b>Memory</b> as Output to set this Memory" img="InputMerker"  name="Ma" range="8"></div>
           <div class="icon logixModules" id="Input" tooltip="Input of Pipe 0-7  (Virtual Input, showing data that is input remotely)" img="InputPipe"  name="Pi" range="8"></div>
+          <div class="icon logixModules" id="Power" ></div>
+          <div class="icon logixModules" id="Ground" ></div>
           
           
           <!-- 
@@ -227,12 +234,26 @@
   
       
     </div>
+    
     <div class="moduleProperty effect1" id="moduleProperty">
       <div id="moduleProperty-title" class="noSelect pointerCursor">Properties</div>
       <div id="moduleProperty-inner"></div>
       <!-- <div id="moduleProperty-toolTip"></div> -->
     </div>
+    <br>
+    
+    
+    <div class="panelBackend">
+         Backend Status<br/>
+         <img src="/img/led_on_red.png" width="20px" height="20px" id="backendStatusLed"><p id="backendStatusText">no status</p><br />
+         <p id="backendStatusDetail">no text</p>
+     </div>
+    
+    
+
   </div>
+  
+  
 
   <div class="rightPanel">
   
@@ -365,7 +386,7 @@
     <div id="insertSubcircuitDialog" style="display:none;"  title="Insert SubCircuit"></div>
     <div id="openProjectDialog" style="display:none;"  title="Open Project"></div>
     <div id="inputChooseDialog" style="display:none;"  title="Choose Input"></div>
-    <div id="outputConfirmDialog" style="display:none;"  title="Exportergbnis überprüfen"></div>
+    <div id="outputConfirmDialog" style="display:none;"  title="Exportergbnis überprüfen" subtitle="Negative Werte deuten auf Fehler hin.">dada</div>
 
 
 
@@ -447,5 +468,64 @@
 
   <script src="js/canvas2svg.js"></script>
 
+  <script>
+  $(document).ready(function(){
+  setTimeout(function() {
+  // Code, der erst nach 2 Sekunden ausgeführt wird
+    globalScope.centerFocus(false);
+    }, 500);
+    
+    
+    /*
+    
+        <div class="panelBackend">
+         Backend Status<br/>
+         <img src="/img/led_on_red.png" width="20px" height="20px" id="backendStatusLed"><div id="backendStatusText">no status</div>
+     </div>
+    
+    */
+    
+    setInterval(function(){ 
+       $.ajax({
+            url: '/getServiceStatus.php',
+            type: 'POST',
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
+            },
+            data: {
+               // "data": data,
+               // "id": logix_project_id,
+                //"image": generateImageForOnline(),
+                //name: projectName
+            },
+            success: function(response) {
+                console.log(response);
+                //showMessage("Export Sucessfull. \nRestarting Backend... .")
+                $("#backendStatusLed").attr("src","/img/led_on_green.png");
+                $("#backendStatusText").text("running");
+                $("#backendStatusDetail").text("");
+                
+                //localStorage.removeItem("recover");
+            },
+            error: function(err) {
+                console.log("Error: "+err);
+                console.log(err);
+                lines = err.responseText.split("\n");
+                console.log(lines);
+                $("#backendStatusLed").attr("src","/img/led_on_red.png");
+                $("#backendStatusText").text("stopped");
+                $("#backendStatusDetail").text(lines[5]+" "+lines[3]);
+                
+                //showError("Backend Error: \n" +err.responseText+"\n\nError in configuration? ")
+                $('.loadingIcon').fadeOut();
+            }
+        });
+    
+    }, 3000);
+    
+    
+});
+  </script>
+  
 </body>
 </html>

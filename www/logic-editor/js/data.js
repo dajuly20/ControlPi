@@ -421,7 +421,7 @@ function generateImageForOnline() {
 }
 
 // Function to save data online
-function save() {
+function save(onSucc = null, onErr = null) {
     projectSaved = true;
 
     $('.loadingIcon').fadeIn();
@@ -474,6 +474,24 @@ function save() {
         form.submit();
     } else {
 */
+    
+    if(onSucc == null){
+      onSucc = function(response) {
+                console.log(response);
+                showMessage("Project: " + projectName + "  saved online.")
+                $('.loadingIcon').fadeOut();
+                localStorage.removeItem("recover");
+            };
+    }
+    
+    if(onErr == null){
+      onErr =   function(err) {
+                console.log("Error: "+err);
+                showMessage("There was an error, we couldn't save to our servers")
+                $('.loadingIcon').fadeOut();
+            };
+    }
+    
         // updates project - this part needs to be improved and optimised
         $.ajax({
             url: '/logicUpdateApi.php?i=json',
@@ -488,17 +506,8 @@ function save() {
                 "image": generateImageForOnline(),
                 name: projectName
             },
-            success: function(response) {
-                console.log(response);
-                showMessage("Project: " + projectName + "  saved online.")
-                $('.loadingIcon').fadeOut();
-                localStorage.removeItem("recover");
-            },
-            failure: function(err) {
-                console.log("Error: "+err);
-                showMessage("There was an error, we couldn't save to our servers")
-                $('.loadingIcon').fadeOut();
-            }
+            success: onSucc,
+            error: onErr,
         });
     //}
 

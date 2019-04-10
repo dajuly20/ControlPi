@@ -4,6 +4,20 @@ var lookup = [];
 globDbg = true;
 
 
+function saveAndExport(){
+  
+    
+   var onSucc = function(response){
+        console.log(response);
+        showMessage("Zeichnung erfolgreich gespeichert.\n Starte Export zu ControlPi")
+        localStorage.removeItem("recover");       
+        logicExport();
+    };
+    
+    save(onSucc);
+    $('.loadingIcon').fadeOut();
+}
+
 // Prompt to restore from localStorage
  function createInputPrompt() {
     $('#inputChooseDialog').empty();
@@ -49,17 +63,47 @@ function saveExportedViaApi(data){
             },
             success: function(response) {
                 console.log(response);
-                showMessage("Project: " + projectName + "  saved online.")
-                $('.loadingIcon').fadeOut();
+                showMessage("Export Sucessfull. \nRestarting Backend... .")
+                reloadBackendViaApi();
                 //localStorage.removeItem("recover");
             },
-            failure: function(err) {
+            error: function(err) {
                 console.log("Error: "+err);
-                showMessage("There was an error, we couldn't save to our servers")
+                console.log(err);
+                showError("Export Api-Error: "+err.status+ " " +err.statusText+"\nLogic not in action!")
                 $('.loadingIcon').fadeOut();
             }
         });
     
+}
+
+
+function reloadBackendViaApi(){
+        $.ajax({
+            url: '/reloadConf.php',
+            type: 'POST',
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
+            },
+            data: {
+                "do" : "restart",
+               // "id": logix_project_id,
+                //"image": generateImageForOnline(),
+                //name: projectName
+            },
+            success: function(response) {
+                console.log(response);
+                showMessage("Backend reload was successfull.\nYour Logic-program should run now!")
+                $('.loadingIcon').fadeOut();
+                //localStorage.removeItem("recover");
+            },
+            error: function(err) {
+                console.log("Error: "+err);
+                console.log(err);
+                showError("There was an error restarting the backend: "+err.status+ " " +err.statusText+" \n\nTry restarting the service manually using \n'sudo service ControlPi restart' on commandline.")
+                $('.loadingIcon').fadeOut();
+            }
+        });
 }
 
 
