@@ -40,7 +40,7 @@ public:
     IO_Channel* getIOChnl();
     IO_Channel_AccesWrapper();
     void setZero();
-    std::string permissionStatus(websocket_session* session);
+    std::vector<std::string> permissionStatus(websocket_session* session);
     const std::map<char,IOChannelPtr>& getAllChannels(){
         return io_channels;
     }

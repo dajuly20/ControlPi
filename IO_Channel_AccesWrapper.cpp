@@ -19,6 +19,7 @@
 
 #include <iostream> // cout
 #include <string>   // std::string
+#include <vector>
 
 std::map<char,IOChannelPtr> IO_Channel_AccesWrapper::io_channels;
 
@@ -112,25 +113,27 @@ void IO_Channel_AccesWrapper::setZero(){
 }
 
 
-std::string IO_Channel_AccesWrapper::permissionStatus(websocket_session* session){
+std::vector<std::string> IO_Channel_AccesWrapper::permissionStatus(websocket_session* session){
     std::stringstream outbuf;
+    std::vector<std::string> out;
     for (auto const& channel : IO_Channel_AccesWrapper::io_channels)
     {
         
         for (auto const& entity : channel.second->chEntities)
         {
+            outbuf.str("");
             // Format:  H:i:read:write:authorized
             outbuf 
                     <<  channel.first 
                     << ":" << entity.first 
                     << ":" << entity.second->get_perm_read()
                     << ":" << entity.second->get_perm_write()
-                    << ":" << (channel.second->is_session_autorized(session) ? "true" : "false")
-                    << std::endl;
+                    << ":" << (channel.second->is_session_autorized(session) ? "true" : "false");
+            out.push_back(outbuf.str());
         }
     }
     
-    return outbuf.str();
+    return out;
 
 }
 //ChannelEntitySP IO_Channel_AccesWrapper::getFirstInput(){

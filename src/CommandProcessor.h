@@ -262,9 +262,16 @@ public:
         else if(crumbs[0] == "show")
         {
             if(crumbs[1] == "channels"){
-                message = "{\"channels\":\"\n";
-                message += chnl.permissionStatus(command.first);
-                message += "\n\"}";
+                std::vector<std::string> lines = chnl.permissionStatus(command.first);
+                message = "{\"channels\": [";
+                bool isFirst = true;
+                for (auto const& line : lines){
+                    if(!isFirst) message +=", ";
+                    message += "\"" + line  + "\"";
+                    isFirst = false;
+                }
+                
+                message += "]}";
             }
             else if(crumbs[1] == "status"){
                 iterationTriggered(chnl);
