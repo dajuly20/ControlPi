@@ -1,240 +1,378 @@
-
 <!DOCTYPE html>
-<html>
+<html >
 <head>
-  <meta charset="utf-8" />
-  <title>WebSocket Chat - CppCon2018</title>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <style>
+  <meta charset="UTF-8">
+  <title>ControlPi - Kleinsteuerung auf RaspberryPi</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+ <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  
+  
+      <link rel="stylesheet" href="css/style.css">
+
+      
+    <style>
   .leds, .switches, .titles{
   width: 50px;
-  border: 1px dotted black;
+  //border: 1px dotted black;
   display:inline-block;
   }
 
 .headline{
-width: 450px;
 text-align:center;
-border:1px solid black;
+//border:1px solid black;
 }  
 
   .preload{
 display:none;
   }
+  
+  
+  
+  
+  
+  input[type=text]
+{
+    margin-left: 5px;
+	//margin-top:8px;
+	font-size:10px;
+	color:#545454;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+	-border-radius: 2px;
+	display:none;
+	width:140px;
+	
+}
+
+.text_label
+{
+	float:left;
+	margin-left: 5px;
+	//margin-top:8px;
+	font-size:10px;
+	color:#545454;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+	-border-radius: 2px;
+}
+
+.edit
+{
+	float:left;
+	//background:url(img/edit.png) no-repeat;
+	width:32px;
+	height:32px;
+	display:block;
+	cursor: pointer;
+	margin-left:10px;
+}
+
+.clear
+{
+	clear:both;
+	height:20px;
+}
+
+
+.switch_headline{
+//border:1px solid red;
+width:250px;
+height:50px; 
+display: block;
+text-align:middle;
+align-items: center;
+vertical-align: middle;
+}
+
+.switch_headline p{
+display: inline-block;
+}
+
+
+.switch_line{
+//border:1px solid red;
+width:250px;
+height:50px; 
+display: flex;
+align-items: center;
+vertical-align: middle;
+}
+
+.switch_line_title{
+//border:1px solid red;
+width:250px;
+height:30px;
+display: flex;
+align-items: center;
+vertical-align: middle;
+}
+
+
+.imgrep{
+//border:1px solid blue;
+width:50px;
+}
+
+.switch_line img{
+float:left;
+display:inline;
+}
+
+.switch_line p{
+float:left;
+display:inline;
+font-weight: 400;
+}
+
+
+
+
+#overview td{
+
+}
+
   </style>
-</head>
-<body>
-  <h1>ControlPi Interface</h1>
-  
-<img src="img/led_on.png" class="preload">
-<img src="img/button_on.png" class="preload"><br>
-<div id="H"><br>
-<div class="headline">Hardware Channels (Hi & Ho)</div><br>
-    <div class="titles">0</div>
-    <div class="titles">1</div>
-    <div class="titles">2</div>
-    <div class="titles">3</div>
-    <div class="titles">4</div>
-    <div class="titles">5</div>
-    <div class="titles">6</div>
-    <div class="titles">7</div>
-    <br>
-    <img src="img/led_off.png" class="leds">
-    <img src="img/led_off.png" class="leds">
-    <img src="img/led_off.png" class="leds">
-    <img src="img/led_off.png" class="leds">
-    <img src="img/led_off.png" class="leds">
-    <img src="img/led_off.png" class="leds">
-    <img src="img/led_off.png" class="leds">
-    <img src="img/led_off.png" class="leds">
-    <br>
-
-    <img src="img/button_off.png" class="switches">
-    <img src="img/button_off.png" class="switches">
-    <img src="img/button_off.png" class="switches">
-    <img src="img/button_off.png" class="switches">
-    <img src="img/button_off.png" class="switches">
-    <img src="img/button_off.png" class="switches">
-    <img src="img/button_off.png" class="switches">
-    <img src="img/button_off.png" class="switches">
-<br>
-</div>
-<br><br>
-<div id="P"><br>
-<div class="headline">Pipe (Pi und Po)</div><br>
-    <div class="titles">0</div>
-    <div class="titles">1</div>
-    <div class="titles">2</div>
-    <div class="titles">3</div>
-    <div class="titles">4</div>
-    <div class="titles">5</div>
-    <div class="titles">6</div>
-    <div class="titles">7</div>
-    <br>
-    <img src="img/led_off.png" class="leds">
-    <img src="img/led_off.png" class="leds">
-    <img src="img/led_off.png" class="leds">
-    <img src="img/led_off.png" class="leds">
-    <img src="img/led_off.png" class="leds">
-    <img src="img/led_off.png" class="leds">
-    <img src="img/led_off.png" class="leds">
-    <img src="img/led_off.png" class="leds">
-    <br>
-
-    <img src="img/button_off.png" class="switches">
-    <img src="img/button_off.png" class="switches">
-    <img src="img/button_off.png" class="switches">
-    <img src="img/button_off.png" class="switches">
-    <img src="img/button_off.png" class="switches">
-    <img src="img/button_off.png" class="switches">
-    <img src="img/button_off.png" class="switches">
-    <img src="img/button_off.png" class="switches">
-<br>
-</div>
-
-<h3><?php echo "PHP ready!";?> 
-  Server URI: <input class="draw-border" id="uri" size="47" value="wss://<?php echo $_SERVER["HTTP_HOST"];?>" style="margin-bottom: 5px;">
-  <button class="echo-button" id="connect">Connect</button>
-  <button class="echo-button" id="disconnect">Disconnect</button><br>
-  
-
-  <pre id="messages" style="width: 600px; height: 400px; border: solid 1px #cccccc; margin-bottom: 5px; overflow: scroll;"></pre>
-
-  
-  <div style="margin-bottom: 5px;">
-    Message<br>
-    <input class="draw-border" id="sendMessage" size="74" value="set:Pi0:high">
-    <button class="echo-button" id="send">Send</button>
-  </div>
-  <script>
-    var ws = null;
-    
-    function appendIt(msg){
-     
-	// allow 1px inaccuracy by adding 1
-	var isScrolledToBottom = messages.scrollHeight - messages.clientHeight <= messages.scrollTop + 1;
-    	
-    	var newElement = document.createElement("div");
-	newElement.innerHTML = msg;
-    	messages.appendChild(newElement);
-    	// scroll to bottom if isScrolledToBotto
-    	if(isScrolledToBottom)
-      		messages.scrollTop = messages.scrollHeight - messages.clientHeight;
-
-    }
-    
-    function drawOutputs(o,id){
-    
-        for(i=0; i<=7; i++){
-            if( ((o >> i) & 1) == 1){
-            $("#"+id+" .leds").eq(i).attr("src","img/led_on.png");
-            }
-            else{
-            $("#"+id+" .leds").eq(i).attr("src","img/led_off.png");
-            }
+  <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>-->
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script type="text/javascript" src="js/ui.enhanced-alert.js"></script>
+  <script type="text/javascript" src="js/easy-editable-text.js"></script>
+    <link type="text/css" rel="stylesheet" href="css/ui-enhanced-alert.css" />
+    <script>
+    function switchToSSL(bla){
+        if(bla){
+         location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
         }
     }
     
-       function drawInputs(o,id){
-    
-        for(i=0; i<=7; i++){
-            if( ((o >> i) & 1) == 1){
-            $("#"+id+" .switches").eq(i).attr("src","img/button_on.png");
-            }
-            else{
-            $("#"+id+" .switches").eq(i).attr("src","img/button_off.png");
-            }
-        }
+      function getLocation(href) {
+    var l = document.createElement("a");
+    l.href = href;
+    return l;
     }
     
-    connect.onclick = function() {
-      ws = new WebSocket(uri.value);
+  function openConnection(url, onmsg){
+    ws = new WebSocket(url);
+   
       ws.onopen = function(ev) {
-        appendIt("[connection opened]\n");
-      };
-      ws.onclose = function(ev) {
-        appendIt("[connection closed, trying reconnect] \n");
-	setTimeout(function(){connect.click()} ,1000)
+        console.log("[connection opened]\n");
+            ws.send("show:channels");
+            ws.send("show:status");
       };
       
-      var c = 0;
-      ws.onmessage = function(ev) {
-      try{
-      var obj = JSON.parse(ev.data);
-      console.log(obj.Ho);
-      drawOutputs(obj.Ho,"H");
-      drawInputs(obj.Hi,"H");
-
-      drawOutputs(obj.Po,"P");
-      drawInputs(obj.Pi,"P");
-      } catch(err) {
-      console.log("Kein Json!");
-      } finally {
-        appendIt(ev.data);
-       }
-      };
-      ws.onerror = function(ev) {
-        appendIt( "[error]\n");
-        console.log(ev);
-      };
-    };
-    disconnect.onclick = function() {
-      ws.close();
-    };
-    send.onclick = function() {
-      ws.send(sendMessage.value);
-      sendMessage.value = "";
-    };
-    sendMessage.onkeyup = function(ev) {
-      ev.preventDefault();
-      if (event.keyCode === 13) {
-        send.click();
-      }
-    }
-
-
-$(function() {
-$(".switches").mousedown(function(event){ 
-    var el = $(event.target);
-    var par_id =  el.parent().attr('id');
-
-    var pos = $("#"+par_id+" .switches").index(el);
-     console.log("Triggering: "+par_id+"i"+pos+"=1");
-    var identifier = par_id+"i"+pos;
+       ws.onclose = function(ev) {
+        console.log("[connection closed, trying reconnect] \n");
+	  setTimeout(function(){openConnection();} ,1000);
+	}
+	
+	ws.onmessage = onmsg;
+      
+      
+  }
     
-    var sendStr = "set:"+identifier+":high";
-    ws.send(sendStr);
+    var ws = null;
     
-});
+  $( function() {
 
-$(".switches").mouseup(function(event){ 
-    var el = $(event.target);
-    var par_id =  el.parent().attr('id');
-
-    var pos = $("#"+par_id+" .switches").index(el);
-     console.log("Triggering: "+par_id+"i"+pos+"=0");
-    var identifier = par_id+"i"+pos;
-    var sendStr = "set:"+identifier+":low";
-    ws.send(sendStr);
-});
-
-$("#reloadConf").click(function(event){
-
-$.get( "reloadConf.php", function( data ) {
-  alert(data);
-});
-
-});
-
-});
-
-  </script>
-
-  <button type="button" id="reloadConf">Reload Conf</button><br>
+  if(location.protocol != "https:"){
+           $.ea.confirm("Your connection is unsafe!<br>Do you want to switch to SSL? ", 'Warning',switchToSSL,'alert');
+           $("#enhanced-confirm").css("width","320px");
+}
   
-  <ifame src="./logic-editor"></iframe>
-<iframe src="logic-editor/" 
-width="60%" height="500" name="sprichwort_des_tages">
-</iframe>
-  </body>
+  
+
+  
+  var l = getLocation(location.href);
+  var ws_protocol = (location.protocol == "https:") ? "wss://" : "ws://";
+  var hostname    = l.hostname;
+  var ws_url  = ws_protocol + hostname;
+  console.log("Connecting to: "+ws_url);
+  
+
+  
+   
+   
+       var onmessage = function(ev) {
+      try{
+        var obj = JSON.parse(ev.data);
+        console.log(obj);
+        //drawOutputs(obj.Ho,"H");
+        //drawInputs(obj.Hi,"H");
+
+        //drawOutputs(obj.Po,"P");
+        //drawInputs(obj.Pi,"P");
+      } catch(err) {
+        console.log("Kein Json! "+err);
+      } finally {
+        console.log(ev.data);
+      }
+      };
+   
+  
+   openConnection(ws_url, onmessage);   
+
+  } );
+  </script
+  </head>
+
+
+<body>
+
+
+ 
+  <h1>ControlPi - Kleinsteuerung auf RaspberryPi</h1>
+
+<div class="tabs">
+  
+  <input type="radio" id="tab1" name="tab-control" checked>
+  <input type="radio" id="tab2" name="tab-control">
+  <input type="radio" id="tab3" name="tab-control">  
+  <input type="radio" id="tab4" name="tab-control">
+  <ul>
+    <li title="Features"><label for="tab1" role="button"><svg viewBox="0 0 24 24"><path d="M14,2A8,8 0 0,0 6,10A8,8 0 0,0 14,18A8,8 0 0,0 22,10H20C20,13.32 17.32,16 14,16A6,6 0 0,1 8,10A6,6 0 0,1 14,4C14.43,4 14.86,4.05 15.27,4.14L16.88,2.54C15.96,2.18 15,2 14,2M20.59,3.58L14,10.17L11.62,7.79L10.21,9.21L14,13L22,5M4.93,5.82C3.08,7.34 2,9.61 2,12A8,8 0 0,0 10,20C10.64,20 11.27,19.92 11.88,19.77C10.12,19.38 8.5,18.5 7.17,17.29C5.22,16.25 4,14.21 4,12C4,11.7 4.03,11.41 4.07,11.11C4.03,10.74 4,10.37 4,10C4,8.56 4.32,7.13 4.93,5.82Z"/>
+</svg><br><span>Übersicht</span></label></li>
+    <li title="Delivery Contents"><label for="tab2" role="button"><svg viewBox="0 0 24 24"><path d="M2,10.96C1.5,10.68 1.35,10.07 1.63,9.59L3.13,7C3.24,6.8 3.41,6.66 3.6,6.58L11.43,2.18C11.59,2.06 11.79,2 12,2C12.21,2 12.41,2.06 12.57,2.18L20.47,6.62C20.66,6.72 20.82,6.88 20.91,7.08L22.36,9.6C22.64,10.08 22.47,10.69 22,10.96L21,11.54V16.5C21,16.88 20.79,17.21 20.47,17.38L12.57,21.82C12.41,21.94 12.21,22 12,22C11.79,22 11.59,21.94 11.43,21.82L3.53,17.38C3.21,17.21 3,16.88 3,16.5V10.96C2.7,11.13 2.32,11.14 2,10.96M12,4.15V4.15L12,10.85V10.85L17.96,7.5L12,4.15M5,15.91L11,19.29V12.58L5,9.21V15.91M19,15.91V12.69L14,15.59C13.67,15.77 13.3,15.76 13,15.6V19.29L19,15.91M13.85,13.36L20.13,9.73L19.55,8.72L13.27,12.35L13.85,13.36Z" />
+</svg><br><span>Steuerung ändern</span></label></li>
+    <li title="Shipping"><label for="tab3" role="button"><svg viewBox="0 0 24 24">
+    <path d="M3,4A2,2 0 0,0 1,6V17H3A3,3 0 0,0 6,20A3,3 0 0,0 9,17H15A3,3 0 0,0 18,20A3,3 0 0,0 21,17H23V12L20,8H17V4M10,6L14,10L10,14V11H4V9H10M17,9.5H19.5L21.47,12H17M6,15.5A1.5,1.5 0 0,1 7.5,17A1.5,1.5 0 0,1 6,18.5A1.5,1.5 0 0,1 4.5,17A1.5,1.5 0 0,1 6,15.5M18,15.5A1.5,1.5 0 0,1 19.5,17A1.5,1.5 0 0,1 18,18.5A1.5,1.5 0 0,1 16.5,17A1.5,1.5 0 0,1 18,15.5Z" />
+</svg><br><span>Dienste</span></label></li>    <li title="Returns"><label for="tab4" role="button"><svg viewBox="0 0 24 24">
+    <path d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z" />
+</svg><br><span>Hilfe</span></label></li>
+  </ul>
+  
+  <div class="slider"><div class="indicator"></div></div>
+  <div class="content">
+    <section>
+      <h2>Übersicht</h2>
+     <div style="text-align: center">
+        <img src="img/led_on.png"      class="preload">
+        <img src="img/button_on.png" class="preload">
+<table id="overview" border="0" style="" width="100%" style="table-layout:fixed;overflow:hidden">
+<tr>
+
+<td width="35%">
+<div style="overflow:hidden;" style="background-color:blue">
+
+
+
+<div id="H"><br>
+<div class="switch_headline"><div>Hardware Channels (Hi & Ho)</div></div>
+
+
+    <div class="switch_line_title" > 
+        <p  class="imgrep" style="">H o</p>
+        <p  class="imgrep" style="">H i</p>
+   
+    </div>
+
+    <div class="switch_line" > 
+        <img src="img/led_off.png" class="leds" >
+        <img src="img/button_off.png" class="switches" > 
+        <p class="text_label"  >Beschreibung</p>
+        <input  type="text" class="input_label" value="" />
+    </div>
+
+    <div class="switch_line" > 
+        <img src="img/led_off.png" class="leds" >
+        <img src="img/button_off.png" class="switches" > 
+        <p class="text_label"  >Beschreibung</p>
+        <input  type="text" class="input_label" value="" />
+    </div>
+
+    <div class="switch_line" > 
+        <img src="img/led_off.png" class="leds" >
+        <img src="img/button_off.png" class="switches" > 
+        <p class="text_label"  >Beschreibung</p>
+        <input  type="text" class="input_label" value="" />
+    </div>
+
+    <div class="switch_line" > 
+        <img src="img/led_off.png" class="leds" >
+        <img src="img/button_off.png" class="switches" > 
+        <p class="text_label"  >Beschreibung</p>
+        <input  type="text" class="input_label" value="" />
+    </div>
+
+    <div class="switch_line" > 
+        <img src="img/led_off.png" class="leds" >
+        <img src="img/button_off.png" class="switches" > 
+        <p class="text_label"  >Beschreibung</p>
+        <input  type="text" class="input_label" value="" />
+    </div>
+
+    <div class="switch_line" > 
+        <img src="img/led_off.png" class="leds" >
+        <img src="img/button_off.png" class="switches" > 
+        <p class="text_label"  >Beschreibung</p>
+        <input  type="text" class="input_label" value="" />
+    </div>
+
+    <div class="switch_line" > 
+        <img src="img/led_off.png" class="leds" >
+        <img src="img/button_off.png" class="switches" > 
+        <p class="text_label"  >Beschreibung</p>
+        <input  type="text" class="input_label" value="" />
+    </div>
+
+    <div class="switch_line" > 
+        <img src="img/led_off.png" class="leds" >
+        <img src="img/button_off.png" class="switches" > 
+        <p class="text_label"  >Beschreibung</p>
+        <input  type="text" class="input_label" value="" />
+    </div>
+
+    
+
+</div>
+
+</div>
+
+
+</td>
+<td witdh="30%">
+  <img class="logicpreview" align="middle"  width="500px" src="img/logic.png"/>
+</td>
+<td width="35%">
+
+<div id="H"><br>
+<div class="headline">Hardware Channels (Hi & Ho)</div><br>
+
+    <img src="img/led_off.png" class="leds"><img src="img/button_off.png" class="switches"> <br />
+    <img src="img/led_off.png" class="leds"><img src="img/button_off.png" class="switches"> <br />
+    <img src="img/led_off.png" class="leds"><img src="img/button_off.png" class="switches"> <br />
+   <img src="img/led_off.png" class="leds"><img src="img/button_off.png" class="switches"> <br /> 
+   <img src="img/led_off.png" class="leds"><img src="img/button_off.png" class="switches"> <br />
+   <img src="img/led_off.png" class="leds"><img src="img/button_off.png" class="switches"> <br />
+   <img src="img/led_off.png" class="leds"><img src="img/button_off.png" class="switches"> <br />
+<br>
+</div>
+</td>
+</tr>
+
+
+  </table>
+  
+</div>
+      
+      <br>
+    
+         </section>
+        <section>
+          <h2>Steuerung ändern</h2>
+         <iframe src="logic-editor/" width="100%" height="700" name="sprichwort_des_tages"></iframe>
+
+         
+         </section>
+        <section>
+          <h2>Dienste</h2>
+          Dienste  ipsum dolor sit amet, consectetur adipisicing elit. Quam nemo ducimus eius, magnam error quisquam sunt voluptate labore, excepturi numquam! Alias libero optio sed harum debitis! Veniam, quia in eum.</section>
+    <section>
+          <h2>Hilfe</h2>
+          HILFE ipsum dolor sit amet, consectetur adipisicing elit. Ipsa dicta vero rerum? Eaque repudiandae architecto libero reprehenderit aliquam magnam ratione quidem? Nobis doloribus molestiae enim deserunt necessitatibus eaque quidem incidunt.</section>
+  </div>
+</div>
+  
+  
+</body>
 </html>
