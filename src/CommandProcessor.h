@@ -262,7 +262,9 @@ public:
         else if(crumbs[0] == "show")
         {
             if(crumbs[1] == "channels"){
-                message = chnl.permissionStatus(command.first);
+                message = "{\"channels\":\"\n";
+                message += chnl.permissionStatus(command.first);
+                message += "\n\"}";
             }
             else if(crumbs[1] == "status"){
                 iterationTriggered(chnl);
