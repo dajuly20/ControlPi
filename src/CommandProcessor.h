@@ -259,6 +259,19 @@ public:
             message = command_auth(crumbs, command.first);
             
         }
+        else if(crumbs[0] == "show")
+        {
+            if(crumbs[1] == "channels"){
+                message = chnl.permissionStatus(command.first);
+            }
+            else if(crumbs[1] == "status"){
+                iterationTriggered(chnl);
+            }
+            else{
+                message = "SAY THAT AGAIN!";
+            }
+        
+        }
         else{
             message = "Command not understood(1) "+command.second;
         }
