@@ -48,6 +48,13 @@ public:
     virtual void    write_all_force(uint8_t data){              write_all(data);}; // Delegated to write pin, unless overridden
     
     
+    int get_perm_read(){
+        return perm_read;
+    }
+    
+    int get_perm_write(){
+        return perm_write;
+    }
    
     bool checkPermission(int operation, bool authorized){
         

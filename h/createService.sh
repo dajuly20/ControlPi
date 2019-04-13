@@ -24,6 +24,7 @@ sudo chgrp www-data conf/timers.conf
 sudo chmod g+rw     conf/timers.conf
 
 sudo systemctl daemon-reload
+sudo service ControlPi stop
 sudo service ControlPi start
 sudo service ControlPi enable
 sudo service ControlPi status

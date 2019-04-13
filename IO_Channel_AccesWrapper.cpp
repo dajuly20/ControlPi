@@ -17,6 +17,9 @@
 #include "src/ChannelEntitys/Channel_Entity.h"
 
 
+#include <iostream> // cout
+#include <string>   // std::string
+
 std::map<char,IOChannelPtr> IO_Channel_AccesWrapper::io_channels;
 
 IO_Channel_AccesWrapper::IO_Channel_AccesWrapper(){};
@@ -108,6 +111,28 @@ void IO_Channel_AccesWrapper::setZero(){
 
 }
 
+
+std::string IO_Channel_AccesWrapper::permissionStatus(websocket_session* session){
+    std::stringstream outbuf;
+    for (auto const& channel : IO_Channel_AccesWrapper::io_channels)
+    {
+        
+        for (auto const& entity : channel.second->chEntities)
+        {
+            // Format:  H:i:read:write:authorized
+            outbuf 
+                    <<  channel.first 
+                    << ":" << entity.first 
+                    << ":" << entity.second->get_perm_read()
+                    << ":" << entity.second->get_perm_write()
+                    << ":" << (channel.second->is_session_autorized(session) ? "true" : "false")
+                    << std::endl;
+        }
+    }
+    
+    return outbuf.str();
+
+}
 //ChannelEntitySP IO_Channel_AccesWrapper::getFirstInput(){
 //    if(options.size() != 1){
 //       std::cerr << "Size is:" << options.size();
