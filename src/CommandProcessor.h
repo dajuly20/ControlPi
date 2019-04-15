@@ -47,7 +47,7 @@ class commandProcessor{
              return this->errText(4);
          
          chnl[IO_Channel].getIOChnl()->add_authorized_session(session); 
-         return "ok.";
+         return "{\"auth\":\"ok.\"}";
          
      }
     
@@ -149,7 +149,7 @@ public:
         
         bool is_first = true;
         std::string json_resp;
-        json_resp = '{';
+        json_resp = "{\"status\" : {";
         for(auto&& [chkey, channel] : chnl.getAllChannels()){
             for(auto&& [entitykey, entity] : channel->chEntities){
                 if(entity->perm_read == Channel_Entity::exp_public){
@@ -168,13 +168,13 @@ public:
                 else if(entity->perm_read == Channel_Entity::exp_private){
                     {
                     uint8_t value = entity->read_all();
-                    std::string json_resp ="{";
+                    std::string json_resp = "{\"status\" : {";
                     json_resp +=  '"';
                     json_resp += chkey;
                     json_resp += entitykey;
                     json_resp += "\": \"";
                     json_resp += std::to_string(value);
-                    json_resp += '"}';
+                    json_resp += "}}";
                     
                     for (auto it = channel->auth_session_begin(); it != channel->auth_session_end(); it++ ){
                         
@@ -195,7 +195,7 @@ public:
         // Get Autorized sessions... but first check if sessions are removed if invalid. 
         //chnl[IO_Channel].getIOChnl()->add_authorized_session(session); 
         
-        json_resp += '}';
+        json_resp += "}}";
         
         //std::cout << "json is: " << json_resp.str();
         
@@ -224,13 +224,16 @@ public:
     
     std::string errText(int what, bool authorized = false){
         std::string authstr = authorized ? "(authorized)" : "(not authorized)";
+        
         switch(what){
-            case 1: return "Command needs to consist out of 3 parts! e.g. set:Hi0";
-            case 2: return "bla";
-            case 3: return "insufficent permission to write that Channel " +authstr+"\nUse command 'auth:<IO-Channel>:<token>' to authorize for a channel.";
-            case 4: return "token incorrect.";
+            case 1: return "{\"error\":\"Command needs to consist out of 3 parts! e.g. set:Hi0\"}";
+            case 2: return "{\"error\":\"Channel is invalid\"}";
+            case 3: return "{\"error\":\"insufficent permission to write that Channel " +authstr+"\nUse command 'auth:<IO-Channel>:<token>' to authorize for a channel.\"}";
+            case 4: return "{\"auth\":\"token incorrect.\"}";
             
         }
+        
+        
         
     }
     

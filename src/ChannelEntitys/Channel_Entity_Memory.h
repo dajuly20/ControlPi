@@ -32,7 +32,7 @@ public:
     virtual void    write_all(uint8_t data) override;
    
 private:
-    uint8_t data;
+    uint8_t data = 0;
 };
 
 #endif /* CHANNEL_ENTITY_MEMORY_H */

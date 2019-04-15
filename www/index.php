@@ -12,7 +12,7 @@
 
       
     <style>
-  .leds, .switches, .titles{
+  .nub, .leds, .switches, .titles{
   width: 50px;
   //border: 1px dotted black;
   display:inline-block;
@@ -31,7 +31,7 @@ display:none;
   
   
   
-  input[type=text]
+  .switch_line input[type=text]
 {
     margin-left: 5px;
 	//margin-top:8px;
@@ -126,6 +126,22 @@ font-weight: 400;
 }
 
 
+img.led-on{
+content: url(img/led_on.png);
+}
+
+img.leds-off{
+content: url(img/led_off.png);
+}
+
+img.switch-on{
+content: url(img/button_on.png);
+}
+
+img.switch-off{
+content: url(img/button_off.png);
+}
+
 
 
 #overview td{
@@ -136,10 +152,44 @@ font-weight: 400;
   <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>-->
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-  <script type="text/javascript" src="js/ui.enhanced-alert.js"></script>
+  <!--<script type="text/javascript" src="js/ui.enhanced-alert.js"></script>-->
+  <script type="text/javascript" src="https://www.jqueryscript.net/demo/jQuery-UI-Based-Native-JS-Dialogs-Replacement-Enhanced-Alert/src/ui.enhanced-alert.js"></script>-->
+  
   <script type="text/javascript" src="js/easy-editable-text.js"></script>
     <link type="text/css" rel="stylesheet" href="css/ui-enhanced-alert.css" />
     <script>
+
+  var channels = null;
+  var channels_parsed = null;
+  
+  
+    var exp_public  = 2;
+   var  exp_private = 1;
+    var exp_none    = 0;
+  
+  
+  function renderChannels(channels){
+  $(".sel_row").html("");
+    for (var i = 0; i < channels.length; i++) {
+        var crumbs = channels[i].split(":");
+        if(crumbs[2] == exp_public || (crumbs[2] == exp_private && crumbs[4] == "true")){
+            var element = $("<option value='"+i+"'>"+crumbs[0]+" "+crumbs[1]+"</option>");
+            element.data("crumbs", crumbs);
+            $(".sel_row").append(element);
+        }
+   }
+   
+   // Loop through select's and let the n'th select element take the n'th entity.
+   var selectors = $(".sel_row");
+    for(var i=0; i < selectors.length; i++){
+        var element = selectors.eq(i);
+        var pos  = selectors.index(element);
+        element.find("option").eq(pos).prop('selected',true);
+        //console.log("Im the "+pos+" element");
+    }
+  
+  }
+    
     function switchToSSL(bla){
         if(bla){
          location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
@@ -152,13 +202,22 @@ font-weight: 400;
     return l;
     }
     
+
+    function getStatus(){
+        ws.send("show:status")
+    }
+    
+    function getChannels(){
+        ws.send("show:channels");
+    }
+    
   function openConnection(url, onmsg){
     ws = new WebSocket(url);
    
       ws.onopen = function(ev) {
         console.log("[connection opened]\n");
-            ws.send("show:channels");
-            ws.send("show:status");
+            getChannels();
+            getStatus();
       };
       
        ws.onclose = function(ev) {
@@ -170,6 +229,96 @@ font-weight: 400;
       
       
   }
+  
+  function switch_clicked(event){
+  if($(this).hasClass("switch-on") || $(this).hasClass("switch-off")){
+    
+    
+    // Find line number and offset (left or right nub)
+    var switch_line = $(this).parent();
+    var switch_block = switch_line.parent();
+    var line_number = switch_block.find(".switch_line").index(switch_line);
+    var offset = $(this).parent().find("img").index($(this));
+    
+    // Find Value of corresponding <select>
+    var selected_option = switch_block.find(".sel_row").eq(offset).find("option:selected");
+    console.log(selected_option);
+    var crumbs = selected_option.data("crumbs");
+    
+    
+    
+    
+    var newVal = ( event.type == "mousedown") ? "high" : "low";
+    var identifier = crumbs[0]+crumbs[1]+line_number;
+    
+    
+    var command =    "set:"+identifier+":"+newVal;
+    
+    if(crumbs[3] == exp_public || (crumbs[3] == exp_private && crumbs[4] == "true")){
+        ws.send(command);
+    }
+    else{
+    $("#enhanced-confirm").css("width","320px");
+    $.ea.prompt('Pleas enter token for Channel '+crumbs[0]+crumbs[1], 'Token required', function(r) {
+     if (r) {
+        ws.send("auth:"+crumbs[0]+":"+r);
+     }
+    });
+   
+    }
+    console.log(line_number + " offset: "+offset);
+    console.log(crumbs);
+  }
+  }
+  
+  function renderStatusupdate(status){
+    
+    // Loop for((each) over all <select>'s and get the selected <option>
+     var selectedOptions = $(".sel_row option:selected");
+     console.log(selectedOptions.length);
+     
+     selectedOptions.each( function(index){
+           var switch_block = Math.floor(index / 2);  // e.g.   element 3 /2 = switch block1 (counting from 0)
+           var switch_offset = index % 2;
+           
+            //console.log("eachSELECT "+index + " " + switch_block + " " +switch_offset );
+            var crumbs =  $(this).data("crumbs");  // the element got data assigned earlier.
+            var ch_en = crumbs[0]+crumbs[1]+""; // containing the crumbs of the channel status like H:i:2:0:false
+            var bitval = status[ch_en]; // Contains all bits 0-7 (uint8_t) 
+            
+            var write_perm = crumbs[3];
+            var authorized  = crumbs[4];
+            
+            var switch_line = $(".switch_block").eq(switch_block).find(".switch_line");
+            
+            var img_class;
+            if((write_perm == exp_public) || write_perm == exp_private){
+                img_class = "switch";
+            }
+            else{
+                img_class = "led";
+            }
+            
+            for(i=0; i<=7; i++){
+                var nub =  switch_line.eq(i).find(".nub").eq(switch_offset);
+                if( ((bitval >> i) & 1) == 1){
+                // LED ON
+                nub.removeClass();
+                nub.addClass("nub "+img_class+"-on");
+                }
+                else{
+                // LED OFF
+                nub.removeClass();
+                nub.addClass("nub "+img_class+"-off");
+                }
+            }
+            
+            
+    });
+   
+    }
+    
+    
     
     var ws = null;
     
@@ -180,8 +329,15 @@ font-weight: 400;
            $("#enhanced-confirm").css("width","320px");
 }
   
-  
 
+  $(".sel_row").change(function(){
+  getStatus();
+  });
+
+  
+  $(".nub").mousedown(switch_clicked);
+  $(".nub").mouseup    (switch_clicked);
+  
   
   var l = getLocation(location.href);
   var ws_protocol = (location.protocol == "https:") ? "wss://" : "ws://";
@@ -189,14 +345,30 @@ font-weight: 400;
   var ws_url  = ws_protocol + hostname;
   console.log("Connecting to: "+ws_url);
   
-
-  
+   
    
    
        var onmessage = function(ev) {
       try{
         var obj = JSON.parse(ev.data);
-        console.log(obj);
+        
+        if(obj.channels != null){
+            channels = obj.channels;
+            renderChannels(channels);
+        }
+        else if(obj.status != null){
+            renderStatusupdate(obj.status);
+        }
+        else if(obj.auth != null){
+           if(obj.auth == "ok."){
+                $.ea.alert("Token accepted.");
+                getChannels();
+            }
+            else{
+                $.ea.alert("Token incorrect.");
+            }
+        }
+        
         //drawOutputs(obj.Ho,"H");
         //drawInputs(obj.Hi,"H");
 
@@ -252,80 +424,76 @@ font-weight: 400;
 <tr>
 
 <td width="35%">
+
 <div style="overflow:hidden;" style="background-color:blue">
+    <div class="switch_block"><br>
+        <div class="switch_headline">
+            <div>Hardware Channels (Hi & Ho)</div>
+        </div>
 
 
+        <div class="switch_line_title" > 
+            <p  class="imgrep" style=""><select class="sel_row">-</select></p>
+            <p  class="imgrep" style=""><select class="sel_row">-</select></p>
+        </div>
 
-<div id="H"><br>
-<div class="switch_headline"><div>Hardware Channels (Hi & Ho)</div></div>
+        <div class="switch_line" > 
+            <img src="img/led_off.png" class="nub led-off" >
+            <img src="img/led_off.png" class="nub led-off" >
+            <p class="text_label"  >Beschreibung</p>
+            <input  type="text" class="input_label" value="" />
+        </div>
 
+        <div class="switch_line" > 
+            <img src="img/led_off.png" class="nub led-off" >
+            <img src="img/led_off.png" class="nub led-off" >
+            <p class="text_label"  >Beschreibung</p>
+            <input  type="text" class="input_label" value="" />
+        </div>
 
-    <div class="switch_line_title" > 
-        <p  class="imgrep" style="">H o</p>
-        <p  class="imgrep" style="">H i</p>
-   
+        <div class="switch_line" > 
+            <img src="img/led_off.png" class="nub led-off" >
+            <img src="img/led_off.png" class="nub led-off" >
+            <p class="text_label"  >Beschreibung</p>
+            <input  type="text" class="input_label" value="" />
+        </div>
+
+        <div class="switch_line" > 
+            <img src="img/led_off.png" class="nub led-off" >
+            <img src="img/led_off.png" class="nub led-off" >
+            <p class="text_label"  >Beschreibung</p>
+            <input  type="text" class="input_label" value="" />
+        </div>
+
+        <div class="switch_line" > 
+            <img src="img/led_off.png" class="nub led-off" >
+            <img src="img/led_off.png" class="nub led-off" >
+            <p class="text_label"  >Beschreibung</p>
+            <input  type="text" class="input_label" value="" />
+        </div>
+
+        <div class="switch_line" > 
+            <img src="img/led_off.png" class="nub led-off" >
+            <img src="img/led_off.png" class="nub led-off" >
+            <p class="text_label"  >Beschreibung</p>
+            <input  type="text" class="input_label" value="" />
+        </div>
+
+        <div class="switch_line" > 
+            <img src="img/led_off.png" class="nub led-off" >
+            <img src="img/led_off.png" class="nub led-off" >
+            <p class="text_label"  >Beschreibung</p>
+            <input  type="text" class="input_label" value="" />
+        </div>
+
+        <div class="switch_line" > 
+            <img src="img/led_off.png" class="nub led-off" >
+            <img src="img/led_off.png" class="nub led-off" >
+            <p class="text_label"  >Beschreibung</p>
+            <input  type="text" class="input_label" value="" />
+        </div>
+
     </div>
-
-    <div class="switch_line" > 
-        <img src="img/led_off.png" class="leds" >
-        <img src="img/button_off.png" class="switches" > 
-        <p class="text_label"  >Beschreibung</p>
-        <input  type="text" class="input_label" value="" />
-    </div>
-
-    <div class="switch_line" > 
-        <img src="img/led_off.png" class="leds" >
-        <img src="img/button_off.png" class="switches" > 
-        <p class="text_label"  >Beschreibung</p>
-        <input  type="text" class="input_label" value="" />
-    </div>
-
-    <div class="switch_line" > 
-        <img src="img/led_off.png" class="leds" >
-        <img src="img/button_off.png" class="switches" > 
-        <p class="text_label"  >Beschreibung</p>
-        <input  type="text" class="input_label" value="" />
-    </div>
-
-    <div class="switch_line" > 
-        <img src="img/led_off.png" class="leds" >
-        <img src="img/button_off.png" class="switches" > 
-        <p class="text_label"  >Beschreibung</p>
-        <input  type="text" class="input_label" value="" />
-    </div>
-
-    <div class="switch_line" > 
-        <img src="img/led_off.png" class="leds" >
-        <img src="img/button_off.png" class="switches" > 
-        <p class="text_label"  >Beschreibung</p>
-        <input  type="text" class="input_label" value="" />
-    </div>
-
-    <div class="switch_line" > 
-        <img src="img/led_off.png" class="leds" >
-        <img src="img/button_off.png" class="switches" > 
-        <p class="text_label"  >Beschreibung</p>
-        <input  type="text" class="input_label" value="" />
-    </div>
-
-    <div class="switch_line" > 
-        <img src="img/led_off.png" class="leds" >
-        <img src="img/button_off.png" class="switches" > 
-        <p class="text_label"  >Beschreibung</p>
-        <input  type="text" class="input_label" value="" />
-    </div>
-
-    <div class="switch_line" > 
-        <img src="img/led_off.png" class="leds" >
-        <img src="img/button_off.png" class="switches" > 
-        <p class="text_label"  >Beschreibung</p>
-        <input  type="text" class="input_label" value="" />
-    </div>
-
-    
-
-</div>
-
 </div>
 
 
@@ -334,19 +502,77 @@ font-weight: 400;
   <img class="logicpreview" align="middle"  width="500px" src="img/logic.png"/>
 </td>
 <td width="35%">
+<div style="overflow:hidden;" style="background-color:blue">
+    <div class="switch_block"><br>
+        <div class="switch_headline">
+            <div>Hardware Channels (Hi & Ho)</div>
+        </div>
 
-<div id="H"><br>
-<div class="headline">Hardware Channels (Hi & Ho)</div><br>
 
-    <img src="img/led_off.png" class="leds"><img src="img/button_off.png" class="switches"> <br />
-    <img src="img/led_off.png" class="leds"><img src="img/button_off.png" class="switches"> <br />
-    <img src="img/led_off.png" class="leds"><img src="img/button_off.png" class="switches"> <br />
-   <img src="img/led_off.png" class="leds"><img src="img/button_off.png" class="switches"> <br /> 
-   <img src="img/led_off.png" class="leds"><img src="img/button_off.png" class="switches"> <br />
-   <img src="img/led_off.png" class="leds"><img src="img/button_off.png" class="switches"> <br />
-   <img src="img/led_off.png" class="leds"><img src="img/button_off.png" class="switches"> <br />
-<br>
+        <div class="switch_line_title" > 
+            <p  class="imgrep" style=""><select class="sel_row">-</select></p>
+            <p  class="imgrep" style=""><select class="sel_row">-</select></p>
+        </div>
+
+        <div class="switch_line" > 
+            <img src="img/led_off.png" class="nub led-off" >
+            <img src="img/led_off.png" class="nub led-off" >
+            <p class="text_label"  >Beschreibung</p>
+            <input  type="text" class="input_label" value="" />
+        </div>
+
+        <div class="switch_line" > 
+            <img src="img/led_off.png" class="nub led-off" >
+            <img src="img/led_off.png" class="nub led-off" >
+            <p class="text_label"  >Beschreibung</p>
+            <input  type="text" class="input_label" value="" />
+        </div>
+
+        <div class="switch_line" > 
+            <img src="img/led_off.png" class="nub led-off" >
+            <img src="img/led_off.png" class="nub led-off" >
+            <p class="text_label"  >Beschreibung</p>
+            <input  type="text" class="input_label" value="" />
+        </div>
+
+        <div class="switch_line" > 
+            <img src="img/led_off.png" class="nub led-off" >
+            <img src="img/led_off.png" class="nub led-off" >
+            <p class="text_label"  >Beschreibung</p>
+            <input  type="text" class="input_label" value="" />
+        </div>
+
+        <div class="switch_line" > 
+            <img src="img/led_off.png" class="nub led-off" >
+            <img src="img/led_off.png" class="nub led-off" >
+            <p class="text_label"  >Beschreibung</p>
+            <input  type="text" class="input_label" value="" />
+        </div>
+
+        <div class="switch_line" > 
+            <img src="img/led_off.png" class="nub led-off" >
+            <img src="img/led_off.png" class="nub led-off" >
+            <p class="text_label"  >Beschreibung</p>
+            <input  type="text" class="input_label" value="" />
+        </div>
+
+        <div class="switch_line" > 
+            <img src="img/led_off.png" class="nub led-off" >
+            <img src="img/led_off.png" class="nub led-off" >
+            <p class="text_label"  >Beschreibung</p>
+            <input  type="text" class="input_label" value="" />
+        </div>
+
+        <div class="switch_line" > 
+            <img src="img/led_off.png" class="nub led-off" >
+            <img src="img/led_off.png" class="nub led-off" >
+            <p class="text_label"  >Beschreibung</p>
+            <input  type="text" class="input_label" value="" />
+        </div>
+
+    </div>
 </div>
+
 </td>
 </tr>
 

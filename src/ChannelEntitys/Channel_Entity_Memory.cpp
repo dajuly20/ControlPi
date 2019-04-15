@@ -15,6 +15,7 @@
 
 Channel_Entity_Memory::Channel_Entity_Memory() {
                 entityType = Channel_Entity::ENTITY_DUPLEX;
+                data = 0;
 }
 
 Channel_Entity_Memory::Channel_Entity_Memory(const Channel_Entity_Memory& orig) {
