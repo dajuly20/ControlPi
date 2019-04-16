@@ -14,7 +14,7 @@ sudo rm /etc/systemd/system/ControlPi.service
 sudo ln h/ControlPi.service /etc/systemd/system/
 
 
-
+rm /opt/controlpi/logic.json
 rm /opt/controlpi/logic.conf
 rm /opt/controlpi/timers.conf
 rm /opt/controlpi/ControlPi.conf

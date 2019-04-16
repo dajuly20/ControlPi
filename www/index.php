@@ -152,8 +152,8 @@ content: url(img/button_off.png);
   <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>-->
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-  <!--<script type="text/javascript" src="js/ui.enhanced-alert.js"></script>-->
-  <script type="text/javascript" src="https://www.jqueryscript.net/demo/jQuery-UI-Based-Native-JS-Dialogs-Replacement-Enhanced-Alert/src/ui.enhanced-alert.js"></script>-->
+  <script type="text/javascript" src="js/ui.enhanced-alert.js"></script>
+<!--  <script type="text/javascript" src="https://www.jqueryscript.net/demo/jQuery-UI-Based-Native-JS-Dialogs-Replacement-Enhanced-Alert/src/ui.enhanced-alert.js"></script>-->
   
   <script type="text/javascript" src="js/easy-editable-text.js"></script>
     <link type="text/css" rel="stylesheet" href="css/ui-enhanced-alert.css" />

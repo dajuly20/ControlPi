@@ -44,6 +44,7 @@ sudo a2enmod proxy_wstunnel
 sudo service apache2 restart
 
 # Linking WWW dir to Apache Webroot
+sudo rm /var/www/controlPi
 sudo ln -s `realpath ./www` /var/www/controlPi 
 
 #change the group of www folder to www-data.
@@ -77,7 +78,7 @@ fi
 fi
 
 if [[ "yes" == $(ask_yes_or_no "View / Edit Apache Config now?") ]]; then 
-nano www-apache2-config.conf
+nano h/www-apache2-config.conf
 fi
 
 
