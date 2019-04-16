@@ -8,12 +8,14 @@ A executable is shipped which is built for Raspbian GNU/Linux 9 (stretch).
 ## Getting Started
 * Attach the PiFaceDigital2 to the RaspberryPi
 * Open a ssh connection and clone this repository with `git clone https://github.com/dajuly20/ControlPi`
-* cd into the new directory ControlPi and execute ./start_manual.sh 
+* cd into the new directory ControlPi and execute ./start_manual.sh to check if the executable works.
 * When you have to build the project from source execute ./start_pull_and_build.sh to install dependencies and build.
-* Otherwise you can create a Service for ControlPi by executing ./start_as_service.sh
+* Otherwise you can create a Service for ControlPi by executing ./start_as_service.sh 
+
 
 ## First Control-Program
 * Open your Browser and enter the IP / Hostname of your RaspberryPi e.g. [http://ControlPi3/]
+  (If a error occurs try to execute h/www-setupApache.sh (which should have been executed by start_as_service.sh already.)
 * Klick on tab Change PLC; Default username and password is "admin"
 * Draw your PLC-Program 
 * H input "H i" 0 - 3  have their own hardware buttons.
