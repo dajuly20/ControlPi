@@ -13,6 +13,12 @@ sudo ln `realpath ControlPi` /usr/bin/ControlPi
 sudo rm /etc/systemd/system/ControlPi.service
 sudo ln h/ControlPi.service /etc/systemd/system/
 
+
+
+rm /opt/controlpi/logic.conf
+rm /opt/controlpi/timers.conf
+rm /opt/controlpi/ControlPi.conf
+
 #Creating Config-dir and
 sudo mkdir /opt/controlpi
 sudo ln  conf/logic.conf  /opt/controlpi/logic.conf
@@ -26,5 +32,5 @@ sudo chmod g+rw     conf/timers.conf
 sudo service ControlPi stop
 sudo systemctl daemon-reload
 sudo service ControlPi start
-sudo service ControlPi enable
+sudo systemctl enable ControlPi.service
 sudo service ControlPi status

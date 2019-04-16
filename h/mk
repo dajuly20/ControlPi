@@ -1,5 +1,3 @@
 #!/bin/bash
 cd bin
-make
-cd ..
-h/createService.sh
+make && cd .. && h/createService.sh

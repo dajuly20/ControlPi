@@ -196,11 +196,14 @@ name="StartPiControl"
 sudo rm ~/$name
 ln  ./bin/ControlPi ~/$name
 cd ~
+
 if [[ "yes" == $(ask_yes_or_no "Start PiControl now?") ]]
 then
-
+if [[ "yes" == $(ask_yes_or_no "Start as Service?") ]]
+	h/createService.sh
+else
 ~/$name
-
+fi
 fi
 
 
