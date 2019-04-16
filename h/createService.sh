@@ -14,23 +14,21 @@ sudo rm /etc/systemd/system/ControlPi.service
 sudo ln h/ControlPi.service /etc/systemd/system/
 
 
-rm /opt/controlpi/logic.json
-rm /opt/controlpi/logic.conf
-rm /opt/controlpi/timers.conf
-rm /opt/controlpi/ControlPi.conf
+
+sudo rm -r /opt/controlpi
 
 #Creating Config-dir and
 sudo mkdir /opt/controlpi
 sudo ln  conf/logic.conf  /opt/controlpi/logic.conf
-sudo chgrp www-data conf/logic.conf
-sudo chmod g+rw     conf/logic.conf
 sudo ln  conf/logic.json /opt/controlpi/logic.json
-sudo chgrp www-data conf/logic.json
-sudo chmod g+rw     conf/logic.json
 sudo ln  conf/timers.conf /opt/controlpi/timers.conf
-sudo ln conf/ControlPi.conf /opt/controlpi/ControlPi.conf
-sudo chgrp www-data conf/timers.conf
-sudo chmod g+rw     conf/timers.conf
+sudo ln  conf/ControlPi.conf /opt/controlpi/ControlPi.conf
+sudo ln  conf/.htpasswd  /opt/controlpi/.htpasswd
+
+sudo chgrp -R www-data conf
+sudo chmod -R g+rw     conf
+
+
 
 sudo service ControlPi stop
 sudo systemctl daemon-reload
