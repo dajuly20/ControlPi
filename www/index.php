@@ -499,7 +499,7 @@ content: url(img/button_off.png);
 
 </td>
 <td witdh="30%">
-  <img class="logicpreview" align="middle"  width="500px" src="img/logic.png"/>
+  <img class="logicpreview" align="middle"  width="500px" src="img/logic.png?t=<?php echo time();?>"/>
 </td>
 <td width="35%">
 <div style="overflow:hidden;" style="background-color:blue">

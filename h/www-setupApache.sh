@@ -7,6 +7,11 @@ function ask_yes_or_no() {
     esac 
 }
 
+# Set Permissions accordingly
+echo "RESETTING PERMISSION IN WWW DIR"
+cd www
+./resetPermission.sh
+cd ..
 if [ -z `which apache2` ]
 then
 echo "Apache2 not installed."

@@ -19,6 +19,9 @@ sudo rm -r /opt/controlpi
 
 #Creating Config-dir and
 sudo mkdir /opt/controlpi
+sudo chgrp -R www-data /opt/controlpi/
+sudo chmod -R g+w /opt/controlpi/
+
 sudo ln  conf/logic.conf  /opt/controlpi/logic.conf
 sudo ln  conf/logic.json /opt/controlpi/logic.json
 sudo ln  conf/timers.conf /opt/controlpi/timers.conf
