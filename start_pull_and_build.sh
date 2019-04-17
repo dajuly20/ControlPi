@@ -33,7 +33,17 @@ echo "SPi is enabled!"
 echo "Found device $spiresponse"
 fi
 
+echo ""
+echo "Swap should be at least 1000 MB for compiling!!"
+if [[ "yes" == $(ask_yes_or_no "Edit swap?") ]]
+then
 
+sudo dphys-swapfile swapoff
+sudo nano /etc/dphys-swapfile
+sudo dphys-swapfile swapon
+sudo service dphys-swapfile restart
+
+fi
 
 #Test if user is in group spi
 if [ -z `groups | grep spi` ] && [ -z `groups | grep gpio`]
@@ -88,7 +98,9 @@ fi
 
 
 #Call sub-script to check for boost. 
-.h/installBoost-1.6.9.sh
+pwd
+cd $workingdir
+./h/installBoost-1.6.9.sh
 #Todo check if boost was installed by hand.
 #package="libboost-all-dev"
 #if [ $(dpkg-query -W -f='${Status}' $package 2>/dev/null | grep -c "ok installed") -eq 0 ]  &&  [[ "yes" == $(ask_yes_or_no "Did not find boostLibrary. Install $package? ") ]]
@@ -102,6 +114,7 @@ fi
 #exit -1
 #fi
 
+cd $workingdir
 #Call sub script to check for BoostBeast.
 ./h/installBoostBeast.sh
 
@@ -135,6 +148,25 @@ sudo make
 sudo make install
 sudo make example
 cd   ~
+
+
+
+
+
+cd $workingdir
+#Trigger Script to update Cmake
+./h/updateCmake.sh
+
+#Trigger Script to update GCC
+./h/install-gcc-8.2-ARM.sh
+source ~/.bashrc
+
+
+
+
+
+
+
 
 #clear
 echo ""
@@ -176,12 +208,6 @@ else
 fi
 
 
-#Trigger Script to update Cmake
-./h/updateCmake.sh
-
-#Trigger Script to update GCC
-./h/install-gcc-8.2-ARM.sh
-
 
 echo ""
 echo ""
@@ -190,7 +216,8 @@ echo "Start Building Project... "
 echo ""
 echo ""
 # Trigger Cmake and make
-./h/build.sh
+cd $workingdir
+./h/rebuild.sh
 echo ""
 name="StartPiControl"
 sudo rm ~/$name
