@@ -222,7 +222,7 @@ echo ""
 name="StartPiControl"
 sudo rm ~/$name
 ln  ./bin/ControlPi ~/$name
-cd ~
+cd $workingdir 
 
 if [[ "yes" == $(ask_yes_or_no "Start PiControl now?") ]]
 then

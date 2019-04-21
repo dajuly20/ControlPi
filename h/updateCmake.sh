@@ -4,6 +4,7 @@ which cmake
 INSTALLED_VERS=`cmake --version | head -n 1`
 # Download version
 CMAKE_VERS="3.13.4"
+CMAKE_VERS_S="cmake version 3.13.4"
 
 extract () {
      if [ -f $1 ] ; then
@@ -40,13 +41,18 @@ function ask_yes_or_no() {
 #        echo -n "Password for $USER:"
 #        read -s  PASS
         echo
-        if [[ "yes" == $(ask_yes_or_no "Uninstall $INSTALLED_VERS and replace by $CMAKE_VERS?") ]]
+	if [ "$INSTALLED_VERS" != "$CMAKE_VERS_S" ]
+	then
+
+        if [[ "yes" == $(ask_yes_or_no "Uninstall  <$INSTALLED_VERS> and replace by <$CMAKE_VERS>?") ]]
          then
 	 sudo apt-get remove cmake
 	 sudo apt-get autoremove
 	fi
-
-
+	else
+	echo "The correct version $INSTALLED_VERS is installed already!"
+	exit 1
+	fi
         if [[ "yes" == $(ask_yes_or_no "Download version $CMAKE_VERS nach home?") ]]
 	then
 	 cd ~

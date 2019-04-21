@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <title>ControlPi - Kleinsteuerung auf RaspberryPi</title>
   
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
- <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="css/normalize.min.css">
+ <link rel="stylesheet" href="css/jquery-ui.css">
   
   
       <link rel="stylesheet" href="css/style.css">
@@ -150,8 +150,8 @@ content: url(img/button_off.png);
 
   </style>
   <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>-->
-  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src="js/jquery-1.12.4.js"></script><!--https://code.jquery.com/jquery-1.12.4.js-->
+  <script src="js/jquery-ui.js"></script><!--https://code.jquery.com/ui/1.12.1/jquery-ui.js-->
   <script type="text/javascript" src="js/ui.enhanced-alert.js"></script>
 <!--  <script type="text/javascript" src="https://www.jqueryscript.net/demo/jQuery-UI-Based-Native-JS-Dialogs-Replacement-Enhanced-Alert/src/ui.enhanced-alert.js"></script>-->
   
@@ -595,7 +595,26 @@ content: url(img/button_off.png);
           Dienste  ipsum dolor sit amet, consectetur adipisicing elit. Quam nemo ducimus eius, magnam error quisquam sunt voluptate labore, excepturi numquam! Alias libero optio sed harum debitis! Veniam, quia in eum.</section>
     <section>
           <h2>Hilfe</h2>
-          HILFE ipsum dolor sit amet, consectetur adipisicing elit. Ipsa dicta vero rerum? Eaque repudiandae architecto libero reprehenderit aliquam magnam ratione quidem? Nobis doloribus molestiae enim deserunt necessitatibus eaque quidem incidunt.</section>
+          <b>How to Change Configuration</b>
+          <ol>
+          <li>SSH into RaspberryPi with  <code>ssh hspf@ControlPi3</code> (User: hspf, Pass: Elektron)</li>
+          <li><font color="red">Change Password</font> with <code>passwd</code></li>
+          <li>change directoryv to <code>cd /opt/controlpi/</code></li>
+          <li>Files in Directory
+                <ol>
+                    <li> <b>ControlPi.conf</b> Global Configuration file </li>
+                    <li> <b>timers.conf</b> Timers Configuration file </li>
+                    <li> <b>logic.conf</b> <u>generated</u>! <small>Will be overridden by webGui. Dont change unless you know what you are doing!</small>  </li>
+                    <li> <b>logic.json</b> <u>generated</u>! <small>Used by CircuitVerse Editor, does not effect the backend.</small>  </li>
+                    <li> <b>.htpasswd</b> <small>Password-file used by CircuitVerse Editor, does not effect the backend.</small>  </li>
+                    
+                    
+                    
+                </ol>
+        </li>
+          <li>After changes restart Service by <code>sudo service ControlPi restart</code></li>
+          </ol>
+          </section>
   </div>
 </div>
   
