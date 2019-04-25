@@ -2,7 +2,7 @@
 
 $jsonfn = "/opt/controlpi/logic.json";
 $txtfn  = "/opt/controlpi/logic.conf";
-
+$timerfn = "/opt/controlpi/timers.conf";
 
 function saveImg($base64){
 
@@ -54,7 +54,11 @@ if(!empty($_REQUEST["data"])){ // Un
 echo "body not empty";
 
         $data = $_REQUEST["data"];
-
+        $timers = "";
+        if(isset($_REQUEST["timers"])){
+            $timers = $_REQUEST["timers"];
+        }
+        
         if(!empty($_REQUEST["image"])){
             saveImg($_REQUEST["image"]);
         }
@@ -67,6 +71,10 @@ echo "body not empty";
 		echo "writing $data to txt";
 		$fhandle = fopen($txtfn,"w");
 		fwrite($fhandle,$data);
+		
+		$fhandle2 = fopen($timerfn,"w");
+		fwrite($fhandle2,$timers);
+		
         }else{
 
         }

@@ -45,7 +45,7 @@ function saveAndExport(){
 }
 
 
-function saveExportedViaApi(data){
+function saveExportedViaApi(data, dataTimers = null){
     
     $('.loadingIcon').fadeIn();
     
@@ -57,6 +57,7 @@ function saveExportedViaApi(data){
             },
             data: {
                 "data": data,
+                "timers" : dataTimers,
                // "id": logix_project_id,
                 //"image": generateImageForOnline(),
                 //name: projectName
@@ -107,13 +108,15 @@ function reloadBackendViaApi(){
 }
 
 
- function createOutputPrompt(output) {
+ function createOutputPrompt(output, timersConf) {
     $('#outputConfirmDialog').empty();
     //var projectList = JSON.parse(localStorage.getItem("projectList"));
     //var flag = true;
    // for (id in projectList) {
    //     flag = false;
-        $('#outputConfirmDialog').append('<label class="option"><textarea rows="'+(output.length+7)+'"  cols="60" rows="10" name="softLogic">'+output.join('\n')+' </textarea></label>');
+        $('#outputConfirmDialog').append('<label class="option"><textarea style="float:left;" rows="'+(output.length+7)+'"  cols="45" rows="10" name="softLogic">'+output.join('\n')+' </textarea><textarea name="timersConf" rows="10" > '+timersConf+' </textarea></label>');
+        
+        
         
     //}
   //  if (flag) $('#inputChooseDialog').append('<p>Looks like no circuit has been saved yet. Create a new one and save it!</p>')
@@ -126,8 +129,9 @@ function reloadBackendViaApi(){
                 //load(JSON.parse(localStorage.getItem($("input[name=projectId]:checked").val())));
                 
                 console.log($("textarea[name=softLogic]").val());
-                
-                saveExportedViaApi($("textarea[name=softLogic]").val());
+                console.log("TIMERS CONF HIER");
+                console.log($("textarea[name=timersConf]").val());
+                saveExportedViaApi($("textarea[name=softLogic]").val(), $("textarea[name=timersConf]").val());
                 $(this).dialog("close");
             },
         }]
@@ -521,9 +525,28 @@ logicStrings.push(completeLogic);
 }
 
 
-createOutputPrompt(logicStrings);
+var timersConf = createTimersConf(JSON.parse(JSON.stringify(j.timers)));
+
+
+createOutputPrompt(logicStrings, timersConf);
 ///showMessage(logicStrings.join("<br>"));
 return completeLogic;
+
+}
+
+
+function createTimersConf(timers){
+ // Creates the timer.conf textfile out of the JSON Object    
+    var timersConf = "";
+    
+    for(var key in timers){
+        timersConf += "timer="+key+"\n";
+        timersConf += "powerOnDelay="+timers[key][0]+"\n";
+        timersConf += "powerOffDelay="+timers[key][1]+"\n\n";
+      
+    }
+    
+    return timersConf;
 
 }
 

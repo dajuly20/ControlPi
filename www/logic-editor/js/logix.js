@@ -156,6 +156,9 @@ function Scope(name = "localScope", id = undefined) {
     this.nodes = []; //intermediate nodes only
     this.allNodes = [];
     this.wires = [];
+    
+    this.timers = {};
+    
 
     // Creating arrays for other module elements
     for (var i = 0; i < moduleList.length; i++) {
@@ -859,6 +862,8 @@ function CircuitElement(x, y, scope, dir, bitWidth) {
         this.hover = true;
     }
 
+    
+    
     this.deleteNodesWhenDeleted = true; // FOR NOW - TO CHECK LATER
 
     this.nodeList = []

@@ -359,7 +359,8 @@ function generateSaveData(name) {
     data["clockEnabled"] = simulationArea.clockEnabled;
     data["projectId"] = projectId;
     data["focussedCircuit"] = globalScope.id;
-
+    data["timers"] = globalScope.timers;
+    
     // Project Circuits, each scope is one circuit
     data.scopes = []
     var dependencyList = {};
@@ -547,6 +548,7 @@ function load(data) {
         loadScope(scope, data.scopes[i]);
 
         // Focus circuit
+        scope.timers = data.timers;
         globalScope = scope;
 
         // Center circuit
