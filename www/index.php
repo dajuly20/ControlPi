@@ -428,7 +428,7 @@ content: url(img/button_off.png);
 <div style="overflow:hidden;" style="background-color:blue">
     <div class="switch_block"><br>
         <div class="switch_headline">
-            <div>Hardware Channels (Hi & Ho)</div>
+            <div>Channel Status</div>
         </div>
 
 
@@ -505,7 +505,7 @@ content: url(img/button_off.png);
 <div style="overflow:hidden;" style="background-color:blue">
     <div class="switch_block"><br>
         <div class="switch_headline">
-            <div>Hardware Channels (Hi & Ho)</div>
+            <div>Channel Status</div>
         </div>
 
 
