@@ -179,6 +179,7 @@ function showProperties(obj) {
                     var timernr = myObj.label[1]+myObj.label[3];
                     var powerOffDelay = 1000;
                     var powerOnDelay = 1000;
+                     if( globalScope.timers == null ) globalScope.timers = {};
                      if( globalScope.timers[timernr] == null ) globalScope.timers[timernr] = [];
                      if( globalScope.timers[timernr][0] != null) powerOnDelay = globalScope.timers[timernr][0];
                      if( globalScope.timers[timernr][1] != null) powerOffDelay = globalScope.timers[timernr][1];
