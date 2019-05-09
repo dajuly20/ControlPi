@@ -586,7 +586,15 @@ int main( int argc, char *argv[] )
         }
         else{
             printf("Interrupts disabled. Aborting.\n");
+            throw std::invalid_argument("Error: Interrupts cant be enabled! ");
             keepRunning = 0;
+            {
+            std::unique_lock<mutex> lock{isg.itCondMutex};    
+            cout << "Locked in Net thread " << endl;
+            isg.itCondSwitch = true;  
+            }
+            isg.itCond.notify_one();
+            
         }
     }  
     

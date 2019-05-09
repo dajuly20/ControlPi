@@ -1,7 +1,9 @@
 [Unit]
 Description=ControlPiService
-After=network.target
 StartLimitIntervalSec=0
+Requires=network-online.target
+After=syslog.target network.target network-online.target 
+
 [Service]
 Type=simple
 Restart=always
