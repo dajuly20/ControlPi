@@ -595,24 +595,24 @@ content: url(img/button_off.png);
           Dienste  ipsum dolor sit amet, consectetur adipisicing elit. Quam nemo ducimus eius, magnam error quisquam sunt voluptate labore, excepturi numquam! Alias libero optio sed harum debitis! Veniam, quia in eum.</section>
     <section>
           <h2>Hilfe</h2>
-          <b>How to Change Configuration</b>
+          <b>How to change configuration</b>
           <ol>
-          <li>SSH into RaspberryPi with  <code>ssh hspf@ControlPi3</code> (User: hspf, Pass: Elektron)</li>
-          <li><font color="red">Change Password</font> with <code>passwd</code></li>
-          <li>change directoryv to <code>cd /opt/controlpi/</code></li>
-          <li>Files in Directory
+          <li>SSH into RaspberryPi with  <code>ssh hspf@ControlPi3</code> (user: hspf, pass: Elektron)</li>
+          <li><font color="red">Change password</font> with <code>passwd</code></li>
+          <li>Change directory to <code>cd /opt/controlpi/</code></li>
+          <li>Files in directory
                 <ol>
-                    <li> <b>ControlPi.conf</b> Global Configuration file </li>
-                    <li> <b>timers.conf</b> Timers Configuration file </li>
-                    <li> <b>logic.conf</b> <u>generated</u>! <small>Will be overridden by webGui. Dont change unless you know what you are doing!</small>  </li>
-                    <li> <b>logic.json</b> <u>generated</u>! <small>Used by CircuitVerse Editor, does not effect the backend.</small>  </li>
-                    <li> <b>.htpasswd</b> <small>Password-file used by CircuitVerse Editor, does not effect the backend.</small>  </li>
+                    <li> <b>ControlPi.conf</b> global configuration file </li>
+                    <li> <b>timers.conf</b> timers configuration file </li>
+                    <li> <b>logic.conf</b> <u>generated</u>! <small>Will be overridden by webGui. Don't change unless you know what you are doing!</small>  </li>
+                    <li> <b>logic.json</b> <u>generated</u>! <small>Used by CircuitVerse Editor, does not affect the backend.</small>  </li>
+                    <li> <b>.htpasswd</b> <small>password-file used by CircuitVerse editor, does not effect the backend.</small>  </li>
                     
                     
                     
                 </ol>
         </li>
-          <li>After changes restart Service by <code>sudo service ControlPi restart</code></li>
+          <li>After changes restart service by <code>sudo service ControlPi restart</code></li>
           </ol>
           </section>
   </div>
