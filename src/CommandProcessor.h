@@ -209,12 +209,12 @@ public:
         //std::cout << "Hardware Outputs are : " << Ho << std::endl;
         webSocketSessions->broadcast(json_resp);
         
-        std::cout << "Active Sessions hier "  << std::endl;
+        //std::cout << "Active Sessions hier "  << std::endl;
         
-        for (auto it = webSocketSessions->begin(); it != webSocketSessions->end(); it++ )
-        {
-         std::cout << "Active Session: " <<  (*it)  << std::endl;
-        }
+        //for (auto it = webSocketSessions->begin(); it != webSocketSessions->end(); it++ )
+        //{
+        // std::cout << "Active Session: " <<  (*it)  << std::endl;
+        //}
         
                 
         
