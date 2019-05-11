@@ -19,7 +19,7 @@
 
 class IO_Channel_Virtual_Memory : public IO_Channel_Virtual {
 public:
-    IO_Channel_Virtual_Memory();
+    IO_Channel_Virtual_Memory(configEntity* _conf);
     IO_Channel_Virtual_Memory(const IO_Channel_Virtual_Memory& orig);
     virtual ~IO_Channel_Virtual_Memory();
 private:

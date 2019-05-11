@@ -14,8 +14,10 @@
 #include "IO_Channel.h"
 
 IO_Channel::IO_Channel() {
+    //conf = _conf;
+    token="none";
+    permission=0;
 }
-
 
 
 IO_Channel::IO_Channel(const IO_Channel& orig) {
@@ -23,5 +25,7 @@ IO_Channel::IO_Channel(const IO_Channel& orig) {
 
 IO_Channel::~IO_Channel() {
 }
+
+
 
 //(*((this->insert(make_pair(k,mapped_type()))).first)).second

@@ -1,0 +1,4 @@
+AuthType Basic
+AuthName "Password Protected Area"
+AuthUserFile /opt/controlpi/.htpasswd
+Require valid-user

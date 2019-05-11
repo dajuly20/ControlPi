@@ -18,10 +18,10 @@
 
 class IO_Channel_Hw : public IO_Channel {
 public:
-    IO_Channel_Hw();
+    IO_Channel_Hw(configEntity* _conf);
     IO_Channel_Hw(const IO_Channel_Hw& orig);
     virtual ~IO_Channel_Hw();
-private:
+    IO_Channel_Hw(){};
 
 };
 

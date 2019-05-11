@@ -12,8 +12,11 @@
  */
 
 #include "IO_Channel_Virtual.h"
+#include "../ConfigParser.h"
 
 IO_Channel_Virtual::IO_Channel_Virtual() {
+ 
+
 }
 
 IO_Channel_Virtual::IO_Channel_Virtual(const IO_Channel_Virtual& orig) {

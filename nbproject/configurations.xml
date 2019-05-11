@@ -16,8 +16,12 @@
         <itemPath>src/IOChannels/IO_Channel_Virtual_Pipe.h</itemPath>
         <itemPath>src/IOChannels/IO_Channel_Virtual_Timer.h</itemPath>
       </logicalFolder>
+      <itemPath>src/ChannelEntitys/Channel_Entity_Memory.h</itemPath>
+      <itemPath>IO_Channel_AccesWrapper.h</itemPath>
       <itemPath>src/IOChannels/IO_Channel_Hw_PiFace.h</itemPath>
       <itemPath>boolLogicParser.h</itemPath>
+      <itemPath>globals.h</itemPath>
+      <itemPath>iterationSwitchGuard.h</itemPath>
       <itemPath>regReplaceExtension.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
@@ -30,20 +34,55 @@
       <logicalFolder name="f2" displayName="Channel_Entities" projectFiles="true">
         <itemPath>src/ChannelEntitys/Channel_Entities_PiFace.cpp</itemPath>
         <itemPath>src/ChannelEntitys/Channel_Entity.cpp</itemPath>
+        <itemPath>src/ChannelEntitys/Channel_Entity_Memory.cpp</itemPath>
+        <itemPath>src/ChannelEntitys/Channel_Entity_Pipe_RX.cpp</itemPath>
+        <itemPath>src/ChannelEntitys/Channel_Entity_Pipe_RX.h</itemPath>
+        <itemPath>src/ChannelEntitys/Channel_Entity_Pipe_TX.cpp</itemPath>
+        <itemPath>src/ChannelEntitys/Channel_Entity_Pipe_TX.h</itemPath>
+        <itemPath>src/ChannelEntitys/Channel_Entity_TimerOutput.cpp</itemPath>
+        <itemPath>src/ChannelEntitys/Channel_Entity_TimerOutput.h</itemPath>
+        <itemPath>src/ChannelEntitys/Channel_Entity_TimerTrigger.cpp</itemPath>
+        <itemPath>src/ChannelEntitys/Channel_Entity_TimerTrigger.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="IO_Channels" projectFiles="true">
         <itemPath>src/IOChannels/IO_Channel.cpp</itemPath>
         <itemPath>src/IOChannels/IO_Channel_Hw.cpp</itemPath>
+        <itemPath>src/IOChannels/IO_Channel_Hw_PiFace.cpp</itemPath>
         <itemPath>src/IOChannels/IO_Channel_Virtual.cpp</itemPath>
         <itemPath>src/IOChannels/IO_Channel_Virtual_Memory.cpp</itemPath>
         <itemPath>src/IOChannels/IO_Channel_Virtual_Pipe.cpp</itemPath>
         <itemPath>src/IOChannels/IO_Channel_Virtual_Timer.cpp</itemPath>
       </logicalFolder>
-      <itemPath>src/IOChannels/IO_Channel_Hw_PiFace.cpp</itemPath>
+      <logicalFolder name="f3" displayName="WebSocket" projectFiles="true">
+        <itemPath>src/WebSocket/.gitignore</itemPath>
+        <itemPath>src/WebSocket/CMakeLists.txt</itemPath>
+        <itemPath>src/WebSocket/CppCon2018.png</itemPath>
+        <itemPath>src/WebSocket/Dockerfile</itemPath>
+        <itemPath>src/WebSocket/LICENSE_1_0.txt</itemPath>
+        <itemPath>src/WebSocket/beast.hpp</itemPath>
+        <itemPath>src/WebSocket/chat_client.html</itemPath>
+        <itemPath>src/WebSocket/http_session.cpp</itemPath>
+        <itemPath>src/WebSocket/http_session.hpp</itemPath>
+        <itemPath>src/WebSocket/listener.cpp</itemPath>
+        <itemPath>src/WebSocket/listener.hpp</itemPath>
+        <itemPath>src/WebSocket/main.cpp</itemPath>
+        <itemPath>src/WebSocket/net.hpp</itemPath>
+        <itemPath>src/WebSocket/shared_state.cpp</itemPath>
+        <itemPath>src/WebSocket/shared_state.hpp</itemPath>
+        <itemPath>src/WebSocket/websocket_session.cpp</itemPath>
+        <itemPath>src/WebSocket/websocket_session.hpp</itemPath>
+      </logicalFolder>
+      <itemPath>IO_Channel_AccesWrapper.cpp</itemPath>
       <itemPath>boolLogicParser.cpp</itemPath>
       <itemPath>bootstrap.sh</itemPath>
+      <itemPath>iterationSwitchGuard.cpp</itemPath>
+      <itemPath>logic.conf</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>regReplaceExtension.cpp</itemPath>
+      <itemPath>timercppNew.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="f1" displayName="WWW" projectFiles="true">
+      <itemPath>www/index.php</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -68,6 +107,10 @@
       <itemPath>Makefile</itemPath>
     </logicalFolder>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>src/WebSocket</Elem>
+    <Elem>src/ChannelEntitys</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="Debug" type="1">
@@ -80,18 +123,35 @@
         <cTool>
           <commandLine>-j 4</commandLine>
         </cTool>
+        <ccTool>
+          <standard>11</standard>
+          <commandLine>-pthread</commandLine>
+        </ccTool>
         <linkerTool>
           <linkerLibItems>
             <linkerLibFileItem>/usr/local/lib/libpifacedigitalcpp.a</linkerLibFileItem>
             <linkerLibFileItem>/usr/local/lib/libmcp23s17.a</linkerLibFileItem>
           </linkerLibItems>
+          <commandLine>-pthread</commandLine>
         </linkerTool>
       </compileType>
+      <item path="IO_Channel_AccesWrapper.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="IO_Channel_AccesWrapper.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="boolLogicParser.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="boolLogicParser.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="bootstrap.sh" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="globals.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="iterationSwitchGuard.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="iterationSwitchGuard.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="logic.conf" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -115,6 +175,56 @@
             flavor2="0">
       </item>
       <item path="src/ChannelEntitys/Channel_Entity.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="src/ChannelEntitys/Channel_Entity_Memory.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="src/ChannelEntitys/Channel_Entity_Memory.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="src/ChannelEntitys/Channel_Entity_Pipe_RX.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="src/ChannelEntitys/Channel_Entity_Pipe_RX.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="src/ChannelEntitys/Channel_Entity_Pipe_TX.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="src/ChannelEntitys/Channel_Entity_Pipe_TX.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="src/ChannelEntitys/Channel_Entity_TimerOutput.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="src/ChannelEntitys/Channel_Entity_TimerOutput.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="src/ChannelEntitys/Channel_Entity_TimerTrigger.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="src/ChannelEntitys/Channel_Entity_TimerTrigger.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -176,6 +286,50 @@
             ex="false"
             tool="3"
             flavor2="0">
+      </item>
+      <item path="src/WebSocket/.gitignore" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/WebSocket/CMakeLists.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/WebSocket/CppCon2018.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/WebSocket/Dockerfile" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/WebSocket/LICENSE_1_0.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/WebSocket/beast.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/WebSocket/chat_client.html" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/WebSocket/http_session.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/WebSocket/http_session.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/WebSocket/listener.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/WebSocket/listener.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/WebSocket/main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/WebSocket/net.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/WebSocket/shared_state.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/WebSocket/shared_state.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/WebSocket/websocket_session.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="src/WebSocket/websocket_session.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="timercppNew.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="www/index.php" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -198,11 +352,23 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="IO_Channel_AccesWrapper.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="IO_Channel_AccesWrapper.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="boolLogicParser.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="boolLogicParser.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="bootstrap.sh" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="globals.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="iterationSwitchGuard.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="iterationSwitchGuard.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="logic.conf" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -226,6 +392,56 @@
             flavor2="0">
       </item>
       <item path="src/ChannelEntitys/Channel_Entity.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="src/ChannelEntitys/Channel_Entity_Memory.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="src/ChannelEntitys/Channel_Entity_Memory.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="src/ChannelEntitys/Channel_Entity_Pipe_RX.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="src/ChannelEntitys/Channel_Entity_Pipe_RX.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="src/ChannelEntitys/Channel_Entity_Pipe_TX.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="src/ChannelEntitys/Channel_Entity_Pipe_TX.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="src/ChannelEntitys/Channel_Entity_TimerOutput.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="src/ChannelEntitys/Channel_Entity_TimerOutput.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="src/ChannelEntitys/Channel_Entity_TimerTrigger.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="src/ChannelEntitys/Channel_Entity_TimerTrigger.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -287,6 +503,50 @@
             ex="false"
             tool="3"
             flavor2="0">
+      </item>
+      <item path="src/WebSocket/.gitignore" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/WebSocket/CMakeLists.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/WebSocket/CppCon2018.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/WebSocket/Dockerfile" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/WebSocket/LICENSE_1_0.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/WebSocket/beast.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/WebSocket/chat_client.html" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/WebSocket/http_session.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/WebSocket/http_session.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/WebSocket/listener.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/WebSocket/listener.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/WebSocket/main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/WebSocket/net.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/WebSocket/shared_state.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/WebSocket/shared_state.hpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/WebSocket/websocket_session.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="src/WebSocket/websocket_session.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="timercppNew.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="www/index.php" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>

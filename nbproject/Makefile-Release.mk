@@ -35,11 +35,16 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/IO_Channel_AccesWrapper.o \
 	${OBJECTDIR}/boolLogicParser.o \
+	${OBJECTDIR}/iterationSwitchGuard.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/regReplaceExtension.o \
 	${OBJECTDIR}/src/ChannelEntitys/Channel_Entities_PiFace.o \
 	${OBJECTDIR}/src/ChannelEntitys/Channel_Entity.o \
+	${OBJECTDIR}/src/ChannelEntitys/Channel_Entity_Memory.o \
+	${OBJECTDIR}/src/ChannelEntitys/Channel_Entity_TimerOutput.o \
+	${OBJECTDIR}/src/ChannelEntitys/Channel_Entity_TimerTrigger.o \
 	${OBJECTDIR}/src/IOChannels/IO_Channel.o \
 	${OBJECTDIR}/src/IOChannels/IO_Channel_Hw.o \
 	${OBJECTDIR}/src/IOChannels/IO_Channel_Hw_PiFace.o \
@@ -67,16 +72,26 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/mycontroldigital
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/controlpi
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/mycontroldigital: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/controlpi: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/mycontroldigital ${OBJECTFILES} ${LDLIBSOPTIONS}
+	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/controlpi ${OBJECTFILES} ${LDLIBSOPTIONS}
+
+${OBJECTDIR}/IO_Channel_AccesWrapper.o: IO_Channel_AccesWrapper.cpp
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/IO_Channel_AccesWrapper.o IO_Channel_AccesWrapper.cpp
 
 ${OBJECTDIR}/boolLogicParser.o: boolLogicParser.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/boolLogicParser.o boolLogicParser.cpp
+
+${OBJECTDIR}/iterationSwitchGuard.o: iterationSwitchGuard.cpp
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/iterationSwitchGuard.o iterationSwitchGuard.cpp
 
 ${OBJECTDIR}/main.o: main.cpp
 	${MKDIR} -p ${OBJECTDIR}
@@ -97,6 +112,21 @@ ${OBJECTDIR}/src/ChannelEntitys/Channel_Entity.o: src/ChannelEntitys/Channel_Ent
 	${MKDIR} -p ${OBJECTDIR}/src/ChannelEntitys
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/ChannelEntitys/Channel_Entity.o src/ChannelEntitys/Channel_Entity.cpp
+
+${OBJECTDIR}/src/ChannelEntitys/Channel_Entity_Memory.o: src/ChannelEntitys/Channel_Entity_Memory.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/ChannelEntitys
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/ChannelEntitys/Channel_Entity_Memory.o src/ChannelEntitys/Channel_Entity_Memory.cpp
+
+${OBJECTDIR}/src/ChannelEntitys/Channel_Entity_TimerOutput.o: src/ChannelEntitys/Channel_Entity_TimerOutput.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/ChannelEntitys
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/ChannelEntitys/Channel_Entity_TimerOutput.o src/ChannelEntitys/Channel_Entity_TimerOutput.cpp
+
+${OBJECTDIR}/src/ChannelEntitys/Channel_Entity_TimerTrigger.o: src/ChannelEntitys/Channel_Entity_TimerTrigger.cpp
+	${MKDIR} -p ${OBJECTDIR}/src/ChannelEntitys
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/ChannelEntitys/Channel_Entity_TimerTrigger.o src/ChannelEntitys/Channel_Entity_TimerTrigger.cpp
 
 ${OBJECTDIR}/src/IOChannels/IO_Channel.o: src/IOChannels/IO_Channel.cpp
 	${MKDIR} -p ${OBJECTDIR}/src/IOChannels

@@ -11,353 +11,245 @@
  * Created on 13. Oktober 2018, 21:49
  */
 
-#include <iostream>
-#include <string>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <signal.h>
-#include <fstream>
-#include <memory>   // shared_ptr
-//#include <string.h>
-#include <regex>
-#include <bitset>
-#include <stdexcept>
-//#include <boost/regex.hpp>
+#include <iostream> // cout
+#include <string>   // std::string
+#include <signal.h> // signal
+#include <fstream>  // ifstream 
+
+#include <regex>    // regex_replace
+#include <stdexcept> // throw
+
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
+#include <chrono>
+#include <sys/file.h>
+#include <errno.h>
+
+#include "src/WebSocket/listener.hpp"
+#include "src/WebSocket/shared_state.hpp"
+#include "src/WebSocket/websocket_session.hpp"
+
+#include <boost/asio/signal_set.hpp>
+
+
 #include "pifacedigitalcpp.h"
-#include "boolLogicParser.h"
-#include "regReplaceExtension.h"
+#include "boolLogicParser.h"    
+#include "regReplaceExtension.h" // Extended reg-replace for inserting callback function.
 
-
+#include "globals.h"
+#include "iterationSwitchGuard.h"
 #include "src/ChannelEntitys/Channel_Entity.h"
 #include "src/ChannelEntitys/Channel_Entities_PiFace.h"
 #include "src/IOChannels/IO_Channel.h"
 #include "src/IOChannels/IO_Channel_Hw_PiFace.h"
+#include "src/IOChannels/IO_Channel_Virtual_Memory.h"
+#include "IO_Channel_AccesWrapper.h"
+#include "src/IOChannels/IO_Channel_Virtual_Timer.h"
+#include "src/IOChannels/IO_Channel_Virtual_Pipe.h"
+#include "src/CommandProcessor.h"
+#include "src/ConfigParser.h"
 
+#include <boost/algorithm/string/classification.hpp> // Include boost::for is_any_of
+#include <boost/algorithm/string/split.hpp> // Include for boost::split
 
-static volatile int keepRunning = 1;
-static volatile bool configRead = false;
 
 using namespace std;
 
-static int hw_addr = 0;
-static int enable_interrupts = 1;
+// Globals 
+std::atomic<bool>    keepRunning(true);     //Used to interrupt mainloop
+static volatile bool configRead  = false; //Used to re-read configuration
 
-PiFaceDigital pfd(hw_addr, enable_interrupts, PiFaceDigital::EXITVAL_ZERO);
+typedef std::shared_ptr<IO_Channel_AccesWrapper> IO_Channel_AccessWrapperPTR;
 
-
- 
-
+/*
+ Functor to inject the IO Object into the replace identifier function.
+ */
 class replaceIdentifier{
-    PiFaceDigital* pfd;
+        IO_Channel_AccesWrapper& chnl;
     
-public:
-   
-    replaceIdentifier(PiFaceDigital* _pfd){
-        this->pfd = _pfd;
-    }
-   
-    std::string operator()(const std::smatch& match) {
-        bool dbg = false;
-        if(dbg) cout << "call on: " << match[1].str() << endl;
-        string dependantStr = match[1].str();
-
-        bool dependantState;
-
-        // Splits String in characters.
-        char frstChar = dependantStr.at(0);
-        char scndChar = dependantStr.at(1);
-        char thrdChar = dependantStr.at(2);
-        char frthChar = dependantStr.at(3);
-
-        // explicit cast 4th character to integer 
-        // (regular expression checks for numberic)
-        int dependantNum = frthChar - '0';
-
-        // Input or Outupt
-        if(frstChar == 'i'){  
-           dependantState = pfd->read_pin(dependantNum, PiFaceDigital::IN);
-           if(dbg) cout << "its input " << dependantNum << " its state is: " << dependantState << endl;        
+    public:
+        replaceIdentifier(IO_Channel_AccesWrapper& _chnl) : chnl(_chnl){
         }
 
-        else if(frstChar == 'o'){
-            //cout << "its output" << dependantNum;    
-            dependantState = pfd->read_pin(dependantNum, PiFaceDigital::OUT);
-            //throw std::invalid_argument("Outputs not yet supportet as identifiers");
-           // cout << "Don't know how to determine output state for now..";   
-        }
+        // TODO Change to return char? 
+        std::string operator()(const std::smatch& match) {
+            bool dbg = false;
+            if(dbg) cout << "call on: " << match[1].str() << endl;
+            string dependantStr = match[1].str();
 
-        else{
-            // Todo throw error! 
-            cout << "FEHLER. This should never happen.. ";
-            throw std::invalid_argument("Identifier has invalid structure");
-        }
+            // Splits String in characters.
+            char frstChar = dependantStr.at(0);
+            char scndChar = dependantStr.at(1);
+            char thrdChar = dependantStr.at(2);
 
-        return std::to_string(dependantState);
-        // Todo second and third chars are ignored for now.
-        //      and have to be implemented.
+            // explicit cast 3th character to integer 
+            // (regular expression checks for numberic)
+            int  dependantNum    = thrdChar - '0';
+            bool dependantState  = chnl[frstChar][scndChar]->read_pin(dependantNum);
 
-        //cout << endl;
+            if(dbg) cout << "FrstChar: " << frstChar << endl << "ScndChar: " << scndChar << endl << " Number:" << thrdChar << endl << endl;
 
-      return "1";
-    }
-    
+            return std::to_string(dependantState);
+        }  
 };
 
-int testBoolLogic ()
-{
-    const std::string inputs[] = { 
-        std::string("true & false;"),
-        std::string("true & !false;"),
-        std::string("!true & false;"),
-        std::string("true | false;"),
-        std::string("true | !false;"),
-        std::string("!true | false;"),
-
-        std::string("T&F;"),
-        std::string("T&!F;"),
-        std::string("!T&F;"),
-        std::string("T|F;"),
-        std::string("T|!F;"),
-        std::string("!T|F;"),
-        std::string("") // marker
-    };
-
-    for (const std::string *i = inputs; !i->empty(); ++i)
-    {
-        typedef std::string::const_iterator It;
-        It f(i->begin()), l(i->end());
-        parser<It> p;
-
-        try
-        {
-            expr result;
-            bool ok = qi::phrase_parse(f,l,p > ';',qi::space,result);
-
-            if (!ok)
-                std::cerr << "invalid input\n";
-            else
-            {
-                std::cout << "result:\t" << result << "\n";
-                std::cout << "evaluated:\t" << evaluate(result) << "\n";
-            }
-
-        } catch (const qi::expectation_failure<It>& e)
-        {
-            std::cerr << "expectation_failure at '" << std::string(e.first, e.last) << "'\n";
-        }
-
-        if (f!=l) std::cerr << "unparsed: '" << std::string(f,l) << "'\n";
-    }
-
-    return 0; 
-}
+/*
+ * Signal Handler
+ * Sets the condition of the main loop to zero, 
+ * to end the program.
+ * 
+ */
 
 void intHandler(int dummy) {
-    keepRunning = 0;
+    keepRunning = false;
+   
 }
 
+/* Signal Handler
+ * Handles SIGUSR1 Signal to trigger re-read of config.
+ */
 void usrSigHandler(int dummy) {
     printf("\n Reveived reload signal.\n ");
     configRead = false;
 }
 
-
-bool parseLogic(string input){
+/*
+ * evaulateLogicString
+ * Evaluates a given logic string e.g. !0 &1 | 0 ... ; to a boolean result. 
+ */
+bool evaluateLogicString(string input){
     bool dbg = false;
-     //string format like:  a0 = "!0 & 1;";
+    //string format like:  a0 = "!0 & 1;";
             
-        typedef std::string::const_iterator It;
-        It f(input.begin()), l(input.end());
-        parser<It> p;
+    typedef std::string::const_iterator It;
+    It f(input.begin()), l(input.end());
+    parser<It> p;
 
-        try
-        {
-            expr result;
-            bool ok = qi::phrase_parse(f,l,p > ';',qi::space,result);
+    try{
+        expr result;
+        bool ok = qi::phrase_parse(f,l,p > ';',qi::space,result);
 
-            if (!ok)
-                std::cerr << "Logic string invalid" << input << endl;
-            else
-            {
-                if(dbg) std::cout << "parseLogic: Input " << input << " resulting into" << result << " evaluated to " << evaluate(result) << endl;
-                return evaluate(result);
+        if (!ok)
+            throw std::invalid_argument("Error: Given logic string invalid >" + input + "<");
             
-            }
-
-        } catch (const qi::expectation_failure<It>& e)
+        else
         {
-            std::cerr << "parseLogic: expectation_failure at '" << std::string(e.first, e.last) << "'\n";
-        }  
+            if(dbg) std::cout << "parseLogic: Input " << input << " resulting into" << result << " evaluated to " << evaluate(result) << endl;
+            return evaluate(result);
+
+        }
+
+    } 
+    catch (const qi::expectation_failure<It>& e){
+        throw std::invalid_argument("Error: parseLogic: expectation_failure at '" + std::string(e.first, e.last));
+    }  
 }
 
-
-uint8_t parseIdentifiers(PiFaceDigital* pfd, std::vector<std::string>& softLogic){
-      // Cut the string in halves at the "=" sign
-    bool dbg = false;
-    std::string delimiter = "=";
-
-    size_t found;
-    uint8_t outputByte = 0;
+/*
+ * Prints a given soft-logic. P
+ * Pretty selfexplandantory
+ */
+void printSoftLogic(std::vector<std::string>& softLogic){
     
-    //Strings shall be read as a array of strings 
-    //string rawFullInput="Ora0=!(![Ira0] & [Ira1]) | [Ira2] & [Ira3];";  
-//     const std::string outputStrings[] = { 
-//        std::string("Ora0=([ira0] | [ora0]) & ![ira1];"),
-//        std::string("Ora1=[ira1];"),
-//        std::string("Ora2=[ira2];"),
-//        std::string("Ora3=![ira3];"),
-//        std::string("") // marker
-//    };
-
-     cout << endl << endl << "Uising following config:" << endl << "---------------------------------------------" << endl;
-        for (std::string outStr: softLogic) { 
-            cout << outStr << endl;
-        } 
-     cout << endl <<  "---------------------------------------------" << endl << endl;
-    // One OutputString might be Ora0=![Ira1] & [Ira0] | [Ira2];
-    //                           ^^^^   ^^^^
-    //                             |     |  
-    //                          Output  Input    
+    cout << endl << endl << "Using following config:" << endl << "---------------------------------------------" << endl;
+    
     for (std::string outStr: softLogic) { 
+        cout << outStr << endl;
+    } 
+    
+    cout << endl <<  "---------------------------------------------" << endl << endl;
+    
+    
+}
 
+/*
+ * logicEngine (parseIdentifiers)
+ * Parses a vector of Logic-strings, and replaces square brakets to their values,
+ * to finally solve the equation and asign the value to the Output 
+ * 
+ * One row may come as follows:
+ * One OutputString might be Ora0=![Ira1] & [Ira0] | [Ira2];
+ *                           ^^^^   ^^^^
+ *                             |     |  
+ *                           Output  Input 
+ * 
+ * In above example the logic string for O-utput r-eal a(..z) 0(..9) will be parsed.
+ * For that anything in square brackets will be replaced by a boolean value representing
+ * the state of the related "pin" or the related signal.
+ * 
+ * So given a value of Ira1=0; Ira0=1 and Ira2 = 0 the above example would end up as follows: 
+ * Ora0=!0 & 1 | 0 
+ *
+ */
+void logicEngine(IO_Channel_AccesWrapper& chnl, std::vector<std::string>& softLogic){
+      // Cut the string in halves at the "=" sign
+    bool        dbg         =  true;
+    std::string delimiter   = "=";
+    size_t      found;
+    int         linectr     = 0;
+    // Output softlogic for debugging purposes.
+    if(dbg) printSoftLogic(softLogic);
+    
+    for (std::string softLogicRow: softLogic) { 
+        linectr++;
         // Splits the output string by the '=' sign in two parts:
         // 1. the Output to use (e.g. Ora0) 2nd the rawLogicString including used inputs in brackets e.g. ![Ira1] & [Ira0] | [Ira2];
-        if ((found = outStr.find("=")) != string::npos){ // TODO "" string to char?
-           string useOutStr = outStr.substr(0,found);
-           int    useOutNum = useOutStr.at(3) - '0'; 
+        if ((found = softLogicRow.find('=')) != string::npos){ 
+            // The part before the '=' is the variable, to which whe outcome will be asigned to ==> 'asigned' part7
+            // TODO Check for length of String
+            string asignedEntityStr         = softLogicRow.substr(0,found);
+            if(asignedEntityStr.size() != 5){
+                throw std::invalid_argument("Error: Asignee needs to have 3 letters/digits in '"+asignedEntityStr+"'");
+            }
+            char   c_io_channel        = asignedEntityStr.at(1);
+            char   c_channel_entity    = asignedEntityStr.at(2);
+            int    c_pin_num           = asignedEntityStr.at(3) - '0'; 
 
-           string rawLogicString  = outStr.substr(found+1, string::npos);
+           // The part after the '=' is the equation string. It consists of identifiers 
+           //   (like [Ho0]) arithmetic operators ( &, | ) and round brakets. Also allowed  are literals (0 or 1)
+           string equationStringVariables  = softLogicRow.substr(found+1, string::npos);
 
-           if(dbg) cout << "HardwareOutput is: " << useOutNum << endl;
-           if(dbg) cout << "RawLogicString is: " << rawLogicString << endl;
+           if(dbg) cout << "HardwareOutput is: " << c_pin_num << endl;
+           if(dbg) cout << "RawLogicString is: " << equationStringVariables << endl;
 
-           
-           // Using as Functor to put in piFaceDigital object.
-           replaceIdentifier rpi(pfd);
+           // Instantiate the replace-identifier Functor/Class that is used to
+           // inject the IO_Channel_AccessWrapper into the actual replace-function.
+           replaceIdentifier rplacIds(chnl);
            
            // Calls a function for each match on "[ira0]" a string of 4 characters in '[' brackets,
            // 1st char of which may be i/o (in/out), 2nd r/v (real/virtual), 3rd hardware idendifier (a-z), 4re input identifier (0-8)
            // eventually every occurance of brackets should be replaced either by a 0 or 1. 
            // For the example state of (Ira1 = 0, Ira0 =1, Ira2 = 1), the example logic string would look like !0 & 1 | 1;
-           string outLogicString  = regex_replace(rawLogicString, regex("\\[([io][rv][a-z][0-8])\\]"),
-                                    rpi);
-           if(dbg) cout << "Resulting logic string is: " << outLogicString << endl;
-
-           // Eventually the example logic string (e.g. !0 & 1 | 1;) will be parsed to 1
-           bool parsedOut = parseLogic(outLogicString);
-
-           // Adds up the one Bits
-           // e.g. Output 3 is the third bit from right, so 2^3 * 1 or 0
-           //outputByte += int(parsedOut) * pow(2, useOutNum); // TODO shift? 
+           string equationStringLiterals  = regex_replace(  equationStringVariables, 
+                                                    regex("\\[([A-Z][a-z][0-8])\\]"),
+                                                    rplacIds
+                                                  );
            
-           if (int(parsedOut) == 1) {
-                outputByte |= 1 << useOutNum; // set
-            } else {
-                outputByte &= 0xff ^ (1 << useOutNum); // clear
-            }
-           cout << "Output" << useOutNum << " is " << int(parsedOut) << endl;
-           if(dbg) cout << "Output Byte is now " << int(outputByte) << endl;
+           if(dbg) cout << "Resulting logic string is: " << equationStringLiterals << endl;
+           // Eventually the example logic string (e.g. !0 & 1 | 1;) will be parsed to 1
+           try{ 
+            bool logic_equation_res = evaluateLogicString(equationStringLiterals);
+
+            if(dbg) cout << "IO_chnl: " << c_io_channel;
+            if(dbg) cout << " Entity: " << c_channel_entity;
+            if(dbg) cout << " Pin: " << c_pin_num;
+            if(dbg) cout << " is assigned " << (logic_equation_res ? "true" : "false") << endl << endl;
+
+            chnl [c_io_channel] [c_channel_entity] -> write_pin(logic_equation_res, c_pin_num);
+           }
+           catch (...) { 
+               // Replacing the error with something better understandable.. 
+               throw std::invalid_argument("Error: Invalid characters in logic string on line "+std::to_string(linectr)+": '"+softLogicRow+"'");
+           }
         }
         else{
             // Todo: Error, = sign not in string.
         }
     }
-     cout << "returning output byte: " << int(outputByte) << endl;
-    return outputByte;
-    
 }
 
-     
-std::string strip_white(const std::string& input)
-{
-   size_t b = input.find_first_not_of(' ');
-   if (b == std::string::npos) b = 0;
-   return input.substr(b, input.find_last_not_of(' ') + 1 - b);
-}
- 
-std::string strip_comments(const std::string& input, const std::string& delimiters)
-{
-   return strip_white(input.substr(0, input.find_first_of(delimiters)));
-}
-
-
-
-std::vector<std::string>  loadSoftLogic(std::string filename){
-    
-        std::ifstream data(filename);
-        
-        if(!data.is_open()){
-           throw std::invalid_argument("Error: Couldnt load conf file: "+filename);
-        }
-	std::string line;
-	std::vector<std::string> logic;
-
-	while (std::getline(data, line))
-	{
-                std::string delimiters("#;");
-                line = strip_comments(line, delimiters);
-                if(line.size() > 0){
-                    cout << "Adding Line: >>" << line << "<<" << endl;
-                    logic.push_back(line+';');
-                }
-	}
-        
-        if(logic.size() == 0){
-            throw std::invalid_argument("Error: Config file empty!");
-        }
-        
-  
-   std::vector<std::string> fallbackLogic = {
-        std::string("Ora0=([ira0] | [ora0]) & ![ira1];"),
-        std::string("Ora1=[ira1];"),
-        std::string("Ora2=[ira2];"),
-        std::string("Ora3=![ira3];")
-    };
-    
-   
-   return logic;
-}
- 
-
- typedef std::unique_ptr<IO_Channel> IOChannelPtr;
-     
-    
-
-
-
-class IO_Channel_AccesWrapper{
-public:
-    IO_Channel_AccesWrapper& operator[](char a);
-      uint8_t operator[](int a);
-    auto  operator->();
-    std::vector<char> options;
-    std::map<char,IOChannelPtr> io_channels;
-    
-};
-
-
-IO_Channel_AccesWrapper& IO_Channel_AccesWrapper::operator[](char a){
-        cout << "Value is " << a;
-        options.push_back(a);
-        return *this;
-    }
-
-  uint8_t IO_Channel_AccesWrapper::operator[](int a){
-        cout << "THE PIN Value is " << a << endl;
-        uint8_t ret =  (*io_channels[options[0]])[options[1]]->read_pin(a);
-        options.clear();
-        return ret;
-    }
-
-auto IO_Channel_AccesWrapper::operator->(){
-    if(options.size() != 2){
-         throw std::invalid_argument("Error: Array must have two dimensions."); 
-    }
-    auto ret = (*io_channels[options[0]])[options[1]];
-    options.clear();
-    return ret;
-}
 
 
 
@@ -366,188 +258,347 @@ int main( int argc, char *argv[] )
     uint8_t i = 0;          /**< Loop iterator */
     uint8_t inputs;         /**< Input bits (pins 0-7) */
     uint8_t outputs;         /**< Input bits (pins 0-7) */
+ 
+    iterationSwitchGuard isg;
+  
+    // Register signalHandlers
+    signal(SIGUSR1 ,usrSigHandler); // Re-Reads config, doesn't exit.
     
-    int hw_addr = 0;        /**< PiFaceDigital hardware address  */
-    int interrupts_enabled; /**< Whether or not interrupts are enabled  */
-    int enable_interrupts = 1; /**< Whether or not interrupts should be enabled  */
+    globalConf conf("ControlPi.conf");  
     
-    // Register signalHandler
-    signal(SIGINT,  intHandler);
-    signal(SIGKILL, intHandler);
-    signal(SIGHUP,  intHandler);
-    signal(SIGTERM, intHandler);
-    signal(SIGUSR1 ,usrSigHandler);
+    std::string _port;
+    std::string _docr; 
+    std::string _adress;
+    bool startWebSockServer;
+     
     
-
     
-    /**
-     * Read command line value for which PiFace to connect to
-     */
-    if (argc > 1) {
-        hw_addr = atoi(argv[1]);
-    }
-
+ 
+      
+          configEntityNetwork* cen = conf.entity_network;
+          _adress = cen->address;
+          _port   = cen->port;
+          _docr   = cen->docroot;
+          startWebSockServer = cen->active;
+          
+      
+        
     
-    /**
-     * Open piface digital SPI connection(s)
-     */
-    cout << endl << endl << "ControlPi started!" << endl; 
-    printf("Opening piface digital connection at location %d\n", hw_addr);
     
-  // Create Instance of pfd
-    PiFaceDigital pfd(hw_addr, enable_interrupts, PiFaceDigital::EXITVAL_ZERO);
-
-    if(!pfd.init_success()){
-        cout << "Error: Could not open PiFaceDigital" << endl;
-        cout << "Is the device properly attached? " << endl; 
-        return -1;
+    // Argument for expose overrides settings. 
+    if(argc >=2){
+        if(std::string(argv[1]) == "--expose"){
+            _adress = "0.0.0.0";
+        }
     }
     
-    IO_Channel_AccesWrapper chnl;
+    if(startWebSockServer){
+        std::cout << "Starting WebSocket Server " << _adress << ":" << _port << "\n";
+     }
+     else{
+       std::cout << "WebSocket Server DISABLED " << "\n";  
+     }
+    
+    auto address = net::ip::make_address(_adress);
+    auto port = static_cast<unsigned short>(std::stoi(_port));
+    auto doc_root = _docr;
+
+    
+    
+    // The io_context is required for all I/O
+    net::io_context ioc;
+       
+    shared_ptr<shared_state> webSocketSessions;
+            
+    if(startWebSockServer){
+    // Create and launch a listening port
+    shared_ptr<listener> p=
+    std::make_shared<listener>(
+        ioc,
+        tcp::endpoint{address, port},
+        std::make_shared<shared_state>(doc_root));
+        
+        webSocketSessions = p->getSharedState();
+   
+    
+        p->run();
+    }
+    // Capture SIGINT and SIGTERM to perform a clean shutdown
+    net::signal_set signals(ioc, SIGINT, SIGTERM, SIGHUP);
+    signals.async_wait(
+        [&ioc,&keepRunning,&isg,&webSocketSessions,startWebSockServer](boost::system::error_code const&, int)
+        {
+       
+            // Stop the io_context. This will cause run()
+            // to return immediately, eventually destroying the
+            // io_context and any remaining handlers in it.
+            keepRunning = false; // Stops the rest of the Program :) 
+            ioc.stop();
+            
+            if(startWebSockServer){
+                webSocketSessions->notify_shutdown();
+            }
+            {
+            std::unique_lock<mutex> lock{isg.itCondMutex};    
+            cout << "Locked in Net thread " << endl;
+            isg.itCondSwitch = true;  
+            }
+            isg.itCond.notify_one();
+        });
+        
+    
+        
+    
+    std::vector<std::string>  timersConf;
+    // Initially read the timers config    
+    std::string fn_timers = "timers.conf";
+      
+    // Push all the possible channels to the array. 
     // Could Access now via (*myte.io_channels['H'])['i']->read_pin(0) 
     // But IO_Channel_AccessWrapper hides it away, and simplyfies access. so obj['H']['i']->member
-    chnl.io_channels.insert(std::make_pair('H', new IO_Channel_Hw_PiFace(&pfd)));
-     
-     
-      //myte['H']['i']->
-//     IOChannelPtr hwChannel_piFace ();
-    // std::map<char,IOChannelPtr> io_channels;
-     
-     //io_channels.insert(std::make_pair('H', new IO_Channel_Hw_PiFace(&pfd)));
-
-
-     
-    // int inputHi0 = (int) (*io_channels['H'])['i']->read_pin(0);
- //  int inputHi0 = (int) chnl['H']['i']->read_pin(0); // (*io_channels['H'])['i']->read_pin(0);
-  int inputHi0 = (int) chnl['H']['i'][0]; // (*io_channels['H'])['i']->read_pin(0);
-
-//      int inOrOut = hwChannel->ge('i')->read_pin(0);
-//      inOrOut = (*hwChannel)['i']->read_pin(0);
-//      inOrOut = hwChannel.operator*()['i']->read_pin(0);
-//      
-     
-       
-     
-      //cout << ">>> " << (hwChannel[34]) << " <<< " << endl;
-      
-      //auto hwInputEntity =  (hwChannel['i']);
-      //
-      //inOrOut = (int) hwInputEntity.
-      
-//    Channel_Entity* Inputs  = new Channel_Entity_PiFace_Inputs(&pfd);
-//    Channel_Entity* Outputs = new Channel_Entity_PiFace_Outputs(&pfd);
-//    
-//    Outputs->write_all(0xFF);
-    cout << "Test Entity New: " <<  inputHi0 << endl;
-//    cout << "Test Entity: " <<  (int) Outputs->read_pin(0) << endl;
-//    sleep(1);
-//    Outputs->write_all(0x00);
+    IO_Channel_AccesWrapper chnl(&isg);
+    webSocketSessions->reg_iochannels(&chnl);  // pointer used to de-register websocket sessions.
+//  
+    std::vector< char> timerEntityKeys;
+    std::vector< char> hardwareEntityKeys;
     
-    
-//    delete Inputs;
-//    delete Outputs;
-    //(*io_channels['H'])['o']->write_all(0xFF);
-    chnl['H']['o']->write_all(0xFF);
-    sleep(1);
-    // Initially set all outputs to 0
-    //(*io_channels['H'])['o']->write_all(0x00);
-    chnl['H']['o']->write_all(0x00);
-    //pfd.write_byte(0x00);
+    int ii = 0;
+    for(auto const& con  : conf.confEnties){
+        std::cout << ii++ << "# " << con.first << " Token: " << (con.second)->private_token << " EntityType:" << con.second->entity_type << std::endl;
+        switch (con.second->entity_type){
+            case globalConf::CONTEXT_HARDWARE:
+                chnl.insert(std::make_pair(con.first, IOChannelPtr(new IO_Channel_Hw_PiFace(con.second))));
+                hardwareEntityKeys.push_back (con.first);
+                // Mandatory for interrupt funktion.
+                for (auto const& entity : chnl[con.first].getIOChnl()->chEntities)
+                {
+                    std::cout << entity.first << std::endl;
+                }
+                inputs = chnl[con.first].getIOChnl()->output->read_all();
+                //inputs = chnl[con.first]['o']->read_all();
+                printf("Outputs: 0x%x\n", inputs);
 
+                break;
+            case globalConf::CONTEXT_MEMORY:
+                chnl.insert(std::make_pair(con.first, IOChannelPtr(new IO_Channel_Virtual_Memory(con.second))));
+                break;
+            case globalConf::CONTEXT_PIPE:
+                chnl.insert(std::make_pair(con.first, IOChannelPtr(new IO_Channel_Virtual_Pipe(con.second)))); 
+                break;
+            case globalConf::CONTEXT_TIMER:
+                {
+                chnl.insert(std::make_pair(con.first, IOChannelPtr(new IO_Channel_Virtual_Timer(con.second)))); 
+                
+                timerEntityKeys.push_back(con.first);
+                timersConf  = loadConfigfile(fn_timers, true);
 
-    /**
-     * Enable interrupt processing (only required for all blocking/interrupt methods).
-     * Reverse the return value of pifacedigital_enable_interrupts() to be consistent
-     * with the variable name "interrupts_enabled". (the function returns 0 on success)
-     */
-    if (pfd.interrupts_enabled()){
-        printf("Interrupts enabled.\n");
-    }else{
-        printf("Could not enable interrupts. Are you in group spi and gpio? Try running using sudo to enable PiFaceDigital interrupts\n");
-        return -1;
+                // Giving out the timers config to the actual timer(s?)
+                ((IO_Channel_Virtual_Timer*) (chnl[con.first].getIOChnl()))->setTimersCfg(&timersConf);
+                }
+                break;
+               
+            
+        }
     }
+    
+    
+    
+ 
+    
+            
+                            // chnl is copied here!
+    commandProcessor cp(isg, chnl, webSocketSessions);
+        
+        
+    std::thread remoteCmdProcessor([&webSocketSessions,&keepRunning,&chnl,&isg,&cp,startWebSockServer](){
+        std::pair<websocket_session*, std::string>  command = make_pair((websocket_session*) NULL, "");
+        
+        
+        while(keepRunning && startWebSockServer){
 
-  
-    /**
-     * Bulk read all inputs at once
-     */
-    inputs = pfd.read_byte(PiFaceDigital::IN);
-    printf("Inputs: 0x%x\n", inputs);
+            webSocketSessions->commandQueue_wait_and_pop(command);
+
+            std::string resp_msg = cp.processCommand(command);
+                   
+            auto const ss = std::make_shared<std::string const>(std::move(resp_msg));
+            command.first->send(ss);
+            //webSockeSessions->broadcast("Ok.");
+
+        }
+    });
+
+    remoteCmdProcessor.detach();
+    
+    
+     
+    // Run the I/O service on the main thread
+    //ioc.run();
+
+    // ONLY ONE! Else we have the same copy of IO_Channel_AccessWrapper
+    int threads = 1;
+    // Run the I/O service on the requested number of threads
+    std::vector<std::thread> v;
+    v.reserve(threads );
+    for(auto i = threads ; i > 0; --i)
+        v.emplace_back(
+        [&ioc]
+        {
+            pthread_setname_np(pthread_self(), "Network");
+            ioc.run();
+        });
+
+
+//    // Usage e.g.:  chnl['H']['i'][0];  ==> (*io_channels['H'])['i']->read_pin(0);
 
     
-    // Mandatory for interrupt funktion.
-    inputs = pfd.read_byte(PiFaceDigital::OUT);
-    printf("Outputs: 0x%x\n", inputs);
-
     
+    // Initially read the logic program    
     std::string filename = "logic.conf";
     std::vector<std::string>  softLogic;
-    
-    /**
-     * Wait for input change interrupt.
-     * pifacedigital_wait_for_input returns a value <= 0 on failure.
-     */
-    // Initially read config and set Outputs accordingly.
-    softLogic = loadSoftLogic(filename);
+    softLogic  = loadConfigfile(filename, false);
     configRead = true;
-    uint8_t parsedOutputs = parseIdentifiers(&pfd, softLogic);
-    pfd.write_byte(parsedOutputs, PiFaceDigital::OUT);
-     
-    while(keepRunning ){
-    if (pfd.interrupts_enabled()) {
-        printf("Waiting for input (press any button on the PiFaceDigital) CTRL + C to Abort\n");
-        if (pfd.wait_for_input(&inputs, -1) > 0){
-        
+    
+    // Initially parse identifiers once.
+    // (Necessary to let starting values take efect.
+    // e.g. if Output 1 is assigned static true)
+    logicEngine(chnl, softLogic);
+   
+    // Enable Caching
+    // TODO: Make infrastructure to enable caching on all channels at once
+    chnl[hardwareEntityKeys[0]].getIOChnl()->caching_enable();  
+    
+    
+    
+    //char firstHardwareEntityKey = hardwareEntityKeys[0];
+    // chnl COPIED here !!!  (fails on copy construct... ) 
+    IO_Channel_AccesWrapper chnl_cpy__hwinterrupt = chnl;
+    std::thread hwInterrupt([&chnl_cpy__hwinterrupt, &isg, hardwareEntityKeys](){
+    
+        pthread_setname_np(pthread_self(), "HW-Interrupt");
+        cout << "Started interrupt thread " << endl;
+        while(keepRunning){
+            // Interrupt only on the first HW Channel. 
+            
+            if (chnl_cpy__hwinterrupt[hardwareEntityKeys[0]].getIOChnl()->wait_for_interrupt()){
+                for (int i = 0; i < 8; i++) {
+                    uint8_t pinStateRev =  chnl_cpy__hwinterrupt[hardwareEntityKeys[0]].getIOChnl()->input->read_pin(i); 
+                    
+                    printf("Input %d value: %d\n", (int)i, (int)pinStateRev);
+                }
+            
+            std::unique_lock<mutex> lock{isg.itCondMutex};
+            {
+                cout << "Locked in interrput thread " << endl;
+                isg.itCondSwitch = true;
+                isg.itCond.notify_one();
+            }
+                
+            }
+            else{
+                printf("Can't wait for input. Something went wrong!\n");
+            }
+        }
+    });
+    
+    hwInterrupt.detach();
+    
+    std::thread signalInterrupt([&isg](){
+        pthread_setname_np(pthread_self(), "Signal-handler");
+        while(keepRunning){
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            // To trigger a iteration when USERSIG1 is detected. 
             if(configRead == false){
-                softLogic = loadSoftLogic(filename);
+                {
+                std::unique_lock<mutex> lock{isg.itCondMutex};    
+                cout << "Locked in signal thread " << endl;
+                isg.itCondSwitch = true;  
+                }
+                isg.itCond.notify_one();    
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            }
+        }
+        
+        //To end the programm, we must trigger an iteration as well... 
+        {
+            std::unique_lock<mutex> lock{isg.itCondMutex};    
+            cout << "Locked in signal thread " << endl;
+            isg.itCondSwitch = true;  
+        }
+        isg.itCond.notify_one();
+    });
+    
+    signalInterrupt.detach();
+    
+    // TODO USE SANTINISER
+    // fno-omit-frame-pointer -fsanitize=thread
+    // -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined
+    // Main loop. 
+    
+    
+  
+    
+    
+    while(keepRunning){
+        
+        if (chnl[hardwareEntityKeys[0]].getIOChnl()->interrupts_enabled()) {
+            printf("\n\nWaiting for input (press any button on the PiFaceDigital)\n");
+       
+        
+            {
+            std::unique_lock<mutex> lock{isg.itCondMutex};
+            cout << "locked in mainloop " << endl;
+                
+            isg.itCond.wait(lock, [&isg] { return isg.itCondSwitch;});  // Waiting for change of itCondSwitch (that is set by another thread..) 
+            
+            // Todo: Put in a thread itself
+            if(configRead == false){
+                softLogic   = loadConfigfile(filename, false); // Loads soft-logic
+                timersConf  = loadConfigfile(fn_timers, true); // Loads timer-config.
+                for (char timerKey : timerEntityKeys){
+                    ((IO_Channel_Virtual_Timer*) (chnl[timerKey].getIOChnl()))->setTimersCfg(&timersConf);
+                }
+                
+                // Sets everything to zero. :-) 
+                chnl.setZero();
+                
                 configRead = true;
                 printf("\n\nConfig has been reloaded!\n");
             }
             
-            /**
-            * Read each input pin individually
-            * A return value of 0 is pressed.
-            */
             
-            // Enable caching for pfd until parsing of identifiers is ready.
-            pfd.caching_enable();
-
-            uint8_t parsedOutputs = parseIdentifiers(&pfd, softLogic);
-         
-            pfd.write_byte(parsedOutputs, PiFaceDigital::OUT);
-            outputs = pfd.read_byte(PiFaceDigital::OUT);
-            printf("Outputs: 0x%x\n", outputs);
-            
-            pfd.flush();
-            // Perform write through.
-            
-//            if ( invertRead(0) && invertRead(1) && invertRead(2) && invertRead(3)){
-//               pfd.digital_write(0, 1); 
-//            }
-//            else{
-//                pfd.digital_write(0, 0);
-//            }
-            
-            for (i = 0; i < 8; i++) {
-                uint8_t pinStateRev =  pfd.read_pin(i); 
-                
-                printf("Input %d value: %d\n", (int)i, (int)pinStateRev);
+            for(char hwKey : hardwareEntityKeys){
+                chnl[hwKey].getIOChnl()->flush();
             }
-        }else{
-            printf("Can't wait for input. Something went wrong!\n");
+            
+            logicEngine(chnl, softLogic);
+            
+            for(char hwKey : hardwareEntityKeys){
+                chnl[hwKey].getIOChnl()->flush();
+            }
+            
+            if(startWebSockServer){
+                cp.iterationTriggered(chnl);
+            }
+          
+            isg.itCondSwitch = false; 
+            }
+            
         }
-    }
-    else{
-        printf("Interrupts disabled. Aborting.\n");
-        keepRunning = 0;
-    }
-
-    }
-    /**
-     * Close the connection to the PiFace Digital 
-     * pfd object goes out of scope, destructor does the rest!
-     */
+        else{
+            printf("Interrupts disabled. Aborting.\n");
+            throw std::invalid_argument("Error: Interrupts cant be enabled! ");
+            keepRunning = 0;
+            {
+            std::unique_lock<mutex> lock{isg.itCondMutex};    
+            cout << "Locked in Net thread " << endl;
+            isg.itCondSwitch = true;  
+            }
+            isg.itCond.notify_one();
+            
+        }
+    }  
     
- 
-    
+    // Block until all the threads exit
+    for(auto& t : v)
+        t.join();
 }
