@@ -8,7 +8,8 @@ See Demo-Video on [youtube.com](https://www.youtube.com/watch?v=_jfn4xiY1Rk)
 See Documentation (german) https://github.com/dajuly20/Thesis/blob/master/thesis.pdf
 Download full SD Image on: https://owncloud.wiche.eu/download/ControlPi/ControlPi-Raspbian-Strech.tar.gz
 
-![YouTube](https://media.giphy.com/media/QB3UTSvPs2DX91s0Ya/giphy.gif)
+[![Demo on YouTume](https://media.giphy.com/media/QB3UTSvPs2DX91s0Ya/giphy.gif)](https://www.youtube.com/watch?v=_jfn4xiY1Rk)
+
 
 
 ## Getting Started
