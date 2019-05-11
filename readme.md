@@ -16,6 +16,12 @@ See Documentation (german) https://github.com/dajuly20/Thesis/blob/master/thesis
 * Extract with `tar -xvzf ControlPi-Raspbian-Strech.tar.gz`
 * opt: `sha1sum ControlPi-Raspbian-Strech.img` and check if equal to `cat ControlPi-Raspbian-Strech.img.sha1sum`
 * Transfer to SD Card with `dd if=ControlPi-Raspbian-Strech.img of=/dev/<Your-SD-Card> bs=4M status=progress`
+* Power up the Raspberry Pi, the standart programm should let led 6 blink. Also switch 0 should trigger output 0.
+* Hostname is `ControlPi3` User: hspf pass: Elektron 
+* Log in using SSH `ssh hspf@ControlPi3`
+* Change password with `passwd`
+* Execute following to update `cd ~/ControlPi && git pull && ./start_as_service.sh`
+* You can change the frontend password with `~/ControlPi/renew_passwort_frontent.sh`
 
 
 ## If you have Raspbian installed already
