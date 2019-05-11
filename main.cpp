@@ -185,7 +185,7 @@ void printSoftLogic(std::vector<std::string>& softLogic){
  */
 void logicEngine(IO_Channel_AccesWrapper& chnl, std::vector<std::string>& softLogic){
       // Cut the string in halves at the "=" sign
-    bool        dbg         =  true;
+    bool        dbg         =  false;
     std::string delimiter   = "=";
     size_t      found;
     int         linectr     = 0;
@@ -205,7 +205,7 @@ void logicEngine(IO_Channel_AccesWrapper& chnl, std::vector<std::string>& softLo
             }
             char   c_io_channel        = asignedEntityStr.at(1);
             char   c_channel_entity    = asignedEntityStr.at(2);
-            int    c_pin_num           = asignedEntityStr.at(3) - '0'; 
+            int      c_pin_num           = asignedEntityStr.at(3) - '0'; 
 
            // The part after the '=' is the equation string. It consists of identifiers 
            //   (like [Ho0]) arithmetic operators ( &, | ) and round brakets. Also allowed  are literals (0 or 1)

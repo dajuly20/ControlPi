@@ -185,10 +185,10 @@ IO_Channel_Virtual_Timer::~IO_Channel_Virtual_Timer() {
      */
 
 void IO_Channel_Virtual_Timer::trigger(bool _tvalu, uint8_t bit_num){
-    
+    bool dbg = false;
     std::string val = _tvalu ? " true" : " false";
     std::string res = "Triggered pin "+ std::to_string(bit_num)+" with " +val;
-    std::cout << res;
+    if (dbg) std::cout << res;
 
     
     
@@ -210,15 +210,15 @@ void IO_Channel_Virtual_Timer::trigger(bool _tvalu, uint8_t bit_num){
         }
         else{
             // Todo: Power off delay here!
-            std::cout << "\n\n\nPOWER OFF TIMER# " << bit_num << " is :" << powerOffTimersCfg[bit_num] << std::endl;
-            powerOffTimers[bit_num]->setTimeout([this, bit_num]() {
+            if(dbg) std::cout << "\n\n\nPOWER OFF TIMER# " << bit_num << " is :" << powerOffTimersCfg[bit_num] << std::endl;
+            powerOffTimers[bit_num]->setTimeout([this, bit_num, dbg]() {
                 pthread_setname_np(pthread_self(), "PowerOffTimer");
-                std::cout << "Hey.. After 2s. I power off the bit./ BITNUM IS: " << std::to_string( (int)bit_num) << std::endl;
+                if(dbg) std::cout << "Hey.. After 2s. I power off the bit./ BITNUM IS: " << std::to_string( (int)bit_num) << std::endl;
 
                 this->o->write_pin(0,bit_num);
                 {
                     std::unique_lock<std::mutex> lock{isg->itCondMutex};
-                    std::cout << "Timer Power off " << bit_num << " was fired" << std::endl;
+                    if(dbg) std::cout << "Timer Power off " << bit_num << " was fired" << std::endl;
                     isg->itCondSwitch = true;
 
                }
@@ -238,15 +238,15 @@ void IO_Channel_Virtual_Timer::trigger(bool _tvalu, uint8_t bit_num){
     else{
         
     
-            std::cout << "\n\n\nPOWER ON TIMER# " << bit_num << " is :" << powerOnTimersCfg[bit_num] << std::endl;
-            powerOnTimers[bit_num]->setTimeout([this, bit_num]() {
+            if(dbg) std::cout << "\n\n\nPOWER ON TIMER# " << bit_num << " is :" << powerOnTimersCfg[bit_num] << std::endl;
+            powerOnTimers[bit_num]->setTimeout([this, bit_num, dbg]() {
                 pthread_setname_np(pthread_self(), "PowerOnTimer");
-                std::cout << "Hey.. After 1s. But I put the output to 1! BITNUM IS: " << std::to_string( (int)bit_num) << std::endl;
+                if(dbg) std::cout << "Hey.. After 1s. But I put the output to 1! BITNUM IS: " << std::to_string( (int)bit_num) << std::endl;
 
                 this->o->write_pin(1,bit_num);
                 {
                     std::unique_lock<std::mutex> lock{isg->itCondMutex};
-                    std::cout << "Timer Power on " << bit_num << " was fired" << std::endl;
+                    if(dbg) std::cout << "Timer Power on " << bit_num << " was fired" << std::endl;
                     isg->itCondSwitch = true;
 
                }
