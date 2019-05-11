@@ -592,10 +592,10 @@ content: url(img/button_off.png);
          </section>
         <section>
           <h2>Dienste</h2>
-         <b>IFTTT:</b>
-         PHP Script <code>websocketAdaptor.php </code> can be used to Add a WebHook.<br>
-         All arguments passed to that script, are executed sequantially.<br>
-         e.g.: <code>  http://ControlPi3/websocketAdaptor.php?params[]=auth:Pi:&lt;auth>&amp;params[]=set:Pi0:low</code>
+         <b>IFTTT:</b><br>
+         PHP Script <code>websocketAdaptor.php </code> can be used for a IFTTT WebHook.<br>
+         All arguments passed to that script are executed sequantially on a WebSocket session.<br>
+         e.g.: <code>  http://<?php echo $_SERVER['HTTP_HOST'];?>/websocketAdaptor.php?params[]=auth:Pi:&lt;auth-token>&amp;params[]=set:Pi0:low&amp;params[]=..</code>
          
          </section>
     <section>
