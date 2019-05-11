@@ -13,3 +13,9 @@
 # Executables
 *.exe *.out
 *.app
+# NetBeans specific
+**/nbproject/private/
+build/ 
+nbbuild/
+dist/
+nbdist/

@@ -1,0 +1,17 @@
+[Unit]
+Description=ControlPiService
+StartLimitIntervalSec=0
+Requires=network-online.target
+After=syslog.target network.target network-online.target 
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=controlpi
+Restart=always
+StandardError=journal
+ExecStart=/usr/bin/ControlPi
+
+[Install]
+WantedBy=multi-user.target

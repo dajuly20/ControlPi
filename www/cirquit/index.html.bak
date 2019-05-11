@@ -1,0 +1,350 @@
+bla
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+
+
+<script>
+var j = {"name":"Kartoffel","timePeriod":500,"clockEnabled":true,"projectId":"lpdqGScMFWwDz0oy9JKZ","focussedCircuit":67058288059,"scopes":[{"layout":{"width":100,"height":100,"title_x":50,"title_y":13,"titleEnabled":true},"allNodes":[{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[6]},{"x":10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[8]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[15]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[18]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[8]},{"x":10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[7]},{"x":200,"y":-280,"type":2,"bitWidth":1,"label":"","connections":[0,7]},{"x":200,"y":-310,"type":2,"bitWidth":1,"label":"","connections":[5,6]},{"x":50,"y":-250,"type":2,"bitWidth":1,"label":"","connections":[1,4]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[10]},{"x":-10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[9]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[12]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[11]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[19]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[15]},{"x":-80,"y":-140,"type":2,"bitWidth":1,"label":"","connections":[2,14]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[19]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[18]},{"x":20,"y":-40,"type":2,"bitWidth":1,"label":"","connections":[17,3]},{"x":-110,"y":-110,"type":2,"bitWidth":1,"label":"","connections":[16,13]}],"id":67058288059,"name":"Main","Input":[{"x":-180,"y":-280,"objectType":"Input","label":"E1","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":0},"values":{"state":1},"constructorParamaters":["RIGHT",1,{"x":0,"y":20,"id":"0jILbNA2ZGTXsxTdJH3Q"}]}},{"x":-210,"y":-170,"objectType":"Input","label":"E2","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":9},"values":{"state":1},"constructorParamaters":["RIGHT",1,{"x":0,"y":40,"id":"ita1IekHMA6W7sPMQBaI"}]}},{"x":-230,"y":-110,"objectType":"Input","label":"E3","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":16},"values":{"state":0},"constructorParamaters":["RIGHT",1,{"x":0,"y":60,"id":"Q4r7TmzRlKyUnvO0dvDd"}]}},{"x":-170,"y":-40,"objectType":"Input","label":"E4","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":17},"values":{"state":0},"constructorParamaters":["RIGHT",1,{"x":0,"y":80,"id":"l0o66OPu0eAtZlhbUaFz"}]}}],"Output":[{"x":180,"y":-250,"objectType":"Output","label":"A2","direction":"LEFT","labelDirection":"RIGHT","propagationDelay":0,"customData":{"nodes":{"inp1":1},"constructorParamaters":["LEFT",1,{"x":100,"y":20,"id":"5b1wWIFi0L14hTsMfuST"}]}},{"x":290,"y":-310,"objectType":"Output","label":"A1","direction":"LEFT","labelDirection":"RIGHT","propagationDelay":0,"customData":{"nodes":{"inp1":5},"constructorParamaters":["LEFT",1,{"x":100,"y":40,"id":"JZ3UHjZ8lKB4j72XI26L"}]}}],"NotGate":[{"x":-180,"y":-170,"objectType":"NotGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",1],"nodes":{"output1":11,"inp1":10}}}],"AndGate":[{"x":30,"y":-130,"objectType":"AndGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[2,3],"output1":4}}},{"x":-100,"y":-160,"objectType":"AndGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[12,13],"output1":14}}}],"nodes":[6,7,8,15,18,19]}]};
+
+
+var j = {"name":"Kartoffel","timePeriod":500,"clockEnabled":true,"projectId":"lpdqGScMFWwDz0oy9JKZ","focussedCircuit":67058288059,"scopes":[{"layout":{"width":100,"height":120,"title_x":50,"title_y":13,"titleEnabled":true},"allNodes":[{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[17]},{"x":10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[16,60]},{"x":10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[14]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[4]},{"x":-10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[3]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[18]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[7]},{"x":-110,"y":-110,"type":2,"bitWidth":1,"label":"","connections":[6,19]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[18]},{"x":-10,"y":-20,"type":0,"bitWidth":1,"label":"","connections":[17]},{"x":-10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[19]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[22]},{"x":-10,"y":20,"type":0,"bitWidth":1,"label":"","connections":[31]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[15]},{"x":280,"y":-300,"type":2,"bitWidth":1,"label":"","connections":[2,15]},{"x":170,"y":-300,"type":2,"bitWidth":1,"label":"","connections":[13,14,16]},{"x":170,"y":-240,"type":2,"bitWidth":1,"label":"","connections":[1,15]},{"x":-50,"y":-320,"type":2,"bitWidth":1,"label":"","connections":[9,0]},{"x":-160,"y":-310,"type":2,"bitWidth":1,"label":"","connections":[5,8]},{"x":-110,"y":-300,"type":2,"bitWidth":1,"label":"","connections":[10,7]},{"x":-10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[26]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[22]},{"x":-30,"y":-290,"type":2,"bitWidth":1,"label":"","connections":[11,21]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[27]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[35]},{"x":30,"y":0,"type":1,"bitWidth":1,"label":"","connections":[29]},{"x":-60,"y":-30,"type":2,"bitWidth":1,"label":"","connections":[29,20]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[23]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[30]},{"x":-90,"y":-30,"type":2,"bitWidth":1,"label":"","connections":[26,25]},{"x":-160,"y":30,"type":2,"bitWidth":1,"label":"","connections":[28,35,36,38]},{"x":50,"y":-280,"type":2,"bitWidth":1,"label":"","connections":[12,32]},{"x":50,"y":-180,"type":2,"bitWidth":1,"label":"","connections":[31,34]},{"x":0,"y":10,"type":1,"bitWidth":1,"label":"","connections":[34]},{"x":90,"y":-180,"type":2,"bitWidth":1,"label":"","connections":[32,33]},{"x":-160,"y":-10,"type":2,"bitWidth":1,"label":"","connections":[24,30]},{"x":10,"y":30,"type":2,"bitWidth":1,"label":"","connections":[30,37]},{"x":10,"y":150,"type":2,"bitWidth":1,"label":"","connections":[38,36]},{"x":-160,"y":150,"type":2,"bitWidth":1,"label":"","connections":[37,30]},{"x":0,"y":-10,"type":1,"bitWidth":1,"label":"","connections":[40]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[39]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-20,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":-20,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":30,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":30,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-20,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":-20,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":30,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":280,"y":-150,"type":2,"bitWidth":1,"label":"","connections":[1]}],"id":67058288059,"name":"Main","Input":[{"x":-60,"y":-350,"objectType":"Input","label":"E1","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":0},"values":{"state":1},"constructorParamaters":["RIGHT",1,{"x":0,"y":20,"id":"0jILbNA2ZGTXsxTdJH3Q"}]}},{"x":-210,"y":-170,"objectType":"Input","label":"E2","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":3},"values":{"state":0},"constructorParamaters":["RIGHT",1,{"x":0,"y":40,"id":"ita1IekHMA6W7sPMQBaI"}]}},{"x":-230,"y":-110,"objectType":"Input","label":"E3","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":6},"values":{"state":1},"constructorParamaters":["RIGHT",1,{"x":0,"y":60,"id":"Q4r7TmzRlKyUnvO0dvDd"}]}},{"x":-240,"y":-30,"objectType":"Input","label":"E4","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":27},"values":{"state":1},"constructorParamaters":["RIGHT",1,{"x":0,"y":80,"id":"HpQj2tbvPGoKaapUXEkg"}]}},{"x":-270,"y":30,"objectType":"Input","label":"E5","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":28},"values":{"state":1},"constructorParamaters":["RIGHT",1,{"x":0,"y":100,"id":"75wppexYwFPIgH3i45Ue"}]}}],"Output":[{"x":290,"y":-240,"objectType":"Output","label":"A2","direction":"LEFT","labelDirection":"RIGHT","propagationDelay":0,"customData":{"nodes":{"inp1":1},"constructorParamaters":["LEFT",1,{"x":100,"y":20,"id":"5b1wWIFi0L14hTsMfuST"}]}},{"x":290,"y":-310,"objectType":"Output","label":"A1","direction":"LEFT","labelDirection":"RIGHT","propagationDelay":0,"customData":{"nodes":{"inp1":2},"constructorParamaters":["LEFT",1,{"x":100,"y":40,"id":"JZ3UHjZ8lKB4j72XI26L"}]}}],"NotGate":[{"x":-180,"y":-170,"objectType":"NotGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",1],"nodes":{"output1":5,"inp1":4}}},{"x":-50,"y":-170,"objectType":"NotGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",1],"nodes":{"output1":21,"inp1":20}}},{"x":330,"y":20,"objectType":"NotGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",1],"nodes":{"output1":47,"inp1":46}}}],"OrGate":[{"x":470,"y":-40,"objectType":"OrGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[43,44],"output1":45}}}],"AndGate":[{"x":120,"y":-300,"objectType":"AndGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",5,1],"nodes":{"inp":[8,9,10,11,12],"output1":13}}},{"x":120,"y":-90,"objectType":"AndGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[40,41],"output1":42}}}],"NorGate":[{"x":190,"y":190,"objectType":"NorGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[51,52],"output1":53}}}],"NandGate":[{"x":-120,"y":-20,"objectType":"NandGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[23,24],"output1":25}}},{"x":340,"y":160,"objectType":"NandGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[54,55],"output1":56}}}],"XorGate":[{"x":250,"y":50,"objectType":"XorGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[48,49],"output1":50}}}],"XnorGate":[{"x":110,"y":90,"objectType":"XnorGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[57,58],"output1":59}}}],"Power":[{"x":90,"y":-180,"objectType":"Power","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":33},"constructorParamaters":[1]}}],"Ground":[{"x":110,"y":-90,"objectType":"Ground","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":39},"constructorParamaters":[1]}}],"nodes":[7,14,15,16,17,18,19,22,26,29,30,31,32,34,35,36,37,38,60]}]};
+
+var j = {"name":"Kartoffel","timePeriod":500,"clockEnabled":true,"projectId":"lpdqGScMFWwDz0oy9JKZ","focussedCircuit":67058288059,"scopes":[{"layout":{"width":100,"height":160,"title_x":50,"title_y":13,"titleEnabled":true},"allNodes":[{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[17]},{"x":10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[16]},{"x":10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[14]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[4]},{"x":-10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[3]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[18]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[7]},{"x":-110,"y":-110,"type":2,"bitWidth":1,"label":"","connections":[6,19]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[18]},{"x":-10,"y":-20,"type":0,"bitWidth":1,"label":"","connections":[17]},{"x":-10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[19]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[22]},{"x":-10,"y":20,"type":0,"bitWidth":1,"label":"","connections":[54]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[15]},{"x":280,"y":-300,"type":2,"bitWidth":1,"label":"","connections":[2,15]},{"x":170,"y":-300,"type":2,"bitWidth":1,"label":"","connections":[13,14,16]},{"x":170,"y":-240,"type":2,"bitWidth":1,"label":"","connections":[1,15,55]},{"x":-50,"y":-320,"type":2,"bitWidth":1,"label":"","connections":[0,9]},{"x":-160,"y":-310,"type":2,"bitWidth":1,"label":"","connections":[5,8]},{"x":-110,"y":-300,"type":2,"bitWidth":1,"label":"","connections":[7,10]},{"x":-10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[26]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[22]},{"x":-30,"y":-290,"type":2,"bitWidth":1,"label":"","connections":[11,21]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[27]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[31]},{"x":30,"y":0,"type":1,"bitWidth":1,"label":"","connections":[29]},{"x":-60,"y":-30,"type":2,"bitWidth":1,"label":"","connections":[20,29]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[23]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[30]},{"x":-90,"y":-30,"type":2,"bitWidth":1,"label":"","connections":[25,26]},{"x":-160,"y":30,"type":2,"bitWidth":1,"label":"","connections":[28,31]},{"x":-160,"y":-10,"type":2,"bitWidth":1,"label":"","connections":[24,30]},{"x":0,"y":-10,"type":1,"bitWidth":1,"label":"","connections":[33]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[32]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-20,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":-20,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":30,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":30,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-20,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":-20,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":30,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[54]},{"x":-10,"y":-280,"type":2,"bitWidth":1,"label":"","connections":[53,12]},{"x":100,"y":-240,"type":2,"bitWidth":1,"label":"","connections":[16]}],"id":67058288059,"name":"Main","Input":[{"x":-60,"y":-350,"objectType":"Input","label":"E1","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":0},"values":{"state":1},"constructorParamaters":["RIGHT",1,{"x":0,"y":20,"id":"0jILbNA2ZGTXsxTdJH3Q"}]}},{"x":-210,"y":-170,"objectType":"Input","label":"E2","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":3},"values":{"state":0},"constructorParamaters":["RIGHT",1,{"x":0,"y":40,"id":"ita1IekHMA6W7sPMQBaI"}]}},{"x":-230,"y":-110,"objectType":"Input","label":"E3","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":6},"values":{"state":1},"constructorParamaters":["RIGHT",1,{"x":0,"y":60,"id":"Q4r7TmzRlKyUnvO0dvDd"}]}},{"x":-240,"y":-30,"objectType":"Input","label":"E4","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":27},"values":{"state":1},"constructorParamaters":["RIGHT",1,{"x":0,"y":80,"id":"HpQj2tbvPGoKaapUXEkg"}]}},{"x":-270,"y":30,"objectType":"Input","label":"E5","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":28},"values":{"state":1},"constructorParamaters":["RIGHT",1,{"x":0,"y":100,"id":"75wppexYwFPIgH3i45Ue"}]}},{"x":-20,"y":-120,"objectType":"Input","label":"E6","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":53},"values":{"state":1},"constructorParamaters":["RIGHT",1,{"x":0,"y":120,"id":"ofk12YTaoRcbg46WXwWm"}]}}],"Output":[{"x":290,"y":-240,"objectType":"Output","label":"A2","direction":"LEFT","labelDirection":"RIGHT","propagationDelay":0,"customData":{"nodes":{"inp1":1},"constructorParamaters":["LEFT",1,{"x":100,"y":20,"id":"5b1wWIFi0L14hTsMfuST"}]}},{"x":290,"y":-310,"objectType":"Output","label":"A1","direction":"LEFT","labelDirection":"RIGHT","propagationDelay":0,"customData":{"nodes":{"inp1":2},"constructorParamaters":["LEFT",1,{"x":100,"y":40,"id":"JZ3UHjZ8lKB4j72XI26L"}]}}],"NotGate":[{"x":-180,"y":-170,"objectType":"NotGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",1],"nodes":{"output1":5,"inp1":4}}},{"x":-50,"y":-170,"objectType":"NotGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",1],"nodes":{"output1":21,"inp1":20}}},{"x":330,"y":20,"objectType":"NotGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",1],"nodes":{"output1":40,"inp1":39}}}],"OrGate":[{"x":470,"y":-40,"objectType":"OrGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[36,37],"output1":38}}}],"AndGate":[{"x":120,"y":-300,"objectType":"AndGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",5,1],"nodes":{"inp":[8,9,10,11,12],"output1":13}}},{"x":120,"y":-90,"objectType":"AndGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[33,34],"output1":35}}}],"NorGate":[{"x":190,"y":190,"objectType":"NorGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[44,45],"output1":46}}}],"NandGate":[{"x":-120,"y":-20,"objectType":"NandGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[23,24],"output1":25}}},{"x":340,"y":160,"objectType":"NandGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[47,48],"output1":49}}}],"XorGate":[{"x":250,"y":50,"objectType":"XorGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[41,42],"output1":43}}}],"XnorGate":[{"x":110,"y":90,"objectType":"XnorGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[50,51],"output1":52}}}],"Ground":[{"x":110,"y":-90,"objectType":"Ground","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":32},"constructorParamaters":[1]}}],"nodes":[7,14,15,16,17,18,19,22,26,29,30,31,54,55]}]};
+
+var j = {"name":"Kartoffel3","timePeriod":500,"clockEnabled":true,"projectId":"lpdqGScMFWwDz0oy9JKZ","focussedCircuit":67058288059,"scopes":[{"layout":{"width":100,"height":160,"title_x":50,"title_y":13,"titleEnabled":true},"allNodes":[{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[44]},{"x":10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[15]},{"x":10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[13]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[4]},{"x":-10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[3]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[16]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[9,41,8]},{"x":-10,"y":-20,"type":0,"bitWidth":1,"label":"","connections":[44,7]},{"x":-10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[7,11,10,43,41]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[43,9,41,42]},{"x":-10,"y":20,"type":0,"bitWidth":1,"label":"","connections":[9,41,42]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[14]},{"x":280,"y":-300,"type":2,"bitWidth":1,"label":"","connections":[2,14]},{"x":170,"y":-300,"type":2,"bitWidth":1,"label":"","connections":[13,15,12]},{"x":170,"y":-240,"type":2,"bitWidth":1,"label":"","connections":[1,14,40]},{"x":-160,"y":-310,"type":2,"bitWidth":1,"label":"","connections":[5]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":0,"y":-10,"type":1,"bitWidth":1,"label":"","connections":[20]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[19]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-20,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":-20,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":30,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":30,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-20,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":-20,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":30,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":100,"y":-240,"type":2,"bitWidth":1,"label":"","connections":[15]},{"x":110,"y":-300,"type":2,"bitWidth":1,"label":"","connections":[11,10,43,7,9]},{"x":110,"y":-280,"type":2,"bitWidth":1,"label":"","connections":[43,10,11]},{"x":110,"y":-290,"type":2,"bitWidth":1,"label":"","connections":[10,42,41,9]},{"x":110,"y":-350,"type":2,"bitWidth":1,"label":"","connections":[0,8]}],"id":67058288059,"name":"Main","Input":[{"x":-60,"y":-350,"objectType":"Input","label":"E1","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":0},"values":{"state":1},"constructorParamaters":["RIGHT",1,{"x":0,"y":20,"id":"0jILbNA2ZGTXsxTdJH3Q"}]}},{"x":-210,"y":-170,"objectType":"Input","label":"E2","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":3},"values":{"state":0},"constructorParamaters":["RIGHT",1,{"x":0,"y":40,"id":"ita1IekHMA6W7sPMQBaI"}]}},{"x":-230,"y":-110,"objectType":"Input","label":"E3","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":6},"values":{"state":1},"constructorParamaters":["RIGHT",1,{"x":0,"y":60,"id":"Q4r7TmzRlKyUnvO0dvDd"}]}},{"x":-240,"y":-30,"objectType":"Input","label":"E4","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":17},"values":{"state":1},"constructorParamaters":["RIGHT",1,{"x":0,"y":80,"id":"HpQj2tbvPGoKaapUXEkg"}]}},{"x":-270,"y":30,"objectType":"Input","label":"E5","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":18},"values":{"state":1},"constructorParamaters":["RIGHT",1,{"x":0,"y":100,"id":"75wppexYwFPIgH3i45Ue"}]}}],"Output":[{"x":290,"y":-240,"objectType":"Output","label":"A2","direction":"LEFT","labelDirection":"RIGHT","propagationDelay":0,"customData":{"nodes":{"inp1":1},"constructorParamaters":["LEFT",1,{"x":100,"y":20,"id":"5b1wWIFi0L14hTsMfuST"}]}},{"x":290,"y":-310,"objectType":"Output","label":"A1","direction":"LEFT","labelDirection":"RIGHT","propagationDelay":0,"customData":{"nodes":{"inp1":2},"constructorParamaters":["LEFT",1,{"x":100,"y":40,"id":"JZ3UHjZ8lKB4j72XI26L"}]}}],"NotGate":[{"x":-180,"y":-170,"objectType":"NotGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",1],"nodes":{"output1":5,"inp1":4}}},{"x":330,"y":20,"objectType":"NotGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",1],"nodes":{"output1":27,"inp1":26}}}],"OrGate":[{"x":470,"y":-40,"objectType":"OrGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[23,24],"output1":25}}}],"AndGate":[{"x":120,"y":-300,"objectType":"AndGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",5,1],"nodes":{"inp":[7,8,9,10,11],"output1":12}}},{"x":120,"y":-90,"objectType":"AndGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[20,21],"output1":22}}}],"NorGate":[{"x":190,"y":190,"objectType":"NorGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[31,32],"output1":33}}}],"NandGate":[{"x":340,"y":160,"objectType":"NandGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[34,35],"output1":36}}}],"XorGate":[{"x":250,"y":50,"objectType":"XorGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[28,29],"output1":30}}}],"XnorGate":[{"x":110,"y":90,"objectType":"XnorGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[37,38],"output1":39}}}],"Ground":[{"x":110,"y":-90,"objectType":"Ground","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":19},"constructorParamaters":[1]}}],"nodes":[13,14,15,16,40,41,42,43,44]}]};
+
+var j = {"name":"Kartoffel3","timePeriod":500,"clockEnabled":true,"projectId":"lpdqGScMFWwDz0oy9JKZ","focussedCircuit":67058288059,"scopes":[{"layout":{"width":100,"height":160,"title_x":50,"title_y":13,"titleEnabled":true},"allNodes":[{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[44]},{"x":10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[15]},{"x":10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[13]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[4]},{"x":-10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[3]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[16]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[9,41,8]},{"x":-10,"y":-20,"type":0,"bitWidth":1,"label":"","connections":[44,7]},{"x":-10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[7,11,10,43,41]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[43,9,41,42]},{"x":-10,"y":20,"type":0,"bitWidth":1,"label":"","connections":[9,41,42]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[14]},{"x":280,"y":-300,"type":2,"bitWidth":1,"label":"","connections":[2,14]},{"x":170,"y":-300,"type":2,"bitWidth":1,"label":"","connections":[13,15,12]},{"x":170,"y":-240,"type":2,"bitWidth":1,"label":"","connections":[1,14,40]},{"x":-160,"y":-310,"type":2,"bitWidth":1,"label":"","connections":[5]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":0,"y":-10,"type":1,"bitWidth":1,"label":"","connections":[20]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[19]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-20,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":-20,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":30,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":30,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-20,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":-20,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":30,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":100,"y":-240,"type":2,"bitWidth":1,"label":"","connections":[15,46]},{"x":110,"y":-300,"type":2,"bitWidth":1,"label":"","connections":[11,10,43,7,9]},{"x":110,"y":-280,"type":2,"bitWidth":1,"label":"","connections":[43,10,11]},{"x":110,"y":-290,"type":2,"bitWidth":1,"label":"","connections":[10,42,41,9]},{"x":110,"y":-350,"type":2,"bitWidth":1,"label":"","connections":[0,8]},{"x":10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[46]},{"x":100,"y":-200,"type":2,"bitWidth":1,"label":"","connections":[40,45]}],"id":67058288059,"name":"Main","Input":[{"x":-60,"y":-350,"objectType":"Input","label":"E1","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":0},"values":{"state":1},"constructorParamaters":["RIGHT",1,{"x":0,"y":20,"id":"0jILbNA2ZGTXsxTdJH3Q"}]}},{"x":-210,"y":-170,"objectType":"Input","label":"E2","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":3},"values":{"state":0},"constructorParamaters":["RIGHT",1,{"x":0,"y":40,"id":"ita1IekHMA6W7sPMQBaI"}]}},{"x":-230,"y":-110,"objectType":"Input","label":"E3","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":6},"values":{"state":1},"constructorParamaters":["RIGHT",1,{"x":0,"y":60,"id":"Q4r7TmzRlKyUnvO0dvDd"}]}},{"x":-240,"y":-30,"objectType":"Input","label":"E4","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":17},"values":{"state":1},"constructorParamaters":["RIGHT",1,{"x":0,"y":80,"id":"HpQj2tbvPGoKaapUXEkg"}]}},{"x":-270,"y":30,"objectType":"Input","label":"E5","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":18},"values":{"state":1},"constructorParamaters":["RIGHT",1,{"x":0,"y":100,"id":"75wppexYwFPIgH3i45Ue"}]}}],"Output":[{"x":290,"y":-240,"objectType":"Output","label":"A2","direction":"LEFT","labelDirection":"RIGHT","propagationDelay":0,"customData":{"nodes":{"inp1":1},"constructorParamaters":["LEFT",1,{"x":100,"y":20,"id":"5b1wWIFi0L14hTsMfuST"}]}},{"x":290,"y":-310,"objectType":"Output","label":"A1","direction":"LEFT","labelDirection":"RIGHT","propagationDelay":0,"customData":{"nodes":{"inp1":2},"constructorParamaters":["LEFT",1,{"x":100,"y":40,"id":"JZ3UHjZ8lKB4j72XI26L"}]}},{"x":290,"y":-200,"objectType":"Output","label":"A3","direction":"LEFT","labelDirection":"RIGHT","propagationDelay":0,"customData":{"nodes":{"inp1":45},"constructorParamaters":["LEFT",1,{"x":100,"y":60,"id":"hww8kfakpgDIIAiJ0ZKa"}]}}],"NotGate":[{"x":-180,"y":-170,"objectType":"NotGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",1],"nodes":{"output1":5,"inp1":4}}},{"x":330,"y":20,"objectType":"NotGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",1],"nodes":{"output1":27,"inp1":26}}}],"OrGate":[{"x":470,"y":-40,"objectType":"OrGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[23,24],"output1":25}}}],"AndGate":[{"x":120,"y":-300,"objectType":"AndGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",5,1],"nodes":{"inp":[7,8,9,10,11],"output1":12}}},{"x":120,"y":-90,"objectType":"AndGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[20,21],"output1":22}}}],"NorGate":[{"x":190,"y":190,"objectType":"NorGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[31,32],"output1":33}}}],"NandGate":[{"x":340,"y":160,"objectType":"NandGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[34,35],"output1":36}}}],"XorGate":[{"x":250,"y":50,"objectType":"XorGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[28,29],"output1":30}}}],"XnorGate":[{"x":110,"y":90,"objectType":"XnorGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[37,38],"output1":39}}}],"Ground":[{"x":110,"y":-90,"objectType":"Ground","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":19},"constructorParamaters":[1]}}],"nodes":[13,14,15,16,40,41,42,43,44,46]}]};
+
+var j = {"name":"Kartoffel3","timePeriod":500,"clockEnabled":true,"projectId":"lpdqGScMFWwDz0oy9JKZ","focussedCircuit":67058288059,"scopes":[{"layout":{"width":100,"height":160,"title_x":50,"title_y":13,"titleEnabled":true},"allNodes":[{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[41]},{"x":10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[15]},{"x":10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[13]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[4]},{"x":-10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[3]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[16]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[9,8]},{"x":-10,"y":-20,"type":0,"bitWidth":1,"label":"","connections":[7,45]},{"x":-10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[7,10]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[9,11]},{"x":-10,"y":20,"type":0,"bitWidth":1,"label":"","connections":[10]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[46]},{"x":280,"y":-300,"type":2,"bitWidth":1,"label":"","connections":[2,44]},{"x":170,"y":-300,"type":2,"bitWidth":1,"label":"","connections":[15,44]},{"x":170,"y":-240,"type":2,"bitWidth":1,"label":"","connections":[1,14,40]},{"x":-160,"y":-310,"type":2,"bitWidth":1,"label":"","connections":[5]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":10,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":0,"y":-10,"type":1,"bitWidth":1,"label":"","connections":[20]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[19]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-20,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":-20,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":20,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":30,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":-10,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":30,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":-20,"y":-10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":-20,"y":10,"type":0,"bitWidth":1,"label":"","connections":[]},{"x":30,"y":0,"type":1,"bitWidth":1,"label":"","connections":[]},{"x":100,"y":-240,"type":2,"bitWidth":1,"label":"","connections":[15,43]},{"x":110,"y":-350,"type":2,"bitWidth":1,"label":"","connections":[0,45]},{"x":10,"y":0,"type":0,"bitWidth":1,"label":"","connections":[43]},{"x":100,"y":-200,"type":2,"bitWidth":1,"label":"","connections":[40,42]},{"x":220,"y":-300,"type":2,"bitWidth":1,"label":"","connections":[14,13,46]},{"x":110,"y":-410,"type":2,"bitWidth":1,"label":"","connections":[8,41]},{"x":220,"y":-390,"type":2,"bitWidth":1,"label":"","connections":[12,44]}],"id":67058288059,"name":"Main","Input":[{"x":-60,"y":-350,"objectType":"Input","label":"E1","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":0},"values":{"state":1},"constructorParamaters":["RIGHT",1,{"x":0,"y":20,"id":"0jILbNA2ZGTXsxTdJH3Q"}]}},{"x":-210,"y":-170,"objectType":"Input","label":"E2","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":3},"values":{"state":0},"constructorParamaters":["RIGHT",1,{"x":0,"y":40,"id":"ita1IekHMA6W7sPMQBaI"}]}},{"x":-230,"y":-110,"objectType":"Input","label":"E3","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":6},"values":{"state":1},"constructorParamaters":["RIGHT",1,{"x":0,"y":60,"id":"Q4r7TmzRlKyUnvO0dvDd"}]}},{"x":-240,"y":-30,"objectType":"Input","label":"E4","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":17},"values":{"state":1},"constructorParamaters":["RIGHT",1,{"x":0,"y":80,"id":"HpQj2tbvPGoKaapUXEkg"}]}},{"x":-270,"y":30,"objectType":"Input","label":"E5","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":18},"values":{"state":1},"constructorParamaters":["RIGHT",1,{"x":0,"y":100,"id":"75wppexYwFPIgH3i45Ue"}]}}],"Output":[{"x":290,"y":-240,"objectType":"Output","label":"A2","direction":"LEFT","labelDirection":"RIGHT","propagationDelay":0,"customData":{"nodes":{"inp1":1},"constructorParamaters":["LEFT",1,{"x":100,"y":20,"id":"5b1wWIFi0L14hTsMfuST"}]}},{"x":290,"y":-310,"objectType":"Output","label":"A1","direction":"LEFT","labelDirection":"RIGHT","propagationDelay":0,"customData":{"nodes":{"inp1":2},"constructorParamaters":["LEFT",1,{"x":100,"y":40,"id":"JZ3UHjZ8lKB4j72XI26L"}]}},{"x":290,"y":-200,"objectType":"Output","label":"A3","direction":"LEFT","labelDirection":"RIGHT","propagationDelay":0,"customData":{"nodes":{"inp1":42},"constructorParamaters":["LEFT",1,{"x":100,"y":60,"id":"hww8kfakpgDIIAiJ0ZKa"}]}}],"NotGate":[{"x":-180,"y":-170,"objectType":"NotGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",1],"nodes":{"output1":5,"inp1":4}}},{"x":330,"y":20,"objectType":"NotGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",1],"nodes":{"output1":27,"inp1":26}}}],"OrGate":[{"x":470,"y":-40,"objectType":"OrGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[23,24],"output1":25}}}],"AndGate":[{"x":170,"y":-390,"objectType":"AndGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",5,1],"nodes":{"inp":[7,8,9,10,11],"output1":12}}},{"x":120,"y":-90,"objectType":"AndGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[20,21],"output1":22}}}],"NorGate":[{"x":190,"y":190,"objectType":"NorGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[31,32],"output1":33}}}],"NandGate":[{"x":340,"y":160,"objectType":"NandGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[34,35],"output1":36}}}],"XorGate":[{"x":250,"y":50,"objectType":"XorGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[28,29],"output1":30}}}],"XnorGate":[{"x":110,"y":90,"objectType":"XnorGate","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":100,"customData":{"constructorParamaters":["RIGHT",2,1],"nodes":{"inp":[37,38],"output1":39}}}],"Ground":[{"x":110,"y":-90,"objectType":"Ground","label":"","direction":"RIGHT","labelDirection":"LEFT","propagationDelay":0,"customData":{"nodes":{"output1":19},"constructorParamaters":[1]}}],"nodes":[13,14,15,16,40,41,43,44,45,46]}]};
+lookup = []
+
+globDbg = true;
+
+O = j.scopes[0];
+
+function addToLookup(lookup, entities, oType, type){
+
+// e.g. AndGate gives an array of two of its kind.
+
+   for(key in entities){
+   nodesOut = [];
+   text ="";
+    nodesIn  =  entities[key].customData.nodes.inp; 
+    if(window.globDbg) console.log(">>>>>>"+key);
+    if(nodesIn == undefined || nodesIn.length == 0){
+    //if(oType == "NotGate"){ // Todo judz check for nodes.inp1 
+    nodesIn = [ entities[key].customData.nodes.inp1 ];
+    }
+    switch(type){
+ 
+    case "inp":
+    text = entities[key].label;
+    break;
+    case "gate":
+    
+    case "static":
+    break;
+    default: 
+    console.log("Type " + type + " not implemented");
+    }
+    nodeOut =  entities[key].customData.nodes.output1;
+    lookup[nodeOut] = {nodesIn, text, oType,  type, nodeOut};
+    }
+}
+
+function makeLookup(lookup, scope){
+    for(key in j.scopes[0]){
+        O = j.scopes[0][key];
+        switch(key){
+            case "AndGate":          addToLookup(lookup, O , key, "gate");     break;
+            case "Ground":            addToLookup(lookup, O , key, "static");        break;
+            case "Input":               addToLookup(lookup, O , key,  "inp");              break;
+            case "NandGate":       addToLookup(lookup, O , key, "gate");    break;
+            case "NorGate":         addToLookup(lookup, O , key, "gate");      break;
+            case "NotGate":         addToLookup(lookup, O , key, "gate");     break;
+            case "OrGate":           addToLookup(lookup, O , key, "gate");        break;
+            case "Power":            addToLookup(lookup, O , key, "static");          break;
+            case "XnorGate":       addToLookup(lookup, O , key, "gate"); break;
+            case "XorGate":         addToLookup(lookup, O , key, "gate");  break;
+        }
+    }
+}
+
+function findNextNodes(outNode, lookup, allNodes, nodeBefore){
+    node = allNodes[outNode];
+    connectingNodes = node.connections;
+   
+  lengthbefore = connectingNodes.length;
+        var index = connectingNodes.indexOf(nodeBefore);
+        if (index !== -1) connectingNodes.splice(index, 1);
+        lengthafter = connectingNodes.length;
+   
+    if(window.globDbg) console.log(connectingNodes);
+   if(connectingNodes.length == 0){console.log("NO CONN NODES"); }
+    return connectingNodes;
+}
+
+
+function followXGate(outNodes,gateType, lookup, allNodes, gateNode){
+        
+var textPre = ""; 
+var retText;
+
+switch(gateType){
+        case "XnorGate":    retText +="!";   // fallthrough;  these both need special handeling.        (-1 so wont stop at this OUT )
+        case "XorGate":      
+        break;
+        default:    return -1;
+        break;
+}
+
+
+  // XOR = (A |  B ) & !( A & B)   so just call followGate again and fake who we are ;) 
+   var    orText   = followGate(outNodes, "OrGate",     lookup, allNodes, gateNode);
+   var andText   = followGate(outNodes, "NandGate", lookup, allNodes, gateNode);
+   
+   if(andText >= 0 && orText >= 0){
+                retText += " ( " + orText + " & " + andText + ")";
+    }
+    
+    return retText;
+    
+       
+    
+}
+
+function followGate(outNodes, gateType, lookup, allNodes, gateNode){
+textPre = "";
+
+switch(gateType){
+        case "XnorGate":   // fallthrough;  these both need special handeling.        (-1 so wont stop at this OUT )
+        case "XorGate":      return followXGate(outNodes, gateType, lookup, allNodes, gateNode);   
+        break;
+       
+        case "NandGate":       
+        case "NotGate":         textPre +="!";
+        case "AndGate":         textPre+= "("; textMid = " & "; textEnd =")";
+        break;
+        
+        case "NorGate":        textPre += "!"; 
+        case "OrGate":          textPre += "("; textMid = " | "; textEnd = ")";
+        break;   
+        default: return -1;
+        break;
+    }
+    
+    var retText;
+    
+    retText =  JSON.parse(JSON.stringify(textPre));
+    var i = 0;
+    var t = 0;
+    var u = 0;
+    if(window.globDbg) console.log("GateType Entry: "+gateType);
+    if(window.globDbg) console.log("OutNodes len "+outNodes.length);
+    if(window.globDbg) console.log(outNodes);
+    
+    var oldNode;
+    // If the GateNode is not in the lookup, it's a Wire Y - ing, so we have to keep the info where we come from.
+    if( !lookup.hasOwnProperty(gateNode)){
+        oldNode = gateNode;
+    }
+    else{
+        // Otherwise we set it to -1, to prevent it stopping at the next element which will be an Input of a gate.
+        oldNode = -1;
+    }
+    
+    lastKey = "Ö";
+    nextNodeKey = "unsinn";
+    for(nextNodeKey in outNodes){
+    nextElement = -1;
+    if(window.globDbg) console.log("Runs: "+(++u));
+        if(lastKey == nextNodeKey){
+        if(window.globDbg) console.log("LASTKEY "+lastKey+" == NEXT KEY "+nextNodeKey+" T= "+(t++));
+        }
+        else{
+        if(window.globDbg) console.log("LASTKEY != NEXT KEY");
+       // break;
+        }
+        
+        previousElement = nextElement;
+        nextElement = followTree(outNodes[nextNodeKey], lookup, allNodes,oldNode);
+        if(window.globDbg) console.log("GateType: "+gateType+ " #"+gateNode);
+        if(window.globDbg) console.log("NextElement: "+nextElement);
+        if(window.globDbg) console.log("PreviousElement: "+previousElement);
+        // If element is -1 then skip. 
+        if(nextElement >= 0){
+                //console.log("Making entry... adding "+nextElement+ " from outNode: " +outNodes[nextNodeKey]+ " to string content: "+retText);
+                if(i++ > 0 ) retText +=  JSON.parse(JSON.stringify(textMid)); 
+                retText +=  JSON.parse(JSON.stringify(nextElement));
+        }
+        else{
+        console.log("Skipping next element "+ nextElement);
+        console.log(outNodes);
+        }
+         retText +=  JSON.parse(JSON.stringify(textEnd));
+         lastKey=nextNodeKey;
+   // console.log("Iteration retText is: "+retText);
+    
+    }
+      
+   if(window.globDbg)  console.log("GateType: "+gateType);
+   if(window.globDbg)  console.log("Returning :" +retText);
+    return retText;
+
+}
+
+
+
+glob_i = 0;
+
+function printType(type){
+t_aus =0;
+t_ein = 1;
+t_ltg  = 2;
+
+switch(type){
+case t_aus: return "Ausgang"; 
+case t_ein: return "Eingang";
+case t_ltg: return "Leitung";
+
+}
+}
+
+//                              Node to befin                        Stop at Output?
+function followTree(outNode, lookup, allNodes, nodeBefore){
+t_aus =0;
+t_ein = 1;
+t_ltg  = 2;
+
+node = allNodes[outNode];
+
+if(window.globDbg) console.log("Stacksize: "+window.glob_i++);
+if(window.glob_i >  50) return "-2"; // Remove? 
+
+if(window.globDbg) console.log("##########################");
+if(window.globDbg) console.log("Node: " +outNode);
+if(window.globDbg) console.log(printType(node.type));
+if(window.globDbg) console.log("Node before: "+nodeBefore);
+
+
+// If this is not the entry point, and we reach an output, we're in a dead end.
+if(nodeBefore > 0 && node.type == t_aus){
+    if(window.globDbg) console.log("dead end");
+    return -1;
+}
+
+nextNodes = -1;
+ft = "nonsence";
+switch(node.type){
+
+// If it is a output, or a connection, go deeper in the rabbithole. 
+case t_aus: case t_ltg:
+     if(window.globDbg) console.log(">>>>>>>>Node Before: "+nodeBefore+ " OutNode: "+outNode+"   >>>>>>>>>");
+      nextNodes = findNextNodes(outNode,lookup, allNodes, nodeBefore);
+      
+      if(nextNodes.length == 1){
+        if(window.globDbg &&nextNodes[0] === undefined){ console.log("Next ~~~~~ Nodes[0] undefined: "); console.log(nextNodes);}
+            
+             if(window.globDbg) console.log(">>>Ret Message from thisNode: "+outNode+" nextNode "+nextNodes[0]+" is: "+ft);
+             ft = followTree(nextNodes[0], lookup, allNodes, outNode);
+             
+             return ft;
+     }
+     
+     else if(nextNodes.length > 1){
+     // if we come here, the way goes in two directions... threting like "OR", so we're faking one and delegate to followGate ;-) 
+       if(window.globDbg)  console.log("X X X ing in cirquit! "+outNode);
+        return followGate(nextNodes, "OrGate", lookup, allNodes, outNode);
+     }
+     
+     else{
+        // the Element is not connected ... dead end...
+        if(window.globDbg) console.log("X X X dead end");
+        return -1;
+     }
+ 
+break;
+
+case t_ein: 
+    // If it is a Input, find out if it's REALLY an input, or just the input of a gate.
+    // All inputs have to be in the lookup Array. 
+    lookupEntry  = lookup[outNode];
+    
+    if(window.globDbg)  console.log("Input");
+    // If the type is input, we reached a endpoint.
+    if(lookupEntry.type == "inp" ||  lookupEntry.type == "static"){
+       if(window.globDbg)  console.log("EXIT POINT");
+       if(window.globDbg) console.log(lookupEntry.text);
+       if(window.globDbg) console.log("^^^^^^^^^");
+      
+        return lookupEntry.text;
+    }
+
+    // When it is a gate we need to go down all paths (for each input of the gate) 
+    else if(lookupEntry.type == "gate"){
+       if(window.globDbg)  console.log("X X X typ gate");
+        nodesIn = lookupEntry.nodesIn;
+        return followGate(nodesIn, lookupEntry.oType, lookup, allNodes, outNode);  
+    }
+
+    else{
+    console.log("Error: element not properly in lookup");
+    }
+
+
+break;
+}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+outputs =   j.scopes[0].Output;
+allNodes = j.scopes[0].allNodes;
+
+
+
+makeLookup(lookup, j.scopes[0]);
+
+
+
+
+logicStrings = [];
+u = 0;
+// Now build Outputs :-) 
+for (key in outputs){
+
+outName = outputs[key].label;
+outNode  = outputs[key].customData.nodes.inp1;
+
+logicString = followTree(outNode, lookup, allNodes, -1);
+completeLogic = outName + "=" + logicString;
+
+console.log("Completed "+completeLogic);
+//break; //TODO remove
+}
+
+
+
+
+</script>

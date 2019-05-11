@@ -2,87 +2,31 @@
 
 Turning your Rasperry Pi into a PLC
 
+This Project was tested with a RaspberryPi2,3 and Zero with the [PiFaceDigital2](http://www.piface.org.uk/products/piface_digital_2/) HAT.
+A executable is shipped which is built for Raspbian GNU/Linux 9 (stretch). 
+See Demo-Video on [youtube.com](https://www.youtube.com/watch?v=_jfn4xiY1Rk)
+See Documentation (german) https://github.com/dajuly20/Thesis/blob/master/thesis.pdf
+Download full SD Image on: http://<Add-here>
+
+
+
 ## Getting Started
+* Attach the PiFaceDigital2 to the RaspberryPi
+* Open a ssh connection and clone this repository with `git clone https://github.com/dajuly20/ControlPi`
+* cd into the new directory ControlPi and execute ./start_manual.sh to check if the executable works.
+* When you have to build the project from source execute ./start_pull_and_build.sh to install dependencies and build.
+* Otherwise you can create a Service for ControlPi by executing ./start_as_service.sh 
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-### Prerequisites
+## First Control-Program
+* Open your Browser and enter the IP / Hostname of your RaspberryPi e.g. [http://ControlPi3/]
+  (If a error occurs try to execute h/www-setupApache.sh (which should have been executed by start_as_service.sh already.)
+* Klick on tab Change PLC; Default username and password is "admin"
+* Draw your PLC-Program 
+* H input "H i" 0 - 3  have their own hardware buttons.
+* H output "H o " 0 and 1 have their own relay. 
+* Click Project -> Save&Export.
+* Hit a Button you programmed and check out the result.
 
-What things you need to install the software and how to install them
 
-```
-Give examples
-```
-
-### Installing
-
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
-## Authors
-
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
-
+ 

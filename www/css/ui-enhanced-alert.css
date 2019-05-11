@@ -1,0 +1,11 @@
+
+.ea {
+  height: 32px;
+  width: 32px;
+  float: left;
+  padding-right:20px;
+}
+
+.ea.alert { background: url(../img/Warning.png) no-repeat; }
+
+.ea.info { background: url(../img/Info_Box_Blue.png) no-repeat; }
