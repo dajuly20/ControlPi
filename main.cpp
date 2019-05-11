@@ -255,10 +255,11 @@ void logicEngine(IO_Channel_AccesWrapper& chnl, std::vector<std::string>& softLo
 
 int main( int argc, char *argv[] )
 {
+    bool dbg = false;
     uint8_t i = 0;          /**< Loop iterator */
     uint8_t inputs;         /**< Input bits (pins 0-7) */
     uint8_t outputs;         /**< Input bits (pins 0-7) */
- 
+    
     iterationSwitchGuard isg;
   
     // Register signalHandlers
@@ -340,7 +341,7 @@ int main( int argc, char *argv[] )
             }
             {
             std::unique_lock<mutex> lock{isg.itCondMutex};    
-            cout << "Locked in Net thread " << endl;
+            //cout << "Locked in Net thread " << endl;
             isg.itCondSwitch = true;  
             }
             isg.itCond.notify_one();
@@ -488,7 +489,7 @@ int main( int argc, char *argv[] )
             
             std::unique_lock<mutex> lock{isg.itCondMutex};
             {
-                cout << "Locked in interrput thread " << endl;
+                //cout << "Locked in interrput thread " << endl;
                 isg.itCondSwitch = true;
                 isg.itCond.notify_one();
             }
@@ -510,7 +511,7 @@ int main( int argc, char *argv[] )
             if(configRead == false){
                 {
                 std::unique_lock<mutex> lock{isg.itCondMutex};    
-                cout << "Locked in signal thread " << endl;
+                //cout << "Locked in signal thread " << endl;
                 isg.itCondSwitch = true;  
                 }
                 isg.itCond.notify_one();    
@@ -521,7 +522,7 @@ int main( int argc, char *argv[] )
         //To end the programm, we must trigger an iteration as well... 
         {
             std::unique_lock<mutex> lock{isg.itCondMutex};    
-            cout << "Locked in signal thread " << endl;
+            //cout << "Locked in signal thread " << endl;
             isg.itCondSwitch = true;  
         }
         isg.itCond.notify_one();
@@ -541,12 +542,12 @@ int main( int argc, char *argv[] )
     while(keepRunning){
         
         if (chnl[hardwareEntityKeys[0]].getIOChnl()->interrupts_enabled()) {
-            printf("\n\nWaiting for input (press any button on the PiFaceDigital)\n");
+            if(dbg) printf("\n\nWaiting for input (press any button on the PiFaceDigital)\n");
        
         
             {
             std::unique_lock<mutex> lock{isg.itCondMutex};
-            cout << "locked in mainloop " << endl;
+            //cout << "locked in mainloop " << endl;
                 
             isg.itCond.wait(lock, [&isg] { return isg.itCondSwitch;});  // Waiting for change of itCondSwitch (that is set by another thread..) 
             
@@ -590,7 +591,7 @@ int main( int argc, char *argv[] )
             keepRunning = 0;
             {
             std::unique_lock<mutex> lock{isg.itCondMutex};    
-            cout << "Locked in Net thread " << endl;
+            //cout << "Locked in Net thread " << endl;
             isg.itCondSwitch = true;  
             }
             isg.itCond.notify_one();
