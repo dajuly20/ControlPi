@@ -592,13 +592,20 @@ content: url(img/button_off.png);
          </section>
         <section>
           <h2>Dienste</h2>
-          Dienste  ipsum dolor sit amet, consectetur adipisicing elit. Quam nemo ducimus eius, magnam error quisquam sunt voluptate labore, excepturi numquam! Alias libero optio sed harum debitis! Veniam, quia in eum.</section>
+         <b>IFTTT:</b>
+         PHP Script <code>websocketAdaptor.php </code> can be used to Add a WebHook.<br>
+         All arguments passed to that script, are executed sequantially.<br>
+         e.g.: <code>  http://ControlPi3/websocketAdaptor.php?params[]=auth:Pi:&lt;auth>&amp;params[]=set:Pi0:low</code>
+         
+         </section>
     <section>
           <h2>Hilfe</h2>
           <b>How to change configuration</b>
           <ol>
           <li>SSH into RaspberryPi with  <code>ssh hspf@ControlPi3</code> (user: hspf, pass: Elektron)</li>
-          <li><font color="red">Change password</font> with <code>passwd</code></li>
+          <li><font color="red">Change system password</font> with <code>passwd</code></li>
+          <li>If this is a new SD-Card: Expand filesystem with <code>sudo raspi-config --expand-rootfs</code></li>
+          <li>Change frontend password using <code>~/ControlPi/h/renew_passwort_frontent.sh </code></li>
           <li>Change directory to <code>cd /opt/controlpi/</code></li>
           <li>Files in directory
                 <ol>
@@ -607,9 +614,6 @@ content: url(img/button_off.png);
                     <li> <b>logic.conf</b> <u>generated</u>! <small>Will be overridden by webGui. Don't change unless you know what you are doing!</small>  </li>
                     <li> <b>logic.json</b> <u>generated</u>! <small>Used by CircuitVerse Editor, does not affect the backend.</small>  </li>
                     <li> <b>.htpasswd</b> <small>password-file used by CircuitVerse editor, does not effect the backend.</small>  </li>
-                    
-                    
-                    
                 </ol>
         </li>
           <li>After changes restart service by <code>sudo service ControlPi restart</code></li>
