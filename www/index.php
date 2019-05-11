@@ -605,6 +605,7 @@ content: url(img/button_off.png);
           <li>SSH into RaspberryPi with  <code>ssh hspf@ControlPi3</code> (user: hspf, pass: Elektron)</li>
           <li><font color="red">Change system password</font> with <code>passwd</code></li>
           <li>If this is a new SD-Card: Expand filesystem with <code>sudo raspi-config --expand-rootfs</code></li>
+          <li>Update project: <code>cd ~/ControlPi && git pull && h/createService.sh</code>
           <li>Change frontend password using <code>~/ControlPi/h/renew_passwort_frontent.sh </code></li>
           <li>Change directory to <code>cd /opt/controlpi/</code></li>
           <li>Files in directory
