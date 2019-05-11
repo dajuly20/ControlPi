@@ -6,7 +6,7 @@ This Project was tested with a RaspberryPi2,3 and Zero with the [PiFaceDigital2]
 A executable is shipped which is built for Raspbian GNU/Linux 9 (stretch). 
 See Demo-Video on [youtube.com](https://www.youtube.com/watch?v=_jfn4xiY1Rk)
 See Documentation (german) https://github.com/dajuly20/Thesis/blob/master/thesis.pdf
-Download full SD Image on: http://<Add-here>
+Download full SD Image on: https://owncloud.wiche.eu/download/ControlPi/ControlPi-Raspbian-Strech.tar.gz
 
 
 
