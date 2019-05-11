@@ -27,8 +27,9 @@ Channel_Entity_TimerOutput::~Channel_Entity_TimerOutput() {
 }
 
 
-void Channel_Entity_TimerOutput::write_pin(bool _bdata, uint8_t bit_num){   
-    std::cout << " **************************** \n\nWrite pin invoked  " << _bdata << " on bit number" << (int) bit_num << " \n\n*******************" << std::endl;
+void Channel_Entity_TimerOutput::write_pin(bool _bdata, uint8_t bit_num){ 
+    bool dbg = false;
+    if(dbg) std::cout << " **************************** \n\nWrite pin invoked  " << _bdata << " on bit number" << (int) bit_num << " \n\n*******************" << std::endl;
     // invoke parent write pin method to really save the pin value
     Channel_Entity_Memory::write_pin(_bdata, bit_num);
 }

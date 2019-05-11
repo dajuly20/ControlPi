@@ -25,7 +25,8 @@ Channel_Entity_Pipe_RX::~Channel_Entity_Pipe_RX() {
 
 
 void Channel_Entity_Pipe_RX::write_pin(bool _bdata, uint8_t bit_num){   
-    std::cout << " **************************** \n\nWrite pin invoked  " << _bdata << " on bit number" << (int) bit_num << " \n\n*******************" << std::endl;
+   bool dbg = false;
+    if(dbg) std::cout << " **************************** \n\nWrite pin invoked  " << _bdata << " on bit number" << (int) bit_num << " \n\n*******************" << std::endl;
 
     // I will crash the program!
      throw std::invalid_argument("Error: Cannot assign readOnly entity with value! (e.g. Pi0=1; in logic.conf  ");
