@@ -20,6 +20,7 @@ See Documentation (german) https://github.com/dajuly20/Thesis/blob/master/thesis
 * Hostname is `ControlPi3` User: hspf pass: Elektron 
 * Log in using SSH `ssh hspf@ControlPi3`
 * Change password with `passwd`
+* Expand the filesystem and reboot `sudo raspi-config --expand-rootfs && sudo reboot`
 * Execute following to update `cd ~/ControlPi && git pull && ./start_as_service.sh`
 * You can change the frontend password with `~/ControlPi/renew_passwort_frontent.sh`
 
