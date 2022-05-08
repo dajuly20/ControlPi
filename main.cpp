@@ -49,7 +49,7 @@
 #include "src/IOChannels/IO_Channel_Virtual_Timer.h"
 #include "src/IOChannels/IO_Channel_Virtual_Pipe.h"
 #include "src/CommandProcessor.h"
-#include "src/ConfigParser.h"
+#include "src/ConfigParser.h" //loadConfigfile
 
 #include <boost/algorithm/string/classification.hpp> // Include boost::for is_any_of
 #include <boost/algorithm/string/split.hpp> // Include for boost::split

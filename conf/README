@@ -1,0 +1,5 @@
+ Where binary is looking for these files! ;-)
+(As per definition in src/ConfigParser.h#~24)
+
+ prio1 = "./conf/";
+ prio2 = "/opt/controlpi/";
