@@ -28,9 +28,13 @@ See Documentation (german) https://github.com/dajuly20/Thesis/blob/master/thesis
 ## If you have Raspbian installed already
 * Attach the PiFaceDigital2 to the RaspberryPi
 * Open a ssh connection and clone this repository with `git clone https://github.com/dajuly20/ControlPi`
-* cd into the new directory ControlPi and execute `./start_manual.sh` to check if the executable works.
-* When you have to build the project from source execute `./start_pull_and_build.sh` to install dependencies and build.
-* Otherwise you can create a Service for ControlPi by executing `./start_as_service.sh`
+* 
+* cd into the new directory ControlPi and execute `./start_InstallMeFirst.sh` This will create the controlpi user and install the binary and config files in the places they should go
+* Now try `./start_manual.sh` to check if the executable works.
+* 
+* When you have changed the codebase (or need to rebuild because the binary is incompatible or corrupt) and rebuild the binary you should execute `./start_pull_and_build.sh` to install dependencies and start the build prpcess. (This could take a while.. better start before going to lunsh and hope it's not coming back at you [too soon] :D ) 
+
+* Either way you can create a Service for ControlPi afterwards by executing `./start_as_service.sh` so everything runs smoothly in the background, and you don't have to worry about reboots (or at least not more than you should anyways [everyone who already restarted any of their Linux devides whithin the last week, and still feels ashamed about it, is now asked to do TEN PENALTY PUSHPUS])
 
 
 ## First Control-Program
